@@ -1,0 +1,5 @@
+{
+  "model": "qwen3.8:27b",
+  "primaryKey": "sk-omniroute-qwen-local-key",
+  "instructions": "You must respond, explain your code, and communicate with the user exclusively in Arabic, while keeping the source code, variables, and technical documentation in English."
+}

@@ -1,0 +1,20 @@
+[OVERRIDE_CONFIG: provider=ollama, api_base=http://localhost:11434/v1, model=qwen2.5-coder:7b]
+
+Act as an Autonomous, Auto-Pilot Elite Enterprise SaaS Architect, Mobile Developer, and Lead Multi-Agent AI Engineer. I want you to build the "MineAI Node" DePIN & AI platform, transformed completely into a fully automated, hyper-bilingual (Arabic & English Core) Multi-Agent AI Network that operates on total auto-pilot with absolute zero-cost free-tier infrastructures.
+
+Autonomous Multi-Agent AI Workforce Requirements:
+1. Telemetry & Hardware Auditor Agent: An autonomous background worker that continuously pings connected network nodes, monitors CPU/GPU uptime, calculates live ticking hashrates, and auto-heals disconnected client machines.
+2. Multilingual Sentiment & Brand Voice Agent: An AI agent that captures client logs, analyzes user sentiments across 30 languages, and generates context-aware replies matching custom corporate tones.
+3. Automated Financial & Fiat Payout Agent: A secure financial agent integrated with CoinGecko and Unmineable APIs that constantly checks crypto ledger balances, performs live currency conversions, and orchestrates automated fiat bank/digital card payout execution routes.
+4. Growth Hacking & Engagement Agent: An automated background agent that monitors gamification metrics (XP tiers, 7-day daily streaks, and live global leaderboards), triggering localized retention alerts and generating viral referral rewards.
+
+Premium Gamified UI/UX & Mobile Readiness:
+- Build a premium, dark-themed responsive dashboard utilizing Next.js 15, Tailwind CSS, and Shadcn UI.
+- Use 'framer-motion' for highly addictive micro-interactions, like millisecond-ticking balance counters that drive rapid dopaminergic loop reinforcement.
+- The stack must be Progressive Web App (PWA) compliant, configured with vercel.json for free hoisting, and optimized for frictionless mobile wrapper compilation (Capacitor) to publish on iOS App Store and Google Play Store.
+
+Security & Guardian Gateways:
+- Enforce rigid 'Strix AI' defensive security sanitization protocols to make the code mathematically immune to injection or access control bypasses.
+- Connect configurations via .env.local following strict anti-crash recovery rules from CLAUDE.md.
+
+Generate and write the absolute full-stack source code tree now. Automatically generate the full folder matrices and codebase without any truncated code or TODO placeholders. Communicate step summaries in Arabic while retaining variables in technical English.
