@@ -37,6 +37,7 @@ export function buildMetadata({
     title,
     description,
     keywords,
+    metadataBase: new URL(siteUrl()),
     alternates: {
       canonical,
       languages: alternates,
@@ -53,7 +54,7 @@ export function buildMetadata({
         .map((meta) => meta.ogLocale),
       images: [
         {
-          url: absoluteUrl('/opengraph-image'),
+          url: absoluteUrl('/og.png'),
           width: 1200,
           height: 630,
           alt: `${title} — MineAI Node`,
@@ -64,7 +65,7 @@ export function buildMetadata({
       card: 'summary_large_image',
       title,
       description,
-      images: [absoluteUrl('/opengraph-image')],
+      images: [absoluteUrl('/og.png')],
     },
     other: {
       'x-default-url': absoluteUrl(localizedPath('en', path)),

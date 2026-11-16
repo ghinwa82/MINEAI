@@ -1,38 +1,92 @@
-# MineAI Node - Enterprise Core Configuration & Capabilities
+# MineAI Node — Engineering Guide
 
-## 1. System Guardrails & Stability Rules (Anti-Crash Framework)
-- **Anti-Crash Rule**: If any file compilation, package download, or automated script fails more than 2 consecutive times, STOP immediately. Do not trigger a 3rd automatic loop. Present the explicit stack trace to the user in Arabic and ask for manual alignment.
-- **Memory Optimization**: Strictly enforce `.gitignore` filters. Completely block recursive indexing of the `node_modules` folder to eliminate memory leaks and runtime crashes.
-- **Bilingual Response Matrix**: As defined by `.claudecode.json`, you must explain steps, document progress, and chat with the user exclusively in Arabic, while outputting production-grade source code files and technical variables in English.
+## 1. Operating guardrails
 
-## 2. Active Developer CLIs & Local Tools
-- `oh-my-claudecode` & `code-review`: Enforced globally to monitor file trees and maintain clean enterprise-level codebase architectural patterns.
-- `typescript-lsp`: Active for continuous pre-compilation type validation across Next.js 15 App Router endpoints.
-- `shadcn-ui`: Pre-authorized for premium, dark-themed responsive UI asset extractions.
-- `security-guidance` & `Strix AI`: Mandated to execute defensive penetration filters on the local/international Fiat Bank Withdrawal Gateway, ensuring absolute zero-leak encryption for `.env.local` Supabase keys.
-- `vercel` & `jq`: Wire serverless configuration schemas for direct, zero-cost automated cloud deployment pipelines.
-- `Playwright`: Configured for rendering headless verification loops on the dashboard registration and cashout clicks.
+- **Anti-crash rule**: if a build, install or script fails more than two
+  consecutive times, stop, do not start a third loop, and surface the exact
+  stack trace before continuing.
+- **Memory optimisation**: `.gitignore` blocks recursive indexing of
+  `node_modules` and every build artefact. Keep it that way.
+- **Bilingual response matrix**: per `.claudecode.json`, explain steps and
+  progress in Arabic while keeping all production code, identifiers and
+  technical values in English.
 
-## 3. Web3, Cryptocurrency & Tokenomics Engineering (Genius Cryptography)
-- **Crypto Genius Core**: Enforce absolute accuracy in cryptographic algorithms, multi-chain gas optimization, and zero-error token generation mechanics.
-- **Token Generation & Execution**: Authorized to script secure, audited ERC-20, BEP-20, and TRC-20 standard smart contract models for automated distribution pipelines.
-- **Algorithmic Liquidity Router**: Embedded mathematical precision for calculating token swap ratios, localized cross-border trading fees, and automatic ledger balances via the CoinGecko API.
+## 2. Where the code actually lives
 
-## 4. Hyper-Autonomous Business, E-commerce & Dropshipping Intelligence
-- **E-com & Dropshipping Genius**: Enforce high-conversion design funnel logic, continuous retail margin optimizations, and multi-supplier automated fulfillment scripts.
-- **Automated Customer Service Core**: Implement multi-language sentiment pipelines mapping user intent to deploy sales-focused, localized customer resolution engines.
-- **Scale & Business Development**: Embed predictive unit economics calculators tracking user lifetime value (LTV), customer acquisition costs (CAC), and programmatic expansion triggers.
+The application tree is `app/`. `src/` holds the shared library layer only —
+`src/lib` (i18n engine, catalogue, treasury, Stripe bridge, agent log,
+structured data) and `src/types`.
 
-## 5. Autonomous Multi-Agent AI Workforce (Vercel AI SDK & LangChain)
-- `Telemetry & Hardware Agent`: Authorized to run non-blocking edge telemetry pings, tracking client computing uptime and live ticking hashrates without packet drop.
-- `Multilingual Support Agent`: Captures incoming e-commerce customer logs and processes context-aware, conversion-optimized replies in 30 languages natively.
-- `Automated Financial & Fiat Agent`: Syncs with CoinGecko and Unmineable APIs to manage cryptocurrency asset valuations and orchestrate direct-to-bank international payout execution routes.
-- `Gamification & Retention Agent`: Monitors 7-day daily streaks, node level ranks (Bronze, Silver, Gold, Diamond Tiers), user XP progression matrices, and the global live top-miners Leaderboard to lock user attention and fuel high monthly retention loops.
-- `Cron Jobs Automation`: Configured via Next.js background workers to trigger multi-agent actions on an autonomous 60-second execution cycle.
+Next.js resolves the root `app/` directory ahead of `src/app/`. There is no
+`src/app` tree, and there must not be one: two app trees means two route
+tables, two designs for the same page, and a `src/app` version that silently
+never renders.
 
-## 6. Self-Evolution, Cinematic Production & SEO Engines (GitHub Automation)
-- `Recursive Learning Engine`: Authorized to query GitHub, NPM registry, and open Web3 libraries to discover, pull, and self-integrate cutting-edge algorithms and layout tools (like Aceternity UI and Framer Motion) to dynamically upgrade your own business and coding logic.
-- `Cinematic Long-Form Video Agent`: Wired to open-source media synthesis pipelines (inspired by Movie-Factory and VideoCrafter) to construct full video scripts and render high-definition long-form frames.
-- `Studio-Grade Voiceover Agent`: Integrated with native `edge-tts` and `Bark/Coqui` voice cloning architectures for human-like multi-character vocal output.
-- `SEO Publisher Agent`: Programmed with universal API wrappers (social-media-automation and youtube-uploader) to auto-generate optimized programmatic titles, tags, and meta-descriptions for recurring daily publishing to TikTok, YouTube Shorts/Longs, and Instagram.
+`app/[locale]/layout.tsx` is the **root layout**. That placement is
+intentional — it lets the server emit `<html lang dir>` for every request, so
+RTL ships in the raw HTML rather than being patched after paint. English is
+served from the un-prefixed paths through the rewrite in `next.config.mjs`.
 
+### Language engine
+
+`src/lib/i18n.ts` is the single dictionary for all six locales (en, ar, fr,
+es, zh, hi). English is the root; the other five mirror it key-for-key.
+`src/lib/i18n-provider.tsx` owns the active locale and the document
+direction. Never introduce a second copy of a string in a component — if a
+label is missing, it belongs in the dictionary.
+
+### Copy discipline
+
+Do not paraphrase the dictionary to make a line fit. The catalogue copy is
+authored per language on purpose; changing it changes the search surface.
+When a new surface ships, add its keys to the interface and to all six
+locales in the same commit.
+
+## 3. Conventions
+
+- TypeScript is strict and the build enforces it. `ignoreBuildErrors` stays
+  off; fix the type instead.
+- Tailwind v4. Design tokens live in `app/globals.css` under `@theme`. The
+  legacy `tailwind.config.ts` is not loaded by v4 — do not add tokens there.
+- Foreground colours must clear WCAG AA against the near-black surface. Text
+  must never be hidden by a gradient: if a headline uses `background-clip:
+  text`, keep a solid colour fallback on the same element.
+- Use logical CSS properties (`start`/`end`, `ps`/`pe`, `ms`/`me`) so RTL
+  works without a second stylesheet.
+- Stripe is called over its REST API from `src/lib/stripe.ts` — no SDK. When
+  no key is configured the platform returns a clearly-labelled sandbox result
+  and the interface says so. Never fake a live settlement.
+- Route handlers validate their input through `src/lib/security.ts` and keep
+  a bounded in-memory audit trail.
+
+## 4. Backend surface
+
+| Endpoint | Role |
+| --- | --- |
+| `/api/autonomous` | Mesh state, agent cycle, node activation. `CRON_SECRET` guards the cycle trigger. |
+| `/api/wallet/withdraw` | Treasury readout and bank settlement. |
+| `/api/payout` | Stripe Checkout session and Connect account state. |
+| `/api/notes` | Field-notes ledger. |
+| `/api/languages` | Locale matrix and the multilingual support agent. |
+| `/api/wallet/crypto` | Multi-chain deposit receivers. |
+
+Supabase is optional. `src/lib/supabase.ts` falls back to an in-memory mode
+when the keys are absent, so a deployment without secrets still boots.
+
+## 5. SEO
+
+`app/sitemap.ts` and `app/robots.ts` are generated from the canonical
+catalogue and route list. JSON-LD is assembled in `src/lib/schema.ts` and
+injected through `app/components/JsonLd.tsx`. When a page is added, it needs
+a canonical URL, the six hreflang alternates and a matching entry in the
+sitemap — the metadata factory in `src/lib/metadata.ts` handles the first two
+if it is used.
+
+## 6. Deployment
+
+Vercel, project `mineai`. `vercel.json` carries the region and the scheduled
+agent cycle; Vercel sends `CRON_SECRET` as an `Authorization: Bearer` header
+on scheduled requests, which `/api/autonomous` verifies. The client also
+hearts the cycle so the mesh stays active on plans without sub-daily crons.
+
+`npm run build` must pass with zero warnings before a deploy.

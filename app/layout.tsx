@@ -27,16 +27,6 @@ export const metadata: Metadata = {
   description: DESCRIPTION,
   applicationName: 'MineAI Node',
   generator: 'Next.js',
-  keywords: [
-    'DePIN',
-    'AI agent network',
-    'autonomous dropshipping',
-    'distributed compute',
-    'Stripe Connect payout',
-    'crypto settlement',
-    'multi-language AI agents',
-    'node marketplace',
-  ],
   authors: [{ name: 'MineAI Node' }],
   creator: 'MineAI Node',
   publisher: 'MineAI Node',
@@ -59,7 +49,7 @@ export const metadata: Metadata = {
     ),
     images: [
       {
-        url: absoluteUrl('/opengraph-image.svg'),
+        url: absoluteUrl('/og.png'),
         width: 1200,
         height: 630,
         alt: 'MineAI Node — autonomous DePIN compute',
@@ -70,7 +60,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: TITLE,
     description: DESCRIPTION,
-    images: [absoluteUrl('/opengraph-image.svg')],
+    images: [absoluteUrl('/og.png')],
   },
   robots: {
     index: true,

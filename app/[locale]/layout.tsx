@@ -3,15 +3,14 @@ import { notFound } from 'next/navigation';
 import { LANGUAGES, LANGUAGE_CODES } from '@/lib/languages';
 import type { SupportedLanguage } from '@/types';
 
-export const dynamicParams = false;
-
 /**
- * Localised route tree.
+ * Nested locale layout.
  *
- * English lives at the root of every path; the other five languages sit
- * under a locale segment so each one has its own crawlable URL. The locale
- * is validated here and the document language and direction are written
- * before the first paint so RTL pages never flash an LTR layout.
+ * The root layout already owns `<html>` and `<body>`, so this layout only
+ * has to (a) validate the locale and (b) write the correct `lang` and `dir`
+ * onto the document element before the first paint, so RTL pages never flash
+ * an LTR layout. `suppressHydrationWarning` on the root html keeps React from
+ * complaining about that pre-paint mutation.
  */
 export function generateStaticParams() {
   return LANGUAGE_CODES.filter((code) => code !== 'en').map((locale) => ({ locale }));

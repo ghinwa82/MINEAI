@@ -8,8 +8,7 @@ import { buildMetadata } from '@/lib/metadata';
 import { faqSchema, itemListSchema, webSiteSchema } from '@/lib/schema';
 import { getCanonicalCatalogue } from '@/lib/catalog';
 import { getDictionary } from '@/lib/i18n';
-import { LANGUAGES, LANGUAGE_CODES } from '@/lib/languages';
-import { normalizeLanguage } from '@/lib/languages';
+import { LANGUAGE_CODES, normalizeLanguage } from '@/lib/languages';
 import type { SupportedLanguage } from '@/types';
 
 interface LocaleHomeProps {
@@ -40,7 +39,7 @@ export default async function LocaleHomePage({ params }: LocaleHomeProps) {
   const { locale } = await params;
   const lang = normalizeLanguage(locale);
 
-  if (!(LANGUAGE_CODES as readonly string[]).includes(lang) || lang === 'en') {
+  if (!(LANGUAGE_CODES as readonly string[]).includes(lang)) {
     notFound();
   }
 

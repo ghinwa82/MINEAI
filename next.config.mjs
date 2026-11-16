@@ -7,6 +7,13 @@ const nextConfig = {
   turbopack: {
     root: process.cwd(),
   },
+  async rewrites() {
+    return [
+      { source: '/favicon.ico', destination: '/icon.svg' },
+      { source: '/apple-touch-icon.png', destination: '/icon.svg' },
+      { source: '/apple-touch-icon-precomposed.png', destination: '/icon.svg' },
+    ];
+  },
   async headers() {
     return [
       {

@@ -32,7 +32,7 @@ export default async function LocaleStorePage({ params }: LocaleStoreProps) {
   const { locale } = await params;
   const lang = normalizeLanguage(locale);
 
-  if (!(LANGUAGE_CODES as readonly string[]).includes(lang) || lang === 'en') {
+  if (!(LANGUAGE_CODES as readonly string[]).includes(lang)) {
     notFound();
   }
 

@@ -251,7 +251,7 @@ export default function HomeView() {
         />
         <div className="relative flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
           <div>
-            <h2 className="mx-section-title max-w-2xl">{t.home.lead}</h2>
+            <h2 className="mx-section-title max-w-2xl">{t.home.closingTitle}</h2>
           </div>
           <Link href="/store" className="mx-btn shrink-0">
             {t.home.ctaPrimary}

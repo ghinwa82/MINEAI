@@ -47,7 +47,7 @@ export default async function LocaleProductPage({ params }: LocaleProductProps) 
   const { locale, id } = await params;
   const lang = normalizeLanguage(locale);
 
-  if (!(LANGUAGE_CODES as readonly string[]).includes(lang) || lang === 'en') {
+  if (!(LANGUAGE_CODES as readonly string[]).includes(lang)) {
     notFound();
   }
 

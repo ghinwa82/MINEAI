@@ -67,6 +67,7 @@ export interface Dictionary {
     tiersTitle: string;
     tiersLead: string;
     tiersCta: string;
+    closingTitle: string;
     faqTitle: string;
     faq: FaqEntry[];
   };
@@ -249,6 +250,7 @@ const en: Dictionary = {
     tiersLead:
       'Start on a single shard. Move up when the margin justifies it.',
     tiersCta: 'Compare every tier',
+    closingTitle: 'One operation. Six languages. No operator required.',
     faqTitle: 'Questions worth asking first',
     faq: [
       {
@@ -454,6 +456,7 @@ const ar: Dictionary = {
     tiersLead:
       'ابدأ بشريحة واحدة، وارتقِ حين يبرّر الهامش ذلك.',
     tiersCta: 'قارن كل الطبقات',
+    closingTitle: 'عملية واحدة. ست لغات. دون الحاجة إلى مشغّل.',
     faqTitle: 'أسئلة تستحق أن تُطرح أولاً',
     faq: [
       {
@@ -659,6 +662,7 @@ const fr: Dictionary = {
     tiersLead:
       'Commencez sur une seule tranche. Montez quand la marge le justifie.',
     tiersCta: 'Comparer tous les paliers',
+    closingTitle: 'Une seule opération. Six langues. Aucun opérateur requis.',
     faqTitle: 'Les questions à poser d’abord',
     faq: [
       {
@@ -864,6 +868,7 @@ const es: Dictionary = {
     tiersLead:
       'Empieza con una sola partición. Sube cuando el margen lo justifique.',
     tiersCta: 'Comparar todos los niveles',
+    closingTitle: 'Una sola operación. Seis idiomas. Sin operador.',
     faqTitle: 'Preguntas que conviene hacer primero',
     faq: [
       {
@@ -1068,6 +1073,7 @@ const zh: Dictionary = {
     tiersTitle: '三档算力',
     tiersLead: '先从单个分片开始，等利润跑通再升级。',
     tiersCta: '对比全部档位',
+    closingTitle: '一次运行，六种语言，无需人工值守。',
     faqTitle: '先问清楚这几个问题',
     faq: [
       {
@@ -1272,6 +1278,7 @@ const hi: Dictionary = {
     tiersTitle: 'कंप्यूट के तीन स्तर',
     tiersLead: 'एक शेयर से शुरुआत करें; मार्जिन ज़रूरी हो तो ऊपर जाएँ।',
     tiersCta: 'सभी स्तर मिलाएँ',
+    closingTitle: 'एक संचालन। छह भाषाएँ। किसी ऑपरेटर की ज़रूरत नहीं।',
     faqTitle: 'पहले पूछने लायक सवाल',
     faq: [
       {
