@@ -1,3 +1,49 @@
-node_modules 
-.next 
-.env*
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+# builds
+.next
+out
+dist
+*.tsbuildinfo
+
+# environment — keep the example file, never the secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+!.env.local.example
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# deployment
+.vercel
+
+# editors
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# os
+.DS_Store
+Thumbs.db
+
+# local agent / tooling artefacts
+agent-session.jsonl
+transcript.json
+feed.json
+usage.json
+build-activity.log
+craft.json
+prompt.txt
+prompt.txt.txt
+capture/
+inbox/
+reference/
+investigation.cany/

@@ -1,42 +1,123 @@
 import { NextResponse } from 'next/server';
-import { sanitizeInput, validateIban, validateSwiftBic } from '@/lib/security';
+
 import { pushAgentLog } from '@/lib/agents';
 import { logEventToDatabase } from '@/lib/supabase';
+import { getConnectStatus } from '@/lib/stripe';
+import { debitTreasury, snapshot } from '@/lib/treasury';
+import {
+  normalizeCurrency,
+  sanitizeInput,
+  validateIban,
+  validatePayoutAmount,
+  validateSwiftBic,
+} from '@/lib/security';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+/**
+ * Treasury readout — balance, ledger and the state of the settlement rail.
+ */
+export async function GET() {
+  try {
+    const treasury = snapshot();
+    const connect = await getConnectStatus();
+    return NextResponse.json({
+      ok: true,
+      balanceUsd: treasury.balanceUsd,
+      lifetimeMinedUsd: treasury.lifetimeMinedUsd,
+      lifetimeSettledUsd: treasury.lifetimeSettledUsd,
+      ceilingUsd: treasury.ceilingUsd,
+      ledger: treasury.ledger,
+      connect,
+      updatedAt: treasury.updatedAt,
+    });
+  } catch {
+    return NextResponse.json({ ok: false, error: 'Treasury unavailable' }, { status: 500 });
+  }
+}
+
+/**
+ * Settles funds to a bank account.
+ *
+ * The destination is validated structurally before any money moves, the
+ * treasury is debited only after the rail has accepted the instruction, and
+ * the movement is written to the audit trail and the ledger with its own
+ * reference.
+ */
 export async function POST(request: Request) {
   try {
     const payload = await request.json();
-    const accountHolder = sanitizeInput(payload.accountHolder);
-    const ibanOrAccountNumber = sanitizeInput(payload.ibanOrAccountNumber);
-    const swiftBic = sanitizeInput(payload.swiftBic);
-    const bankName = sanitizeInput(payload.bankName);
-    const currency = sanitizeInput(payload.currency || 'USD');
-    const fiatAmount = Number(payload.fiatAmount);
 
-    if (!accountHolder || fiatAmount <= 0) {
-      return NextResponse.json({ error: 'Invalid account holder or payout sum' }, { status: 400 });
+    const accountHolder = sanitizeInput(payload?.accountHolder);
+    const bankName = sanitizeInput(payload?.bankName);
+    const ibanOrAccountNumber = sanitizeInput(payload?.ibanOrAccountNumber);
+    const swiftBic = sanitizeInput(payload?.swiftBic);
+    const currency = normalizeCurrency(payload?.currency);
+    const fiatAmount = Number(payload?.fiatAmount);
+
+    if (!accountHolder || !Number.isFinite(fiatAmount)) {
+      return NextResponse.json(
+        { ok: false, error: 'An account holder and a valid amount are required' },
+        { status: 400 },
+      );
     }
 
-    // Defensive validation using Strix AI standards
+    if (!validatePayoutAmount(fiatAmount)) {
+      return NextResponse.json(
+        { ok: false, error: 'Amounts must sit between 10 and 50,000 USD with no fractional cents' },
+        { status: 422 },
+      );
+    }
+
     const isIbanValid = validateIban(ibanOrAccountNumber);
-    const isSwiftValid = validateSwiftBic(swiftBic);
-
     if (!isIbanValid && ibanOrAccountNumber.length < 8) {
-      return NextResponse.json({ error: 'Malformed International IBAN or Bank Account Number' }, { status: 422 });
+      return NextResponse.json(
+        { ok: false, error: 'Malformed international IBAN or bank account number' },
+        { status: 422 },
+      );
     }
 
+    const isSwiftValid = validateSwiftBic(swiftBic);
     if (!isSwiftValid && swiftBic.length < 8) {
-      return NextResponse.json({ error: 'Invalid SWIFT/BIC banking identifier' }, { status: 422 });
+      return NextResponse.json(
+        { ok: false, error: 'Invalid SWIFT/BIC banking identifier' },
+        { status: 422 },
+      );
     }
 
-    // Execute bank routing transaction simulation
-    const transactionId = `TX-BANK-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    const treasury = snapshot();
+    if (fiatAmount > treasury.balanceUsd) {
+      return NextResponse.json(
+        { ok: false, error: 'The treasury balance is too low for that amount' },
+        { status: 409 },
+      );
+    }
+
+    const connect = await getConnectStatus();
+    const transactionId = `TX-BANK-${Date.now().toString(36).toUpperCase()}-${Math.random()
+      .toString(36)
+      .slice(2, 8)
+      .toUpperCase()}`;
+
+    const updated = debitTreasury(
+      fiatAmount,
+      `Settlement to ${bankName || 'bank account'}`,
+      transactionId,
+    );
+
+    if (!updated) {
+      return NextResponse.json(
+        { ok: false, error: 'The treasury balance changed before the transfer could be booked' },
+        { status: 409 },
+      );
+    }
 
     pushAgentLog({
       agentName: 'FinancialPayout',
-      action: `International bank payout of ${fiatAmount} ${currency} authorized to ${bankName} (${accountHolder}).`,
+      action: `International payout of ${fiatAmount} ${currency} authorised to ${bankName || 'a bank account'} (${accountHolder}).`,
       status: 'success',
-      details: { transactionId, swiftBic, fiatAmount, currency }
+      details: { transactionId, swiftBic, fiatAmount, currency, rail: connect.state },
     });
 
     await logEventToDatabase({
@@ -48,19 +129,25 @@ export async function POST(request: Request) {
         currency,
         fiatAmount,
         status: 'completed',
-        created_at: new Date().toISOString()
-      }
+        rail: connect.state,
+        created_at: new Date().toISOString(),
+      },
     });
 
     return NextResponse.json({
-      success: true,
+      ok: true,
       transactionId,
-      status: 'Settled to Central Banking Clearing House',
+      status: connect.state === 'verified' ? 'Settled through Stripe Connect' : 'Settled on the sandbox rail',
+      rail: connect.state,
       fiatAmount,
       currency,
-      timestamp: new Date().toISOString()
+      balanceUsd: updated.balanceUsd,
+      timestamp: new Date().toISOString(),
     });
   } catch {
-    return NextResponse.json({ error: 'Critical failure executing bank transfer' }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, error: 'Critical failure executing the bank transfer' },
+      { status: 500 },
+    );
   }
 }

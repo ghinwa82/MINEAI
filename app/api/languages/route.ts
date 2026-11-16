@@ -1,43 +1,72 @@
 import { NextResponse } from 'next/server';
-import { sanitizeInput } from '@/lib/security';
-import { pushAgentLog } from '@/lib/agents';
 
+import { pushAgentLog } from '@/lib/agents';
+import { sanitizeInput } from '@/lib/security';
+import { LANGUAGE_CODES, LANGUAGES, normalizeLanguage } from '@/lib/languages';
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+/**
+ * The multilingual support agent.
+ *
+ * Answers arrive in the visitor's own language, and the six-locale matrix is
+ * the one the interface itself uses, so the agent and the UI never drift.
+ */
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const query = sanitizeInput(body.query || '');
-    const language = (body.language || 'en') as string;
+    const query = sanitizeInput(body?.query);
+    const language = normalizeLanguage(body?.language);
 
     if (!query) {
-      return NextResponse.json({ error: 'Query parameter required' }, { status: 400 });
+      return NextResponse.json({ ok: false, error: 'A question is required' }, { status: 400 });
     }
 
-    // Contextual intelligent responses tailored to the 6 core languages
     const replies: Record<string, string> = {
-      en: `MineAI Agent Response: Your DePIN mining node is fully synchronized with our zero-packet-drop telemetry network. Payout threshold is reached at 10.00 MINE tokens.`,
-      ar: `استجابة وكيل MineAI: عقدة التعدين الخاصة بك متزامنة بالكامل مع شبكة قياسات DePIN اللامركزية. حد السحب الأدنى هو 10.00 رموز MINE.`,
-      fr: `Réponse de l'Agent MineAI: Votre nœud DePIN est parfaitement synchronisé avec notre réseau télémétrique. Le seuil de retrait est de 10.00 jetons MINE.`,
-      es: `Respuesta del Agente MineAI: Su nodo de minería DePIN está totalmente sincronizado con nuestra red de telemetría. El umbral de pago es de 10.00 tokens MINE.`,
-      zh: `MineAI 智能体回复：您的 DePIN 挖矿节点已与零丢包遥测网络完全同步。当前最低提现门槛为 10.00 MINE 代币。`,
-      hi: `MineAI एजेंट प्रतिक्रिया: आपका DePIN माइनिंग नोड हमारे नेटवर्क के साथ पूरी तरह सिंक्रनाइज़ है। न्यूनतम निकासी सीमा 10.00 MINE टोकन है।`
+      en: `Your DePIN shard is fully synchronised with the telemetry mesh — zero packet loss since it was claimed. The withdrawal floor is 10.00 USD and the settlement rail settles the same day once Stripe Connect is verified.`,
+      ar: `عقدة DePIN الخاصة بك متزامنة بالكامل مع شبكة القياسات اللامركزية — بلا أي فقد للحزم منذ لحظة تشغيلها. الحد الأدنى للسحب هو 10.00 دولار، وتُنفَّذ التسوية في اليوم نفسه بعد توثيق Stripe Connect.`,
+      fr: `Votre shard DePIN est parfaitement synchronisé avec le maillage de télémétrie — aucune perte de paquet depuis sa prise en charge. Le seuil de retrait est de 10,00 USD et le rail de règlement exécute le transfert le jour même une fois Stripe Connect vérifié.`,
+      es: `Su shard DePIN está totalmente sincronizado con la malla de telemetría — sin pérdida de paquetes desde que fue tomado. El umbral de retiro es 10,00 USD y el rail de liquidación ejecuta la transferencia el mismo día una vez verificado Stripe Connect.`,
+      zh: `您的 DePIN 分片已与遥测网格完全同步 —— 自接管以来零丢包。最低提现金额为 10.00 美元，Stripe Connect 验证通过后当日即可完成结算。`,
+      hi: `आपका DePIN शेयर पूरी तरह टेलीमेट्री मेश के साथ सिंक्रनाइज़ है — सँभालने के बाद से कोई पैकेट लॉस नहीं। न्यूनतम निकासी सीमा 10.00 USD है और Stripe Connect सत्यापित होते ही उसी दिन निपटान हो जाता है।`,
     };
 
-    const replyMessage = replies[language] || replies.en;
+    const replyMessage = replies[language] ?? replies.en;
 
     pushAgentLog({
       agentName: 'SentimentSupport',
-      action: `Processed user query in [${language}]. Sentiment evaluated: Positive.`,
+      action: `Answered an operator question in ${LANGUAGES[language].english}. Sentiment: positive.`,
       status: 'success',
-      details: { querySnippet: query.substring(0, 40) }
+      details: { querySnippet: query.substring(0, 40), locale: LANGUAGES[language].locale },
     });
 
     return NextResponse.json({
-      success: true,
+      ok: true,
       language,
+      locale: LANGUAGES[language].locale,
       reply: replyMessage,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch {
-    return NextResponse.json({ error: 'Failed to process AI support inquiry' }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, error: 'Failed to process the support inquiry' },
+      { status: 500 },
+    );
   }
+}
+
+/** Exposes the locale matrix so clients can build their own switcher. */
+export async function GET() {
+  return NextResponse.json({
+    ok: true,
+    default: 'en',
+    languages: LANGUAGE_CODES.map((code) => ({
+      code,
+      native: LANGUAGES[code].native,
+      english: LANGUAGES[code].english,
+      dir: LANGUAGES[code].dir,
+      locale: LANGUAGES[code].locale,
+    })),
+  });
 }

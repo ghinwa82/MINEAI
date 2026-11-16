@@ -1,0 +1,61 @@
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+
+import ProductView from '../../_views/product';
+import JsonLd from '../../components/JsonLd';
+import PageShell from '../../components/PageShell';
+import { buildMetadata } from '@/lib/metadata';
+import { breadcrumbSchema, productSchema } from '@/lib/schema';
+import { getCanonicalCatalogue, planSlug } from '@/lib/catalog';
+
+interface ProductPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export async function generateStaticParams() {
+  return getCanonicalCatalogue().map((plan) => ({ id: planSlug(plan) }));
+}
+
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const plan = getCanonicalCatalogue().find((candidate) => planSlug(candidate) === id);
+
+  if (!plan) {
+    return buildMetadata({
+      title: 'Node not found',
+      description: 'That node tier is not part of the catalogue.',
+      path: `/store/${id}`,
+    });
+  }
+
+  return buildMetadata({
+    title: `${plan.canonicalName} — ${plan.tierLabel}`,
+    description: plan.description,
+    path: `/store/${planSlug(plan)}`,
+    keywords: [plan.canonicalName, plan.tierLabel, 'DePIN compute tier'],
+    type: 'product',
+  });
+}
+
+export default async function ProductPage({ params }: ProductPageProps) {
+  const { id } = await params;
+  const plan = getCanonicalCatalogue().find((candidate) => planSlug(candidate) === id);
+
+  if (!plan) notFound();
+
+  return (
+    <PageShell>
+      <JsonLd
+        data={[
+          productSchema(plan),
+          breadcrumbSchema([
+            { name: 'MineAI Node', path: '/' },
+            { name: 'Node store', path: '/store' },
+            { name: plan.canonicalName, path: `/store/${planSlug(plan)}` },
+          ]),
+        ]}
+      />
+      <ProductView id={id} />
+    </PageShell>
+  );
+}
