@@ -1,0 +1,18 @@
+{
+  "name": "@mineai/hardhat-toolchain",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hardhat toolchain for the $MINEAI token. Kept out of the Next.js root install so the app build never pulls a Solidity compiler; the Solidity source itself lives in ../contracts.",
+  "scripts": {
+    "compile": "hardhat --config ../hardhat.config.js compile",
+    "deploy:bsc": "hardhat --config ../hardhat.config.js run ../scripts/deploy-mineai.js --network bsc",
+    "deploy:testnet": "hardhat --config ../hardhat.config.js run ../scripts/deploy-mineai.js --network bscTestnet",
+    "deploy:ethereum": "hardhat --config ../hardhat.config.js run ../scripts/deploy-mineai.js --network ethereum",
+    "deploy:arbitrum": "hardhat --config ../hardhat.config.js run ../scripts/deploy-mineai.js --network arbitrum"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "dotenv": "^16.4.7",
+    "hardhat": "^2.22.18"
+  }
+}

@@ -7,6 +7,10 @@ import { useI18n } from '@/lib/i18n-provider';
 import { useMesh } from '@/lib/use-mesh';
 import { getCatalogue } from '@/lib/catalog';
 import { formatUsd } from '@/lib/treasury';
+import ExplainerVideoPlayer from '../components/ExplainerVideoPlayer';
+import LiveMarketTracker from '../components/LiveMarketTracker';
+import MineAICoinLogo from '../components/MineAICoinLogo';
+import PayoutTicker from '../components/PayoutTicker';
 
 /**
  * The overview.
@@ -16,7 +20,7 @@ import { formatUsd } from '@/lib/treasury';
  * sections repeat the same shape.
  */
 export default function HomeView() {
-  const { t, lang } = useI18n();
+  const { t, lang, eco, href: to } = useI18n();
   const { state } = useMesh(20_000);
   const catalogue = getCatalogue(lang);
 
@@ -39,14 +43,14 @@ export default function HomeView() {
           <p className="mx-lede mt-7 max-w-xl">{t.home.lead}</p>
 
           <div className="mt-9 flex flex-wrap items-center gap-3">
-            <Link href="/store" className="mx-btn">
+            <Link href={to('/store')} className="mx-btn">
               {t.home.ctaPrimary}
               <svg width="14" height="10" viewBox="0 0 14 10" aria-hidden>
                 <path d="M1 5h11M8.5 1.5L12 5l-3.5 3.5" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </Link>
-            <Link href="/notes" className="mx-btn-quiet">
-              {t.home.ctaSecondary}
+            <Link href={to('/mining')} className="mx-btn-quiet">
+              {eco.nav.mining}
             </Link>
           </div>
 
@@ -115,7 +119,7 @@ export default function HomeView() {
             </ul>
 
             <Link
-              href="/notes"
+              href={to('/notes')}
               className="mt-7 inline-flex items-center gap-2 text-[0.78rem] font-semibold text-cyan transition hover:gap-3"
             >
               {t.notes.feedTitle}
@@ -123,6 +127,11 @@ export default function HomeView() {
             </Link>
           </div>
         </aside>
+      </section>
+
+      {/* ------------------------------------------------------ Markets */}
+      <section className="pb-20">
+        <LiveMarketTracker variant="strip" />
       </section>
 
       {/* ------------------------------------------------------- Systems */}
@@ -190,6 +199,47 @@ export default function HomeView() {
         </ol>
       </section>
 
+      {/* ------------------------------------------------------- Explainer */}
+      <section className="border-t border-white/8 py-20">
+        <ExplainerVideoPlayer />
+      </section>
+
+      {/* -------------------------------------------------------- Mining */}
+      <section className="grid gap-12 border-t border-white/8 py-20 lg:grid-cols-[1fr_0.85fr] lg:items-center lg:gap-20">
+        <div>
+          <p className="mx-eyebrow">{eco.mining.eyebrow}</p>
+          <h2 className="mx-section-title mt-5">{eco.mining.title}</h2>
+          <p className="mx-lede mt-5">{eco.mining.lead}</p>
+
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href={to('/mining')} className="mx-btn">
+              {eco.nav.mining}
+            </Link>
+            <Link href={to('/rewards')} className="mx-btn-quiet">
+              {eco.nav.rewards}
+            </Link>
+          </div>
+
+          <dl className="mt-9 grid gap-6 border-t border-white/8 pt-7 sm:grid-cols-2">
+            <div>
+              <dt className="text-[0.72rem] font-semibold text-mint">{eco.mining.zeroPower}</dt>
+              <dd className="mt-2 text-[0.82rem] leading-relaxed text-ink-mute">{eco.mining.zeroPowerBody}</dd>
+            </div>
+            <div>
+              <dt className="text-[0.72rem] font-semibold text-cyan">{eco.mining.compliance}</dt>
+              <dd className="mt-2 text-[0.82rem] leading-relaxed text-ink-mute">{eco.mining.edgeBody}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div className="flex flex-col items-center gap-8">
+          <MineAICoinLogo size={250} />
+          <div className="w-full">
+            <PayoutTicker limit={6} />
+          </div>
+        </div>
+      </section>
+
       {/* ---------------------------------------------------- Catalogue */}
       <section className="border-t border-white/8 py-20">
         <div className="flex flex-wrap items-end justify-between gap-6">
@@ -197,7 +247,7 @@ export default function HomeView() {
             <p className="mx-eyebrow">{t.home.tiersTitle}</p>
             <h2 className="mx-section-title mt-5">{t.home.tiersLead}</h2>
           </div>
-          <Link href="/store" className="mx-btn-quiet">
+          <Link href={to('/store')} className="mx-btn-quiet">
             {t.home.tiersCta}
             <span aria-hidden>→</span>
           </Link>
@@ -207,7 +257,7 @@ export default function HomeView() {
           {catalogue.map((plan) => (
             <Link
               key={plan.id}
-              href={`/store/${plan.canonicalName.toLowerCase().replace(/\s+/g, '-')}`}
+              href={to(`/store/${plan.canonicalName.toLowerCase().replace(/\s+/g, '-')}`)}
               className="group relative overflow-hidden rounded-[1.35rem] border border-white/8 bg-[#080d18] p-7 transition duration-500 hover:border-cyan/35 hover:bg-[#0a1120]"
             >
               <div
@@ -253,7 +303,7 @@ export default function HomeView() {
           <div>
             <h2 className="mx-section-title max-w-2xl">{t.home.closingTitle}</h2>
           </div>
-          <Link href="/store" className="mx-btn shrink-0">
+          <Link href={to('/store')} className="mx-btn shrink-0">
             {t.home.ctaPrimary}
           </Link>
         </div>

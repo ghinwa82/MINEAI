@@ -56,22 +56,57 @@ locales in the same commit.
 - Stripe is called over its REST API from `src/lib/stripe.ts` — no SDK. When
   no key is configured the platform returns a clearly-labelled sandbox result
   and the interface says so. Never fake a live settlement.
-- Route handlers validate their input through `src/lib/security.ts` and keep
-  a bounded in-memory audit trail.
+- The new financial modules keep their copy in `src/lib/ecosystem-i18n.ts`, one
+  hand-authored block per locale. Components read it as `eco` from
+  `useI18n()`; never hardcode a new-module string.
+- Every internal link in a client component goes through `href(path)` from
+  `useI18n()` so the locale prefix survives navigation.
+- Route handlers validate their input through `src/lib/validation.ts` (zod) and
+  keep a bounded in-memory audit trail.
 
 ## 4. Backend surface
 
 | Endpoint | Role |
 | --- | --- |
 | `/api/autonomous` | Mesh state, agent cycle, node activation. `CRON_SECRET` guards the cycle trigger. |
+| `/api/payments/checkout` | Fiat rail status and hosted checkout sessions. |
+| `/api/payments/crypto` | Deposit intents, QR payloads and on-chain hash verification. |
+| `/api/webhooks/payment` | Signed processor callbacks; unsigned bodies are refused. |
+| `/api/mining` | Position snapshot and claim/stake/unstake/withdraw actions. |
+| `/api/mining/cron` | Accrual sweep, guarded by `CRON_SECRET`. |
+| `/api/rewards` | Streak, VIP tier and referral graph. |
+| `/api/security/2fa` | TOTP enrolment and recovery. |
+| `/api/markets` | Global quotes plus the internal $MINEAI print. |
+| `/api/token` | Supply, burn, pools and contract addresses. |
+| `/api/payouts` | Public settlement tape. |
 | `/api/wallet/withdraw` | Treasury readout and bank settlement. |
-| `/api/payout` | Stripe Checkout session and Connect account state. |
+| `/api/payout` | Legacy Stripe Checkout session and Connect account state. |
 | `/api/notes` | Field-notes ledger. |
 | `/api/languages` | Locale matrix and the multilingual support agent. |
 | `/api/wallet/crypto` | Multi-chain deposit receivers. |
 
 Supabase is optional. `src/lib/supabase.ts` falls back to an in-memory mode
 when the keys are absent, so a deployment without secrets still boots.
+`supabase/security_schema.sql` is the production RLS layer: the 2FA vault and
+audit log are service-role only, and deposits/withdrawals are read-only to the
+operator who owns them.
+
+## 4b. Contracts
+
+`contracts/MineAIToken.sol` is the only Solidity source. It mints the fixed
+1,000,000,000 supply once, exposes burn, and pays staking yield from funded
+reserves rather than new minting. Hardhat lives under `hardhat/` — outside the
+Solidity source tree, so the app build never downloads a compiler and Hardhat
+never mistakes `node_modules` for a source directory:
+
+```bash
+npm --prefix hardhat install
+npm --prefix hardhat run compile
+npm --prefix hardhat run deploy:testnet
+```
+
+`scripts/deploy-mineai.js` writes `contracts/deployments/<network>.json`; copy
+the address into `NEXT_PUBLIC_MINEAI_BSC_CONTRACT` or the Ethereum equivalent.
 
 ## 5. SEO
 

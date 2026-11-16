@@ -8,11 +8,14 @@ import { useI18n } from '@/lib/i18n-provider';
 import { LANGUAGE_CODES, LANGUAGES } from '@/lib/languages';
 
 export default function SiteFooter() {
-  const { t, lang, setLang } = useI18n();
+  const { t, lang, eco, href: to, setLang } = useI18n();
 
   const links = [
     { href: '/', label: t.nav.home },
     { href: '/store', label: t.nav.store },
+    { href: '/mining', label: eco.nav.mining },
+    { href: '/markets', label: eco.nav.markets },
+    { href: '/rewards', label: eco.nav.rewards },
     { href: '/notes', label: t.nav.notes },
   ];
 
@@ -38,7 +41,7 @@ export default function SiteFooter() {
               {links.map((link) => (
                 <li key={link.href}>
                   <Link
-                    href={link.href}
+                    href={to(link.href)}
                     className="text-sm text-ink-mute transition hover:text-cyan"
                   >
                     {link.label}

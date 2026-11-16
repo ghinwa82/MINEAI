@@ -16,6 +16,10 @@
     {
       "path": "/api/autonomous",
       "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/mining/cron",
+      "schedule": "*/15 * * * *"
     }
   ]
 }

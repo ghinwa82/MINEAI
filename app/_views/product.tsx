@@ -3,6 +3,7 @@
 import React, { useCallback, useState } from 'react';
 import Link from 'next/link';
 
+import PaymentCheckout from '../components/PaymentCheckout';
 import { useI18n } from '@/lib/i18n-provider';
 import { useMesh } from '@/lib/use-mesh';
 import { findPlanById, getCatalogue, type NodePlan } from '@/lib/catalog';
@@ -15,14 +16,14 @@ import { formatUsd } from '@/lib/treasury';
  * support read like an equipment datasheet rather than a marketing card.
  */
 export default function ProductView({ id }: { id: string }) {
-  const { t, lang } = useI18n();
+  const { t, lang, href: to } = useI18n();
   const { state, dispatch } = useMesh(20_000);
   const catalogue = getCatalogue(lang);
 
   const plan: NodePlan | undefined = findPlanById(lang, id) ?? catalogue[0];
 
   const [pending, setPending] = useState(false);
-  const [purchasing, setPurchasing] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [message, setMessage] = useState<{ tone: 'success' | 'error'; text: string } | null>(null);
 
   const isActive = state?.nodes?.[plan.id]?.status === 'active';
@@ -44,31 +45,9 @@ export default function ProductView({ id }: { id: string }) {
     }
   }, [dispatch, isActive, plan.canonicalName, plan.id, t.store.activatedToast, t.store.activationFailed, t.store.pausedToast]);
 
-  const purchase = useCallback(async () => {
-    setPurchasing(true);
-    try {
-      const response = await fetch('/api/payout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          tier: plan.tierLabel,
-          amountUsd: plan.priceUsd,
-          nodeId: plan.id,
-        }),
-      });
-      const payload = (await response.json()) as { ok?: boolean; checkoutUrl?: string; error?: string };
-      if (!response.ok || !payload.checkoutUrl) {
-        setMessage({ tone: 'error', text: payload.error ?? t.store.error });
-        return;
-      }
-      window.open(payload.checkoutUrl, '_blank', 'noopener,noreferrer');
-      setMessage({ tone: 'success', text: t.store.purchaseToast });
-    } catch {
-      setMessage({ tone: 'error', text: t.common.error });
-    } finally {
-      setPurchasing(false);
-    }
-  }, [plan.id, plan.priceUsd, plan.tierLabel, t.common.error, t.store.purchaseToast]);
+  const purchase = useCallback(() => {
+    setCheckoutOpen(true);
+  }, []);
 
   const specRows: Array<[string, string]> = [
     [t.product.specRows.compute, plan.envelope.compute],
@@ -80,7 +59,7 @@ export default function ProductView({ id }: { id: string }) {
   return (
     <article className="pb-10 pt-14">
       <Link
-        href="/store"
+        href={to('/store')}
         className="inline-flex items-center gap-2 text-[0.78rem] font-semibold text-ink-mute transition hover:text-cyan"
       >
         <span aria-hidden>←</span>
@@ -147,8 +126,8 @@ export default function ProductView({ id }: { id: string }) {
                     ? t.store.deactivate
                     : t.store.activate}
               </button>
-              <button type="button" onClick={purchase} disabled={purchasing} className="mx-btn-quiet">
-                {purchasing ? `${t.store.purchasing}…` : t.product.deployCta}
+              <button type="button" onClick={purchase} className="mx-btn-quiet">
+                {t.product.deployCta}
               </button>
             </div>
 
@@ -171,6 +150,18 @@ export default function ProductView({ id }: { id: string }) {
           </div>
         </aside>
       </div>
+
+      {checkoutOpen ? (
+        <PaymentCheckout
+          plan={{
+            id: plan.id,
+            name: plan.name,
+            tierLabel: plan.tierLabel,
+            priceUsd: plan.priceUsd,
+          }}
+          onClose={() => setCheckoutOpen(false)}
+        />
+      ) : null}
     </article>
   );
 }

@@ -6,20 +6,29 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "contract:install": "npm --prefix hardhat install",
+    "contract:compile": "npm --prefix hardhat run compile",
+    "contract:deploy:testnet": "npm --prefix hardhat run deploy:testnet",
+    "contract:deploy:bsc": "npm --prefix hardhat run deploy:bsc"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.3.5",
+    "@types/qrcode": "^1.5.6",
     "@vercel/speed-insights": "^2.1.0",
     "autoprefixer": "^10.6.2",
+    "framer-motion": "^14.14.0",
     "next": "^16.4.5",
     "postcss": "^8.5.3",
+    "qrcode": "^1.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwindcss": "^4.3.5",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@openzeppelin/contracts": "^5.1.0",
     "@types/node": "20.17.6",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",

@@ -114,8 +114,35 @@ export function productSchema(plan: NodePlan): Record<string, unknown> {
   };
 }
 
-export function faqSchema(items: FaqEntry[]): Record<string, unknown> {
+/**
+ * $MINEAI identity.
+ *
+ * The offer is marked `PreOrder` because the token is not listed on a DEX yet;
+ * once `NEXT_PUBLIC_MINEAI_DEX_URL` is present the markets page links to the
+ * pool and this flag should be revisited.
+ */
+export function tokenSchema(priceUsd = 4.85): Record<string, unknown> {
   return {
+    '@type': 'Product',
+    '@id': `${siteUrl()}/markets#mineai`,
+    name: 'Mine AI',
+    alternateName: '$MINEAI',
+    description:
+      'Utility token behind the MineAI compute mesh: fixed supply, deflationary burn and staking pools on BEP-20 and ERC-20.',
+    brand: { '@type': 'Brand', name: 'MineAI' },
+    category: 'Utility token',
+    url: absoluteUrl('/markets'),
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'USD',
+      price: priceUsd.toFixed(2),
+      availability: 'https://schema.org/PreOrder',
+      seller: { '@id': `${siteUrl()}/#organization` },
+    },
+  };
+}
+
+export function faqSchema(items: FaqEntry[]): Record<string, unknown> {  return {
     '@type': 'FAQPage',
     mainEntity: items.map((item) => ({
       '@type': 'Question',

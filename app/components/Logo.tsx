@@ -20,14 +20,14 @@ export default function Logo({
   showTagline?: boolean;
   href?: string;
 }) {
-  const { t } = useI18n();
+  const { t, href: to } = useI18n();
 
   const frame = size === 'sm' ? 'h-9 w-9' : size === 'lg' ? 'h-14 w-14' : 'h-11 w-11';
   const radius = size === 'sm' ? 'rounded-[11px]' : size === 'lg' ? 'rounded-[17px]' : 'rounded-[14px]';
 
   return (
     <a
-      href={href}
+      href={to(href)}
       className="group/logo relative flex items-center gap-3 rounded-xl outline-none"
       aria-label={`${t.brand.name} ${t.brand.product}`}
     >

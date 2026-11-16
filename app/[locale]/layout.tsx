@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 
+import JsonLd from '../components/JsonLd';
 import { LANGUAGES, LANGUAGE_CODES } from '@/lib/languages';
+import { webSiteSchema } from '@/lib/schema';
 import type { SupportedLanguage } from '@/types';
 
 /**
@@ -37,6 +39,7 @@ export default async function LocaleLayout({
   return (
     <>
       <script dangerouslySetInnerHTML={{ __html: bootstrap }} />
+      <JsonLd data={[webSiteSchema(locale as SupportedLanguage)]} />
       {children}
     </>
   );

@@ -39,6 +39,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   push('/', 1, 'daily');
   push('/store', 0.9, 'daily');
+  push('/mining', 0.9, 'daily');
+  push('/markets', 0.85, 'daily');
+  push('/rewards', 0.8, 'daily');
   push('/notes', 0.7, 'daily');
 
   for (const plan of catalogue) {

@@ -134,6 +134,20 @@
   }
 }
 
+@keyframes mx-coin-sheen {
+  0% {
+    transform: translateX(-16%);
+    opacity: 0;
+  }
+  35% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateX(16%);
+    opacity: 0;
+  }
+}
+
 /* ------------------------------------------------------------------ *
  * Base
  * ------------------------------------------------------------------ */
@@ -431,6 +445,21 @@
     display: flex;
     width: max-content;
     animation: var(--animate-marquee);
+  }
+
+  /* Settlement tape: same marquee mechanics, slower and pausable. */
+  .mx-tape-track {
+    animation: mx-marquee 46s linear infinite;
+  }
+
+  .mx-tape:hover .mx-tape-track {
+    animation-play-state: paused;
+  }
+
+  /* Specular sweep across the gold coin. */
+  .mx-coin-sheen {
+    transform-origin: center;
+    animation: mx-coin-sheen 2.6s cubic-bezier(0.45, 0, 0.25, 1) infinite;
   }
 
   .mx-caret::after {

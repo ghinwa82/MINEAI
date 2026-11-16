@@ -13,6 +13,7 @@ import { usePathname, useRouter } from 'next/navigation';
 
 import type { SupportedLanguage } from '@/types';
 import { getDictionary, type Dictionary } from '@/lib/i18n';
+import { getEcosystemCopy, type EcosystemCopy } from '@/lib/ecosystem-i18n';
 import {
   DEFAULT_LANGUAGE,
   LANGUAGES,
@@ -30,6 +31,10 @@ interface I18nContextValue {
   dictionary: Dictionary;
   /** Convenience alias so call sites read `t.nav.store` rather than `dictionary.nav.store`. */
   t: Dictionary;
+  /** Copy for the financial and Web3 modules. */
+  eco: EcosystemCopy;
+  /** Prefixes a canonical path with the active locale (`/fr/store`). */
+  href: (path: string) => string;
   setLang: (lang: SupportedLanguage) => void;
 }
 
@@ -120,6 +125,8 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       dir: isRTL(lang) ? 'rtl' : 'ltr',
       dictionary,
       t: dictionary,
+      eco: getEcosystemCopy(lang),
+      href: (path: string) => localizedPath(lang, path),
       setLang,
     };
   }, [lang, setLang]);

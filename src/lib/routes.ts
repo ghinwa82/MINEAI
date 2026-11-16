@@ -52,4 +52,4 @@ export function alternatesFor(path: string): Record<string, string> {
 }
 
 /** Every localisable route in the site, used by the sitemap generator. */
-export const LOCALISABLE_ROUTES = ['/', '/store', '/notes'] as const;
+export const LOCALISABLE_ROUTES = ['/', '/store', '/mining', '/markets', '/rewards', '/notes'] as const;

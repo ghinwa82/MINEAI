@@ -9,6 +9,11 @@ out
 dist
 *.tsbuildinfo
 
+# hardhat artefacts — the toolchain is its own project under hardhat/
+hardhat/artifacts
+hardhat/cache
+hardhat/typechain-types
+
 # environment — keep the example file, never the secrets
 .env
 .env.local

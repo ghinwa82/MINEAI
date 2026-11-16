@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import PaymentCheckout from '../components/PaymentCheckout';
 import { useI18n } from '@/lib/i18n-provider';
 import { useMesh } from '@/lib/use-mesh';
 import { getCatalogue } from '@/lib/catalog';
@@ -30,7 +31,7 @@ export default function StoreView() {
 
   const [activeNodes, setActiveNodes] = useState<Record<string, boolean>>({});
   const [pendingNode, setPendingNode] = useState<string | null>(null);
-  const [purchasingNode, setPurchasingNode] = useState<string | null>(null);
+  const [checkoutPlan, setCheckoutPlan] = useState<NodePlan | null>(null);
   const [toast, setToast] = useState<Toast | null>(null);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
 
@@ -74,41 +75,10 @@ export default function StoreView() {
     [activeNodes, dispatch, notify, t.store.activatedToast, t.store.activationFailed, t.store.pausedToast],
   );
 
-  const handlePurchase = useCallback(
-    async (plan: NodePlan) => {
-      setPurchasingNode(plan.id);
-      try {
-        const response = await fetch('/api/payout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            tier: plan.tierLabel,
-            amountUsd: plan.priceUsd,
-            nodeId: plan.id,
-          }),
-        });
-        const payload = (await response.json()) as {
-          ok?: boolean;
-          checkoutUrl?: string;
-          mode?: string;
-          error?: string;
-        };
-
-        if (!response.ok || !payload.checkoutUrl) {
-          notify('error', payload.error ?? 'The checkout gateway did not answer.');
-          return;
-        }
-
-        notify('info', t.store.purchaseToast);
-        window.open(payload.checkoutUrl, '_blank', 'noopener,noreferrer');
-      } catch {
-        notify('error', t.common.error);
-      } finally {
-        setPurchasingNode(null);
-      }
-    },
-    [notify, t.common.error, t.store.purchaseToast],
-  );
+  // The checkout dialog owns both rails; the card only opens it.
+  const handlePurchase = useCallback((plan: NodePlan) => {
+    setCheckoutPlan(plan);
+  }, []);
 
   const connect = state?.connect;
   const connectLabel =
@@ -291,10 +261,9 @@ export default function StoreView() {
                 <button
                   type="button"
                   onClick={() => handlePurchase(plan)}
-                  disabled={purchasingNode === plan.id}
                   className="mx-btn-quiet w-full !py-3 !text-[0.82rem]"
                 >
-                  {purchasingNode === plan.id ? `${t.store.purchasing}…` : t.store.deploy}
+                  {t.store.deploy}
                 </button>
               </div>
             </article>
@@ -346,6 +315,18 @@ export default function StoreView() {
             setWithdrawOpen(false);
             notify('success', message);
           }}
+        />
+      ) : null}
+
+      {checkoutPlan ? (
+        <PaymentCheckout
+          plan={{
+            id: checkoutPlan.id,
+            name: checkoutPlan.name,
+            tierLabel: checkoutPlan.tierLabel,
+            priceUsd: checkoutPlan.priceUsd,
+          }}
+          onClose={() => setCheckoutPlan(null)}
         />
       ) : null}
     </>

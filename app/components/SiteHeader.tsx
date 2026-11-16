@@ -8,43 +8,49 @@ import Logo from './Logo';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useI18n } from '@/lib/i18n-provider';
 import { useMesh } from '@/lib/use-mesh';
+import { stripLocale } from '@/lib/routes';
 
 /**
  * Site chrome.
  *
  * A single sticky bar carrying the mark, the primary routes, the live
- * treasury position and the language control. The treasury figure is read
- * from the autonomous endpoint rather than held in the component.
+ * treasury position and the language control. Every route is built through the
+ * locale helper, so a visitor reading French never gets thrown back to English
+ * by a nav click.
  */
 export default function SiteHeader() {
-  const { t, lang } = useI18n();
+  const { t, lang, eco, href: to } = useI18n();
   const pathname = usePathname();
   const { state } = useMesh(20_000);
 
   const routes = [
     { href: '/', label: t.nav.home },
     { href: '/store', label: t.nav.store },
+    { href: '/mining', label: eco.nav.mining },
+    { href: '/markets', label: eco.nav.markets },
+    { href: '/rewards', label: eco.nav.rewards },
     { href: '/notes', label: t.nav.notes },
   ];
 
+  const current = stripLocale(pathname);
   const balance = state?.treasury.balanceUsd ?? 0;
   const activeNodes = state?.stats.activeNodes ?? 0;
 
   const isActive = (href: string) =>
-    href === '/' ? pathname === '/' : pathname.startsWith(href);
+    href === '/' ? current === '/' : current.startsWith(href);
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/8 bg-[#04060d]/72 backdrop-blur-2xl">
       <div className="mx-auto flex h-16 w-full max-w-[84rem] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Logo />
 
-        <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
+        <nav aria-label="Primary" className="hidden items-center gap-0.5 lg:flex">
           {routes.map((route) => (
             <Link
               key={route.href}
-              href={route.href}
+              href={to(route.href)}
               aria-current={isActive(route.href) ? 'page' : undefined}
-              className={`relative rounded-xl px-3.5 py-2 text-sm font-medium transition ${
+              className={`relative rounded-xl px-3 py-2 text-[0.82rem] font-medium transition ${
                 isActive(route.href)
                   ? 'bg-cyan-400/10 text-cyan'
                   : 'text-ink-mute hover:bg-white/5 hover:text-ink'
@@ -52,7 +58,7 @@ export default function SiteHeader() {
             >
               {route.label}
               {isActive(route.href) ? (
-                <span className="absolute inset-x-3.5 -bottom-px h-px bg-gradient-to-r from-transparent via-cyan-400 to-transparent" />
+                <span className="absolute inset-x-3 -bottom-px h-px bg-gradient-to-r from-transparent via-cyan-400 to-transparent" />
               ) : null}
             </Link>
           ))}
@@ -78,7 +84,7 @@ export default function SiteHeader() {
 
           <LanguageSwitcher />
 
-          <Link href="/store" className="mx-btn hidden !px-4 !py-2 !text-[0.78rem] lg:inline-flex">
+          <Link href={to('/store')} className="mx-btn hidden !px-4 !py-2 !text-[0.78rem] xl:inline-flex">
             {t.nav.openConsole}
           </Link>
         </div>
@@ -86,12 +92,12 @@ export default function SiteHeader() {
 
       <nav
         aria-label="Primary mobile"
-        className="flex items-center gap-1 overflow-x-auto border-t border-white/6 px-4 py-2 md:hidden"
+        className="flex items-center gap-1 overflow-x-auto border-t border-white/6 px-4 py-2 lg:hidden"
       >
         {routes.map((route) => (
           <Link
             key={route.href}
-            href={route.href}
+            href={to(route.href)}
             aria-current={isActive(route.href) ? 'page' : undefined}
             className={`shrink-0 rounded-lg px-3 py-1.5 text-[0.78rem] font-medium transition ${
               isActive(route.href) ? 'bg-cyan-400/12 text-cyan' : 'text-ink-mute hover:text-ink'
