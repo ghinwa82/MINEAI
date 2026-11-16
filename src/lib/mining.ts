@@ -135,7 +135,7 @@ function store(): MiningStore {
         at: new Date(Date.now() - (index + 1) * 7 * 60_000).toISOString(),
       })),
       lastAccrualAt: now,
-      cron: 'daily · 03:00 UTC',
+      cron: 'daily · 03:30 UTC',
     };
   }
   return globalRef.__mineaiMining;

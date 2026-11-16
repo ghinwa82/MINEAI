@@ -191,8 +191,9 @@ npm run build && npm run start
 vercel deploy --prod --yes
 ```
 
-The scheduled agent cycle lives in `vercel.json`. Vercel sends
-`CRON_SECRET` as an `Authorization: Bearer` header on every scheduled request,
-which `/api/autonomous` verifies before running a cycle. The client also
-keeps the loop alive with a heartbeat, so the mesh stays active on plans where
-sub-daily crons are not available.
+The scheduled jobs live in `vercel.json`: the agent cycle at 03:00 UTC and the
+mining accrual sweep at 03:30 UTC. Both run daily because Vercel's Hobby plan
+refuses sub-daily cron expressions; accrual itself is time-based, so a position
+still earns on read even between sweeps. Vercel sends `CRON_SECRET` as an
+`Authorization: Bearer` header on every scheduled request, which
+`/api/autonomous` and `/api/mining/cron` verify before doing any work.
