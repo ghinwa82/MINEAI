@@ -250,7 +250,7 @@ const EN: LegalCopy = {
         {
           heading: 'Response hours',
           body: [
-            'Support is staffed Sunday to Thursday, 09:00–18:00 Gulf Standard Time. Critical payment incidents are monitored outside those hours.',
+            'The on-page assistant answers immediately, 24 hours a day, in English, Arabic, French, Spanish, Chinese and Hindi. A person replies Sunday to Thursday, 09:00–18:00 Gulf Standard Time, and critical payment incidents are monitored outside those hours.',
           ],
         },
       ],
@@ -459,7 +459,7 @@ const AR: LegalCopy = {
         {
           heading: 'ساعات الاستجابة',
           body: [
-            'الدعم يعمل من الأحد إلى الخميس، 09:00–18:00 بتوقيت الخليج. تُراقَب حوادث الدفع الحرجة خارج هذه الساعات.',
+            'المساعد داخل الصفحة يجيب فورًا على مدار الساعة، بالعربية والإنجليزية والفرنسية والإسبانية والصينية والهندية. يرد فريق بشري من الأحد إلى الخميس، 09:00–18:00 بتوقيت الخليج، وتُراقَب حوادث الدفع الحرجة خارج هذه الساعات.',
           ],
         },
       ],
@@ -668,7 +668,7 @@ const FR: LegalCopy = {
         {
           heading: 'Horaires de réponse',
           body: [
-            "Le support est assuré du dimanche au jeudi, 09:00–18:00 heure du Golfe. Les incidents de paiement critiques sont surveillés en dehors de ces heures.",
+            "L’assistant de la page répond immédiatement, 24 h/24, en anglais, arabe, français, espagnol, chinois et hindi. Une personne répond du dimanche au jeudi, 09:00–18:00 heure du Golfe, et les incidents de paiement critiques sont surveillés en dehors de ces heures.",
           ],
         },
       ],
@@ -877,7 +877,7 @@ const ES: LegalCopy = {
         {
           heading: 'Horario de respuesta',
           body: [
-            'El soporte opera de domingo a jueves, 09:00–18:00 hora del Golfo. Los incidentes críticos de pago se monitorizan fuera de ese horario.',
+            'El asistente de la página responde al instante, 24 horas al día, en inglés, árabe, francés, español, chino e hindi. Una persona responde de domingo a jueves, 09:00–18:00 hora del Golfo, y los incidentes críticos de pago se monitorizan fuera de ese horario.',
           ],
         },
       ],
@@ -1086,7 +1086,7 @@ const ZH: LegalCopy = {
         {
           heading: '响应时间',
           body: [
-            '支持团队工作时间为周日至周四 09:00–18:00（海湾标准时间）。关键支付事件在上述时间外亦有监控。',
+            '页面上的助手全天 24 小时即时回答，支持英语、阿拉伯语、法语、西班牙语、中文和印地语。人工回复时间为周日至周四 09:00–18:00（海湾标准时间），关键支付事件在该时间外亦有监控。',
           ],
         },
       ],
@@ -1295,7 +1295,7 @@ const HI: LegalCopy = {
         {
           heading: 'प्रतिक्रिया समय',
           body: [
-            'सहायता रविवार से गुरुवार, 09:00–18:00 खाड़ी मानक समय तक उपलब्ध है। गंभीर भुगतान घटनाओं की निगरानी उस समय के बाहर भी होती है।',
+            'पेज पर मौजूद सहायक चौबीसों घंटे तुरंत जवाब देता है — अंग्रेज़ी, अरबी, फ़्रेंच, स्पेनिश, चीनी और हिंदी में। किसी व्यक्ति का जवाब रविवार से गुरुवार, 09:00–18:00 खाड़ी मानक समय तक मिलता है, और गंभीर भुगतान घटनाओं की निगरानी उस समय के बाहर भी होती है।',
           ],
         },
       ],

@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 
 import LegalView from '../_views/legal';
 import JsonLd from './JsonLd';
+import SupportChat from './SupportChat';
 import { getLegalCopy, type LegalSlug } from '@/lib/legal-i18n';
 import { buildMetadata } from '@/lib/metadata';
 import { breadcrumbSchema, faqSchema } from '@/lib/schema';
@@ -76,6 +77,7 @@ export default function LegalScreen({
           ]),
         ]}
       />
+      {slug === 'contact' ? <SupportChat /> : null}
       <LegalView slug={slug} />
     </>
   );
