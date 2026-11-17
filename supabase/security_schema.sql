@@ -96,7 +96,7 @@ create table if not exists public.deposits (
   id             uuid primary key default gen_random_uuid(),
   owner_id       uuid references auth.users (id) on delete set null,
   operator_ref   text,
-  rail           text not null check (rail in ('paymob', 'lemonsqueezy', 'stripe', 'crypto')),
+  rail           text not null check (rail in ('kashier', 'paymob', 'stripe', 'crypto')),
   network        text,
   asset          text,
   amount_usd     numeric(18, 2) not null check (amount_usd > 0),
@@ -281,7 +281,7 @@ create trigger contract_deployments_touch
 alter table public.deposits drop constraint if exists deposits_rail_check;
 alter table public.deposits
   add constraint deposits_rail_check
-  check (rail in ('kashier', 'paymob', 'lemonsqueezy', 'stripe', 'crypto'));
+  check (rail in ('kashier', 'paymob', 'stripe', 'crypto'));
 
 -- ------------------------------------------------------------- RLS setup ---
 
