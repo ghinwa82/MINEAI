@@ -165,6 +165,229 @@ const BOOST_COPY: Record<
   },
 };
 
+const TELEMETRY_COPY: Record<
+  string,
+  {
+    title: string;
+    lead: string;
+    gauge: string;
+    nodes: string;
+    yieldTitle: string;
+    yieldBody: string;
+    projected: string;
+    active: string;
+    standby: string;
+    mhs: string;
+    ths: string;
+  }
+> = {
+  en: {
+    title: 'Live mining telemetry',
+    lead: 'A simple view of your cloud power and what it pays at today’s rate.',
+    gauge: 'Cloud power',
+    nodes: 'Node status',
+    yieldTitle: '7-day earnings at today’s rate',
+    yieldBody: 'This is what your current plan would pay over the next seven days if nothing changes.',
+    projected: 'Projected total',
+    active: 'Online',
+    standby: 'Waiting for data',
+    mhs: 'MH/s',
+    ths: 'TH/s',
+  },
+  ar: {
+    title: 'قياس التعدين المباشر',
+    lead: 'نظرة بسيطة على قوة السحابة وما تدفعه بسعر اليوم.',
+    gauge: 'قوة السحابة',
+    nodes: 'حالة العقد',
+    yieldTitle: 'أرباح 7 أيام بسعر اليوم',
+    yieldBody: 'هذا ما ستدفعه خطتك الحالية خلال الأيام السبعة القادمة إن لم يتغير شيء.',
+    projected: 'الإجمالي المتوقع',
+    active: 'متصل',
+    standby: 'بانتظار البيانات',
+    mhs: 'ميغاهاش/ث',
+    ths: 'تيراهاش/ث',
+  },
+  fr: {
+    title: 'Télémétrie de minage en direct',
+    lead: 'Une vue simple de votre puissance cloud et de ce qu’elle rapporte au taux du jour.',
+    gauge: 'Puissance cloud',
+    nodes: 'État des nœuds',
+    yieldTitle: 'Gains sur 7 jours au taux du jour',
+    yieldBody: 'Voici ce que votre offre actuelle rapporterait sur les sept prochains jours sans changement.',
+    projected: 'Total prévu',
+    active: 'En ligne',
+    standby: 'En attente de données',
+    mhs: 'MH/s',
+    ths: 'TH/s',
+  },
+  es: {
+    title: 'Telemetría de minería en vivo',
+    lead: 'Una vista simple de tu potencia en la nube y lo que paga al ritmo de hoy.',
+    gauge: 'Potencia en la nube',
+    nodes: 'Estado de los nodos',
+    yieldTitle: 'Ganancias de 7 días al ritmo de hoy',
+    yieldBody: 'Esto es lo que pagaría tu plan actual en los próximos siete días si nada cambia.',
+    projected: 'Total previsto',
+    active: 'En línea',
+    standby: 'Esperando datos',
+    mhs: 'MH/s',
+    ths: 'TH/s',
+  },
+  zh: {
+    title: '实时挖矿遥测',
+    lead: '简单查看你的云算力和按今日速率获得的收益。',
+    gauge: '云算力',
+    nodes: '节点状态',
+    yieldTitle: '按今日速率的 7 天收益',
+    yieldBody: '如果一切不变，这是你当前套餐未来七天大致可获得的收益。',
+    projected: '预计总额',
+    active: '在线',
+    standby: '等待数据',
+    mhs: 'MH/s',
+    ths: 'TH/s',
+  },
+  hi: {
+    title: 'लाइव माइनिंग टेलीमेट्री',
+    lead: 'आपकी क्लाउड पावर और आज की दर पर उसकी कमाई की सरल जानकारी।',
+    gauge: 'क्लाउड पावर',
+    nodes: 'नोड स्थिति',
+    yieldTitle: 'आज की दर पर 7 दिन की कमाई',
+    yieldBody: 'अगर कुछ न बदले तो आपका मौजूदा प्लान अगले सात दिनों में इतना भुगतान करेगा।',
+    projected: 'अनुमानित कुल',
+    active: 'ऑनलाइन',
+    standby: 'डेटा की प्रतीक्षा',
+    mhs: 'MH/s',
+    ths: 'TH/s',
+  },
+};
+
+type TelemetryCopy = (typeof TELEMETRY_COPY)['en'];
+
+function TelemetryPanel({ snapshot, copy }: { snapshot: Snapshot | null; copy: TelemetryCopy }) {
+  const hashrate = snapshot?.hashrateMhs ?? 0;
+  const useTera = hashrate >= 1000;
+  const shown = useTera ? hashrate / 1000 : hashrate;
+  const unit = useTera ? copy.ths : copy.mhs;
+
+  const ceiling = Math.max(useTera ? 2 : 100, Math.ceil((shown * 1.5) / (useTera ? 1 : 50)) * (useTera ? 1 : 50));
+  const ratio = ceiling > 0 ? Math.min(1, shown / ceiling) : 0;
+  const radius = 58;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference * (1 - ratio);
+
+  const daily = snapshot?.emissionUsdPerDay ?? 0;
+  const series = Array.from({ length: 7 }, (_, index) => daily * (index + 1));
+  const peak = series[series.length - 1] || 1;
+  const line = series
+    .map((value, index) => {
+      const x = 8 + (index / 6) * 264;
+      const y = 84 - (value / peak) * 66;
+      return `${index === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(' ');
+  const area = `${line} L272,90 L8,90 Z`;
+
+  const usd = (value: number) =>
+    value.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
+  const nodes = ['edge-01', 'edge-02', 'edge-03'];
+
+  return (
+    <section className="mt-6 grid gap-6 rounded-2xl border border-white/8 bg-[#080d18] p-6 sm:p-7 lg:grid-cols-[0.78fr_1.22fr] lg:items-center">
+      <div>
+        <h2 className="text-[0.95rem] font-bold text-ink">{copy.title}</h2>
+        <p className="mt-2 max-w-sm text-[0.76rem] leading-relaxed text-ink-mute">{copy.lead}</p>
+
+        <div className="mt-5 flex items-center gap-5">
+          <svg viewBox="0 0 160 160" className="h-36 w-36 shrink-0" role="img" aria-label={copy.gauge}>
+            <circle cx="80" cy="80" r={radius} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="11" />
+            <circle
+              cx="80"
+              cy="80"
+              r={radius}
+              fill="none"
+              stroke="url(#telemetry-gauge)"
+              strokeWidth="11"
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={offset}
+              transform="rotate(-90 80 80)"
+              style={{ transition: 'stroke-dashoffset 800ms ease' }}
+            />
+            <defs>
+              <linearGradient id="telemetry-gauge" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#ffd27a" />
+                <stop offset="100%" stopColor="#22e0ff" />
+              </linearGradient>
+            </defs>
+            <text x="80" y="76" textAnchor="middle" fill="#f5f7fb" style={{ fontSize: 22, fontWeight: 700 }}>
+              {shown.toFixed(useTera ? 2 : 1)}
+            </text>
+            <text x="80" y="95" textAnchor="middle" fill="#8b93a7" style={{ fontSize: 10 }}>
+              {unit}
+            </text>
+          </svg>
+
+          <dl>
+            <dt className="text-[0.6rem] tracking-[0.12em] text-ink-faint uppercase">{copy.gauge}</dt>
+            <dd className="mx-numeric mt-1 text-lg font-bold text-amber">
+              {shown.toFixed(useTera ? 2 : 1)} {unit}
+            </dd>
+            <dd className="mx-numeric mt-1 text-[0.68rem] text-ink-faint">
+              {copy.projected}: {usd(series[series.length - 1])}
+            </dd>
+          </dl>
+        </div>
+      </div>
+
+      <div className="grid gap-5">
+        <div>
+          <h3 className="text-[0.6rem] tracking-[0.14em] text-ink-faint uppercase">{copy.nodes}</h3>
+          <ul className="mt-2.5 grid gap-2 sm:grid-cols-3">
+            {nodes.map((node) => (
+              <li
+                key={node}
+                className="flex items-center justify-between gap-2 rounded-lg border border-white/8 bg-[#04060d]/70 px-3 py-2"
+              >
+                <span className="mx-numeric text-[0.68rem] text-ink-soft">{node}</span>
+                <span className={`inline-flex items-center gap-1.5 text-[0.62rem] ${snapshot ? 'text-mint' : 'text-ink-faint'}`}>
+                  <span
+                    className={`h-1.5 w-1.5 rounded-full ${snapshot ? 'animate-pulse bg-mint' : 'bg-ink-faint'}`}
+                    aria-hidden
+                  />
+                  {snapshot ? copy.active : copy.standby}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="rounded-xl border border-white/8 bg-[#04060d]/70 p-4">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h3 className="text-[0.78rem] font-semibold text-ink">{copy.yieldTitle}</h3>
+            <span className="mx-numeric text-[0.8rem] font-bold text-cyan">{usd(series[series.length - 1])}</span>
+          </div>
+          <p className="mt-1.5 text-[0.7rem] leading-relaxed text-ink-mute">{copy.yieldBody}</p>
+          <svg viewBox="0 0 280 90" className="mt-3 h-24 w-full" role="img" aria-label={copy.yieldTitle}>
+            <defs>
+              <linearGradient id="telemetry-area" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="rgba(34,224,255,0.35)" />
+                <stop offset="100%" stopColor="rgba(34,224,255,0)" />
+              </linearGradient>
+            </defs>
+            <path d={area} fill="url(#telemetry-area)" />
+            <path d={line} fill="none" stroke="#22e0ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <div className="mx-numeric mt-1 flex justify-between text-[0.56rem] text-ink-faint">
+            <span>Day 1</span>
+            <span>Day 4</span>
+            <span>Day 7</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function MiningView() {
   const { eco, t, lang, href: to } = useI18n();
   const uid = useUid();
@@ -312,6 +535,7 @@ export default function MiningView() {
   };
 
   const boost = BOOST_COPY[lang] ?? BOOST_COPY.en;
+  const telemetry = TELEMETRY_COPY[lang] ?? TELEMETRY_COPY.en;
 
   const shareBoost = useCallback(async () => {
     const url = `${window.location.origin}${to('/mining')}?ref=${encodeURIComponent(snapshot?.referralCode ?? '')}`;
@@ -422,6 +646,8 @@ export default function MiningView() {
           accent="amber"
         />
       </section>
+
+      <TelemetryPanel snapshot={snapshot} copy={telemetry} />
 
       {/* -------------------------------------------------- Coin terminal */}
       <section className="mt-6 overflow-hidden rounded-2xl border border-amber/20 bg-[linear-gradient(135deg,rgba(212,175,55,0.06),rgba(8,13,24,0.97)_46%)]">

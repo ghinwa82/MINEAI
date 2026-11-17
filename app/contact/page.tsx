@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import LegalView from '../_views/legal';
 import PageShell from '../components/PageShell';
 import JsonLd from '../components/JsonLd';
+import SupportChat from '../components/SupportChat';
 import { buildMetadata } from '@/lib/metadata';
 import { getLegalCopy } from '@/lib/legal-i18n';
 import { breadcrumbSchema, faqSchema } from '@/lib/schema';
@@ -25,7 +26,7 @@ const FAQ = [
   {
     question: 'How fast does MineAI Node answer?',
     answer:
-      'Support is staffed Sunday to Thursday, 09:00–18:00 Gulf Standard Time. We acknowledge within two business days and answer privacy requests within 30 days.',
+      'The on-page assistant answers immediately, 24 hours a day, in English, Arabic, French, Spanish, Chinese and Hindi. A person replies to email Sunday to Thursday, 09:00–18:00 Gulf Standard Time, within two business days; privacy requests are answered within 30 days.',
   },
   {
     question: 'Should I send my card number or seed phrase?',
@@ -46,6 +47,7 @@ export default function ContactPage() {
           ]),
         ]}
       />
+      <SupportChat />
       <LegalView slug="contact" />
     </PageShell>
   );
