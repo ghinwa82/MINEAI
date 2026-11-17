@@ -283,7 +283,7 @@ const KEYWORDS: Array<{ intent: SupportIntent; words: string[] }> = [
   },
   {
     intent: 'withdraw',
-    words: ['withdraw', 'payout', 'cash out', 'wallet', 'retrait', 'portefeuille', 'retirar', 'cartera', '提现', '钱包', 'निकासी', 'वॉलेट', 'سحب', 'محفظة'],
+    words: ['withdraw', 'payout', 'cash out', 'wallet', 'retrait', 'portefeuille', 'retirar', 'cartera', 'billetera', '提现', '钱包', 'निकासी', 'वॉलेट', 'سحب', 'محفظة'],
   },
   {
     intent: 'payment',
@@ -295,7 +295,7 @@ const KEYWORDS: Array<{ intent: SupportIntent; words: string[] }> = [
   },
   {
     intent: 'mining',
-    words: ['mine', 'mining', 'hashrate', 'miner', 'minage', 'minería', '挖矿', '算力', 'माइनिंग', 'तोदन', 'تعدين', 'التعدين'],
+    words: ['mine', 'mining', 'hashrate', 'miner', 'minage', 'mineur', 'minería', 'mineria', 'minar', 'minero', '挖矿', '算力', 'माइनिंग', 'खनन', 'تعدين', 'التعدين'],
   },
   {
     intent: 'register',
