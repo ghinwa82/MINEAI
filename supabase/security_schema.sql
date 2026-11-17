@@ -393,3 +393,230 @@ comment on table public.two_factor_secrets is
   'TOTP secrets sealed with AES-256-GCM. Service-role access only; no RLS policy grants client reads.';
 comment on table public.audit_log is
   'Append-only record of money movement and security events. Service-role access only.';
+
+-- ============================================================================
+--  Production data model — the eight tables the product reads and writes.
+--
+--  `profiles` and `withdrawals` are defined above. This block adds the rest of
+--  the public surface named by the product spec (`mining_nodes`,
+--  `mining_balances`, `subscriptions`, `transactions`, `support_tickets`,
+--  `referrals`) and then hands every role an explicit grant. RLS still decides
+--  which rows a caller sees, so a table-level grant never widens row access.
+-- ============================================================================
+
+-- -------------------------------------------------------------- mining_nodes ---
+
+create table if not exists public.mining_nodes (
+  id           text primary key,
+  label        text not null,
+  region       text,
+  status       text not null default 'online'
+               check (status in ('online', 'degraded', 'offline')),
+  hashrate_mhs numeric(18, 2) not null default 0 check (hashrate_mhs >= 0),
+  load_pct     numeric(5, 2) not null default 0 check (load_pct >= 0 and load_pct <= 100),
+  created_at   timestamptz not null default now(),
+  updated_at   timestamptz not null default now()
+);
+
+drop trigger if exists mining_nodes_touch on public.mining_nodes;
+create trigger mining_nodes_touch
+  before update on public.mining_nodes
+  for each row execute function public.set_updated_at();
+
+-- ----------------------------------------------------------- mining_balances ---
+
+create table if not exists public.mining_balances (
+  owner_id   uuid not null references auth.users (id) on delete cascade,
+  coin       text not null check (coin in ('mineai', 'btc', 'eth', 'sol', 'bnb', 'ton', 'doge', 'ltc')),
+  balance    numeric(36, 18) not null default 0 check (balance >= 0),
+  lifetime   numeric(36, 18) not null default 0 check (lifetime >= 0),
+  updated_at timestamptz not null default now(),
+  primary key (owner_id, coin)
+);
+
+create index if not exists mining_balances_owner_idx on public.mining_balances (owner_id);
+
+-- ------------------------------------------------------------ subscriptions ---
+
+create table if not exists public.subscriptions (
+  id          uuid primary key default gen_random_uuid(),
+  owner_id    uuid not null references auth.users (id) on delete cascade,
+  plan_id     text not null,
+  plan_name   text not null,
+  price_usd   numeric(12, 2) not null default 0 check (price_usd >= 0),
+  status      text not null default 'pending'
+              check (status in ('pending', 'active', 'past_due', 'cancelled', 'expired')),
+  rail        text check (rail in ('kashier', 'paymob', 'stripe', 'crypto')),
+  started_at  timestamptz,
+  expires_at  timestamptz,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
+);
+
+create index if not exists subscriptions_owner_idx on public.subscriptions (owner_id, created_at desc);
+
+drop trigger if exists subscriptions_touch on public.subscriptions;
+create trigger subscriptions_touch
+  before update on public.subscriptions
+  for each row execute function public.set_updated_at();
+
+-- ------------------------------------------------------------- transactions ---
+
+create table if not exists public.transactions (
+  id           uuid primary key default gen_random_uuid(),
+  owner_id     uuid references auth.users (id) on delete set null,
+  kind         text not null
+               check (kind in ('subscription', 'deposit', 'withdrawal', 'referral', 'adjustment')),
+  rail         text check (rail in ('kashier', 'paymob', 'stripe', 'crypto')),
+  network      text,
+  asset        text,
+  amount_usd   numeric(18, 2) not null default 0,
+  asset_amount numeric(36, 18) not null default 0,
+  status       text not null default 'pending'
+               check (status in ('pending', 'processing', 'sent', 'confirmed', 'failed', 'refunded')),
+  reference    text,
+  tx_hash      text,
+  wallet       text,
+  created_at   timestamptz not null default now(),
+  updated_at   timestamptz not null default now()
+);
+
+create index if not exists transactions_owner_idx on public.transactions (owner_id, created_at desc);
+create index if not exists transactions_status_idx on public.transactions (status);
+
+drop trigger if exists transactions_touch on public.transactions;
+create trigger transactions_touch
+  before update on public.transactions
+  for each row execute function public.set_updated_at();
+
+-- ---------------------------------------------------------- support_tickets ---
+
+create table if not exists public.support_tickets (
+  id         uuid primary key default gen_random_uuid(),
+  owner_id   uuid references auth.users (id) on delete set null,
+  email      text,
+  lang       text not null default 'en',
+  topic      text,
+  message    text not null,
+  status     text not null default 'open' check (status in ('open', 'answered', 'closed')),
+  reply      text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists support_tickets_owner_idx on public.support_tickets (owner_id, created_at desc);
+
+drop trigger if exists support_tickets_touch on public.support_tickets;
+create trigger support_tickets_touch
+  before update on public.support_tickets
+  for each row execute function public.set_updated_at();
+
+-- ---------------------------------------------------------------- referrals ---
+
+create table if not exists public.referrals (
+  id               uuid primary key default gen_random_uuid(),
+  owner_id         uuid not null references auth.users (id) on delete cascade,
+  code             text not null unique,
+  referred_owner_id uuid references auth.users (id) on delete set null,
+  tier             text not null default 'bronze' check (tier in ('bronze', 'silver', 'gold', 'diamond')),
+  commission_pct   numeric(5, 2) not null default 5 check (commission_pct >= 0 and commission_pct <= 100),
+  earned_usd       numeric(18, 2) not null default 0 check (earned_usd >= 0),
+  created_at       timestamptz not null default now(),
+  updated_at       timestamptz not null default now()
+);
+
+create index if not exists referrals_owner_idx on public.referrals (owner_id);
+
+drop trigger if exists referrals_touch on public.referrals;
+create trigger referrals_touch
+  before update on public.referrals
+  for each row execute function public.set_updated_at();
+
+-- ------------------------------------------------------------------- RLS ---
+
+alter table public.mining_nodes    enable row level security;
+alter table public.mining_balances enable row level security;
+alter table public.subscriptions   enable row level security;
+alter table public.transactions    enable row level security;
+alter table public.support_tickets enable row level security;
+alter table public.referrals       enable row level security;
+
+-- Nodes are public infrastructure status: everyone may read, only the service
+-- role may change them.
+drop policy if exists mining_nodes_public_read on public.mining_nodes;
+create policy mining_nodes_public_read on public.mining_nodes
+  for select to anon, authenticated
+  using (true);
+
+-- Balances, subscriptions and transactions: an operator reads their own rows.
+drop policy if exists mining_balances_select_own on public.mining_balances;
+create policy mining_balances_select_own on public.mining_balances
+  for select to authenticated
+  using (owner_id = auth.uid());
+
+drop policy if exists subscriptions_select_own on public.subscriptions;
+create policy subscriptions_select_own on public.subscriptions
+  for select to authenticated
+  using (owner_id = auth.uid());
+
+drop policy if exists transactions_select_own on public.transactions;
+create policy transactions_select_own on public.transactions
+  for select to authenticated
+  using (owner_id = auth.uid());
+
+-- Support: an operator may open a ticket for themselves and read it back.
+drop policy if exists support_tickets_select_own on public.support_tickets;
+create policy support_tickets_select_own on public.support_tickets
+  for select to authenticated
+  using (owner_id = auth.uid());
+
+drop policy if exists support_tickets_insert_own on public.support_tickets;
+create policy support_tickets_insert_own on public.support_tickets
+  for insert to authenticated
+  with check (owner_id = auth.uid());
+
+-- Referrals: the owner sees and creates their own invite code.
+drop policy if exists referrals_select_own on public.referrals;
+create policy referrals_select_own on public.referrals
+  for select to authenticated
+  using (owner_id = auth.uid());
+
+drop policy if exists referrals_insert_own on public.referrals;
+create policy referrals_insert_own on public.referrals
+  for insert to authenticated
+  with check (owner_id = auth.uid());
+
+-- ------------------------------------------------------------- explicit grants ---
+--
+-- The Data API needs table privileges even when RLS would allow the row.
+-- Grant them to every role the app uses, then re-revoke the secret tables so
+-- the blanket grant can never expose two-factor material or the audit log.
+
+grant usage on schema public to anon, authenticated, service_role;
+
+grant select, insert, update, delete on all tables in schema public
+  to authenticated, service_role;
+
+grant select on public.profiles,
+              public.mining_nodes,
+              public.contract_deployments
+  to anon;
+
+alter default privileges in schema public
+  grant select, insert, update, delete on tables to authenticated, service_role;
+
+revoke all on public.two_factor_secrets from anon, authenticated;
+revoke all on public.audit_log from anon, authenticated;
+
+comment on table public.mining_nodes is
+  'Cloud node registry rendered by the mining terminal. Public read; service-role write.';
+comment on table public.mining_balances is
+  'One durable row per operator and coin. Service-role write; owner read.';
+comment on table public.subscriptions is
+  'Plan subscriptions unlocked by a confirmed card or crypto payment.';
+comment on table public.transactions is
+  'Every money movement with its rail, status and on-chain hash.';
+comment on table public.support_tickets is
+  'Tickets opened from the 24/7 assistant or the help centre.';
+comment on table public.referrals is
+  'Affiliate codes, tiers and accrued commission per operator.';

@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { normalizeLanguage } from '@/lib/languages';
 import { answerFor } from '@/lib/support-i18n';
 import { clientKey, checkRateLimit } from '@/lib/rate-limit';
+import { insertServiceRow, serviceRoleConfigured } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -41,5 +42,19 @@ export async function POST(request: Request) {
   const lang = normalizeLanguage(parsed.data.lang ?? 'en');
   const answer = answerFor(parsed.data.message, lang);
 
-  return NextResponse.json({ ok: true, lang, ...answer });
+  // Keep the question in `support_tickets` when the database is reachable, so a
+  // human can follow up on anything the assistant could not settle. Without a
+  // service-role key the route simply answers and stores nothing — it never
+  // pretends a row was written.
+  let stored = false;
+  if (serviceRoleConfigured()) {
+    stored = await insertServiceRow('support_tickets', {
+      lang,
+      topic: answer.intent,
+      message: parsed.data.message.slice(0, 2000),
+      status: 'open',
+    });
+  }
+
+  return NextResponse.json({ ok: true, lang, stored, ...answer });
 }

@@ -4,6 +4,7 @@ import React from 'react';
 
 import SiteFooter from './SiteFooter';
 import SiteHeader from './SiteHeader';
+import AiSupportWidget from './AiSupportWidget';
 import { useI18n } from '@/lib/i18n-provider';
 
 /**
@@ -34,6 +35,7 @@ export default function PageShell({
         {children}
       </main>
       <SiteFooter />
+      <AiSupportWidget />
     </div>
   );
 }

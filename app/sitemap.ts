@@ -49,6 +49,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   push('/privacy', 0.3, 'monthly');
   push('/refund-policy', 0.3, 'monthly');
   push('/contact', 0.4, 'monthly');
+  push('/support', 0.5, 'monthly');
 
   for (const plan of catalogue) {
     push(`/store/${planSlug(plan)}`, 0.8, 'weekly');

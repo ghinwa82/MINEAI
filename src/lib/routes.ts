@@ -65,4 +65,5 @@ export const LOCALISABLE_ROUTES = [
   '/privacy',
   '/refund-policy',
   '/contact',
+  '/support',
 ] as const;

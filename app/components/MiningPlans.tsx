@@ -41,8 +41,7 @@ export default function MiningPlans({ withCalculator = true }: { withCalculator?
   return (
     <div className="space-y-14">
       <header className="max-w-2xl">
-        <p className="mx-eyebrow">{notes.title}</p>
-        <h2 className="mx-section-title mt-5">{notes.title}</h2>
+        <h2 className="mx-section-title">{notes.title}</h2>
         <p className="mx-lede mt-5">{notes.lead}</p>
       </header>
 

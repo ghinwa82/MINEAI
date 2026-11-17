@@ -197,12 +197,14 @@ export interface EcosystemCopy {
     mute: string;
     unmute: string;
     sceneOf: string;
+    captionsOn: string;
+    captionsOff: string;
     captions: CaptionScene[];
   };
 }
 
 const EN: EcosystemCopy = {
-  nav: { mining: 'Cloud Mining', markets: 'Live Markets', rewards: 'Rewards & VIP', news: 'Global News', plans: 'Mining Plans', insights: 'Market Insights', support: 'Support', startFree: 'Start Free Mining' },
+  nav: { mining: 'Cloud Mining', markets: 'Live Markets', rewards: 'VIP & Rewards', news: 'Global News', plans: 'Plans & Pricing', insights: 'Market Insights', support: 'Support', startFree: 'Start Free Mining' },
   rails: {
     eyebrow: 'Payment rails',
     title: 'Pay by card, or settle on-chain with zero platform fee',
@@ -376,6 +378,8 @@ const EN: EcosystemCopy = {
     mute: 'Mute narration',
     unmute: 'Unmute narration',
     sceneOf: 'Scene',
+    captionsOn: 'Captions on',
+    captionsOff: 'Captions off',
     captions: [
       {
         title: 'The mesh wakes',
@@ -398,7 +402,7 @@ const EN: EcosystemCopy = {
 };
 
 const AR: EcosystemCopy = {
-  nav: { mining: 'التعدين السحابي', markets: 'الأسواق المباشرة', rewards: 'المكافآت وVIP', news: 'أخبار العالم', plans: 'خطط التعدين', insights: 'رؤى السوق', support: 'الدعم', startFree: 'ابدأ التعدين المجاني' },
+  nav: { mining: 'التعدين السحابي', markets: 'الأسواق المباشرة', rewards: 'VIP والمكافآت', news: 'أخبار العالم', plans: 'الخطط والأسعار', insights: 'رؤى السوق', support: 'الدعم', startFree: 'ابدأ التعدين المجاني' },
   rails: {
     eyebrow: 'مسارات الدفع',
     title: 'ادفع بالبطاقة، أو سوِّ على السلسلة دون أي رسوم منصة',
@@ -572,6 +576,8 @@ const AR: EcosystemCopy = {
     mute: 'كتم الصوت',
     unmute: 'تشغيل الصوت',
     sceneOf: 'مشهد',
+    captionsOn: 'الترجمة مفعّلة',
+    captionsOff: 'الترجمة متوقفة',
     captions: [
       {
         title: 'الشبكة تستيقظ',
@@ -594,7 +600,7 @@ const AR: EcosystemCopy = {
 };
 
 const FR: EcosystemCopy = {
-  nav: { mining: 'Minage cloud', markets: 'Marchés en direct', rewards: 'Récompenses & VIP', news: 'Actualités mondiales', plans: 'Forfaits de minage', insights: 'Analyses marché', support: 'Assistance', startFree: 'Commencer gratuitement' },
+  nav: { mining: 'Minage cloud', markets: 'Marchés en direct', rewards: 'VIP & récompenses', news: 'Actualités mondiales', plans: 'Offres & tarifs', insights: 'Analyses marché', support: 'Assistance', startFree: 'Commencer gratuitement' },
   rails: {
     eyebrow: 'Rails de paiement',
     title: "Payez par carte, ou réglez on-chain sans frais de plateforme",
@@ -769,6 +775,8 @@ const FR: EcosystemCopy = {
     mute: 'Couper la narration',
     unmute: 'Activer la narration',
     sceneOf: 'Scène',
+    captionsOn: 'Sous-titres activés',
+    captionsOff: 'Sous-titres désactivés',
     captions: [
       {
         title: 'Le mesh se réveille',
@@ -791,7 +799,7 @@ const FR: EcosystemCopy = {
 };
 
 const ES: EcosystemCopy = {
-  nav: { mining: 'Minería cloud', markets: 'Mercados en vivo', rewards: 'Recompensas y VIP', news: 'Noticias globales', plans: 'Planes de minería', insights: 'Análisis de mercado', support: 'Soporte', startFree: 'Empezar gratis' },
+  nav: { mining: 'Minería cloud', markets: 'Mercados en vivo', rewards: 'VIP y recompensas', news: 'Noticias globales', plans: 'Planes y precios', insights: 'Análisis de mercado', support: 'Soporte', startFree: 'Empezar gratis' },
   rails: {
     eyebrow: 'Canales de pago',
     title: 'Paga con tarjeta o liquida on-chain sin comisión de plataforma',
@@ -966,6 +974,8 @@ const ES: EcosystemCopy = {
     mute: 'Silenciar narración',
     unmute: 'Activar narración',
     sceneOf: 'Escena',
+    captionsOn: 'Subtítulos activados',
+    captionsOff: 'Subtítulos desactivados',
     captions: [
       {
         title: 'La malla despierta',
@@ -988,7 +998,7 @@ const ES: EcosystemCopy = {
 };
 
 const ZH: EcosystemCopy = {
-  nav: { mining: '云端挖矿', markets: '实时行情', rewards: '奖励与 VIP', news: '全球新闻', plans: '挖矿方案', insights: '市场洞察', support: '客服支持', startFree: '免费开始挖矿' },
+  nav: { mining: '云端挖矿', markets: '实时行情', rewards: 'VIP 与奖励', news: '全球新闻', plans: '套餐与价格', insights: '市场洞察', support: '客服支持', startFree: '免费开始挖矿' },
   rails: {
     eyebrow: '支付通道',
     title: '银行卡支付，或链上结算零平台费',
@@ -1162,6 +1172,8 @@ const ZH: EcosystemCopy = {
     mute: '关闭旁白',
     unmute: '开启旁白',
     sceneOf: '场景',
+    captionsOn: '字幕已开启',
+    captionsOff: '字幕已关闭',
     captions: [
       {
         title: '网络苏醒',
@@ -1184,7 +1196,7 @@ const ZH: EcosystemCopy = {
 };
 
 const HI: EcosystemCopy = {
-  nav: { mining: 'क्लाउड माइनिंग', markets: 'लाइव बाज़ार', rewards: 'इनाम और VIP', news: 'वैश्विक समाचार', plans: 'माइनिंग प्लान', insights: 'बाज़ार अंतर्दृष्टि', support: 'सहायता', startFree: 'मुफ़्त माइनिंग शुरू करें' },
+  nav: { mining: 'क्लाउड माइनिंग', markets: 'लाइव बाज़ार', rewards: 'VIP और इनाम', news: 'वैश्विक समाचार', plans: 'प्लान और कीमतें', insights: 'बाज़ार अंतर्दृष्टि', support: 'सहायता', startFree: 'मुफ़्त माइनिंग शुरू करें' },
   rails: {
     eyebrow: 'भुगतान रेल',
     title: 'कार्ड से भुगतान करें, या शून्य प्लेटफ़ॉर्म शुल्क पर ऑन-चेन निपटान',
@@ -1358,6 +1370,8 @@ const HI: EcosystemCopy = {
     mute: 'आवाज़ बंद करें',
     unmute: 'आवाज़ चालू करें',
     sceneOf: 'दृश्य',
+    captionsOn: 'सबटाइटल चालू',
+    captionsOff: 'सबटाइटल बंद',
     captions: [
       {
         title: 'मेश जागता है',

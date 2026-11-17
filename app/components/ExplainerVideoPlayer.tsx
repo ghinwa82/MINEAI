@@ -52,6 +52,56 @@ const STAGE = [
   },
 ] as const;
 
+/**
+ * Voice ranking.
+ *
+ * Browsers expose a dozen voices per language with wildly different quality.
+ * Network "Natural/Neural" voices (Edge, Chrome) sound human; compact local
+ * voices sound like a machine. We score by name and fall back to any voice in
+ * the requested language rather than reading English with a foreign accent.
+ */
+const PREFERRED = [
+  'natural',
+  'neural',
+  'enhanced',
+  'google',
+  'siri',
+  'microsoft',
+  'samantha',
+  'ava',
+  'serena',
+  'amelie',
+  'amélie',
+  'monica',
+  'mónica',
+  'ting-ting',
+  'lekha',
+  'maged',
+  'hoda',
+  'zira',
+];
+
+function chooseVoice(voices: SpeechSynthesisVoice[], tag: string): SpeechSynthesisVoice | null {
+  const target = tag.toLowerCase();
+  const base = target.split('-')[0];
+  const candidates = voices.filter((voice) => voice.lang.replace('_', '-').toLowerCase().startsWith(base));
+  if (candidates.length === 0) return null;
+
+  const score = (voice: SpeechSynthesisVoice): number => {
+    const name = voice.name.toLowerCase();
+    const lang = voice.lang.replace('_', '-').toLowerCase();
+    let points = lang === target ? 6 : 0;
+    PREFERRED.forEach((preferred, index) => {
+      if (name.includes(preferred)) points += 10 - index * 0.4;
+    });
+    if (name.includes('compact') || name.includes('espeak')) points -= 6;
+    if (voice.localService === false) points += 1.5;
+    return points;
+  };
+
+  return [...candidates].sort((a, b) => score(b) - score(a))[0] ?? null;
+}
+
 export default function ExplainerVideoPlayer() {
   const { eco, lang } = useI18n();
   const reduce = useReducedMotion();
@@ -62,6 +112,17 @@ export default function ExplainerVideoPlayer() {
   const [playing, setPlaying] = useState(false);
   const [started, setStarted] = useState(false);
   const [muted, setMuted] = useState(false);
+  const [captions, setCaptions] = useState(true);
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+
+  // Most browsers populate the voice list after the first paint.
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    const load = () => setVoices(window.speechSynthesis.getVoices());
+    load();
+    window.speechSynthesis.addEventListener('voiceschanged', load);
+    return () => window.speechSynthesis.removeEventListener('voiceschanged', load);
+  }, []);
 
   // Advance the clock only while playing.
   useEffect(() => {
@@ -79,31 +140,49 @@ export default function ExplainerVideoPlayer() {
     setIndex((previous) => (previous + 1) % scenes.length);
   }, [elapsed, scenes.length]);
 
-  // Narration follows the scene. Cancelled on pause, mute or unmount.
+  // Narration follows the scene, one sentence per utterance with a short
+  // breath between them. Cancelled on pause, mute, scene change or unmount.
   useEffect(() => {
     if (!playing || muted || !started) return;
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
 
     const synth = window.speechSynthesis;
     const scene = scenes[index];
-    const utterance = new SpeechSynthesisUtterance(`${scene.title}. ${scene.line}`);
-    utterance.lang = VOICE[lang];
-    utterance.rate = 0.97;
-    utterance.pitch = 1.02;
+    const voice = chooseVoice(voices, VOICE[lang]);
 
-    const voices = synth.getVoices();
-    const match =
-      voices.find((voice) => voice.lang.replace('_', '-') === VOICE[lang]) ??
-      voices.find((voice) => voice.lang.toLowerCase().startsWith(lang));
-    if (match) utterance.voice = match;
+    const sentences = `${scene.title}. ${scene.line}`
+      .split(/(?<=[.!?。！？؟])\s+/)
+      .map((sentence) => sentence.trim())
+      .filter(Boolean);
+
+    let cancelled = false;
+    const timers: number[] = [];
+
+    const speak = (position: number) => {
+      if (cancelled || position >= sentences.length) return;
+      const utterance = new SpeechSynthesisUtterance(sentences[position]);
+      utterance.lang = VOICE[lang];
+      utterance.rate = 0.94;
+      utterance.pitch = 1;
+      utterance.volume = 0.96;
+      if (voice) utterance.voice = voice;
+      utterance.onend = () => {
+        if (cancelled) return;
+        const timer = window.setTimeout(() => speak(position + 1), 280);
+        timers.push(timer);
+      };
+      synth.speak(utterance);
+    };
 
     synth.cancel();
-    synth.speak(utterance);
+    speak(0);
 
     return () => {
+      cancelled = true;
+      timers.forEach((timer) => window.clearTimeout(timer));
       synth.cancel();
     };
-  }, [index, playing, muted, started, lang, scenes]);
+  }, [index, playing, muted, started, lang, scenes, voices]);
 
   useEffect(() => {
     return () => {
@@ -208,6 +287,32 @@ export default function ExplainerVideoPlayer() {
               </motion.div>
             </AnimatePresence>
 
+            <AnimatePresence>
+              {index >= 2 ? (
+                <motion.div
+                  key={`rail-${index}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="pointer-events-none absolute end-4 top-16 hidden w-32 flex-col gap-1.5 sm:flex"
+                  aria-hidden
+                >
+                  {['$MINEAI', 'BTC', 'ETH', 'SOL'].map((symbol, position) => (
+                    <motion.span
+                      key={symbol}
+                      initial={{ x: reduce ? 0 : 14, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: position * 0.12, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                      className="flex items-center justify-between rounded-lg border border-white/10 bg-black/45 px-2.5 py-1.5 text-[0.62rem] font-semibold text-ink-soft backdrop-blur"
+                    >
+                      {symbol}
+                      <span className="text-mint">+{(position + 1) * 3.1}%</span>
+                    </motion.span>
+                  ))}
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+
             <div className="relative">
               <AnimatePresence mode="wait">
                 <motion.h3
@@ -238,18 +343,20 @@ export default function ExplainerVideoPlayer() {
             <p className="mt-4 text-[0.85rem] leading-relaxed text-ink-mute">{eco.video.lead}</p>
 
             <div className="mt-7 min-h-[7.5rem]" aria-live="polite">
-              <AnimatePresence mode="wait">
-                <motion.p
-                  key={`line-${index}`}
-                  initial={{ opacity: 0, y: reduce ? 0 : 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: reduce ? 0 : -8 }}
-                  transition={{ duration: 0.4 }}
-                  className="text-[0.95rem] leading-relaxed text-ink-soft"
-                >
-                  {scene.line}
-                </motion.p>
-              </AnimatePresence>
+              {captions ? (
+                <AnimatePresence mode="wait">
+                  <motion.p
+                    key={`line-${index}`}
+                    initial={{ opacity: 0, y: reduce ? 0 : 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: reduce ? 0 : -8 }}
+                    transition={{ duration: 0.4 }}
+                    className="text-[0.95rem] leading-relaxed text-ink-soft"
+                  >
+                    {scene.line}
+                  </motion.p>
+                </AnimatePresence>
+              ) : null}
             </div>
 
             <ol className="mt-2 flex gap-1.5">
@@ -271,6 +378,41 @@ export default function ExplainerVideoPlayer() {
                 </li>
               ))}
             </ol>
+
+            {/* Profit flow: mining → yield → wallet. Icons only, so it reads in every language. */}
+            <motion.svg
+              key={`profit-${index}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: index === 2 ? 1 : 0.35 }}
+              transition={{ duration: 0.5 }}
+              viewBox="0 0 240 36"
+              className="mt-5 h-11 w-full"
+              aria-hidden
+            >
+              <defs>
+                <linearGradient id="explainer-profit" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor={stage.accent} />
+                  <stop offset="100%" stopColor="#d4af37" />
+                </linearGradient>
+              </defs>
+              <g fill="none" stroke="url(#explainer-profit)" strokeWidth="1.3" strokeLinecap="round">
+                <rect x="8" y="9" width="30" height="19" rx="4" />
+                <path d="M15 23v-5M21 23v-9M27 23v-3" />
+                <path d="M44 18h34" strokeDasharray="3 4" className={index === 2 ? 'mx-flow' : undefined} />
+                <circle cx="120" cy="18" r="11" />
+                <path d="M115 13.5v9M120 13.5v9M115 18h10" opacity="0.9" />
+                <path d="M140 18h34" strokeDasharray="3 4" className={index === 2 ? 'mx-flow' : undefined} />
+                <rect x="184" y="9" width="30" height="19" rx="4" />
+                <path d="M190 14h18M190 18h11M190 22h7" />
+              </g>
+              <circle r="2.2" fill="#ffd27a">
+                <animateMotion
+                  dur={index === 2 ? '3.4s' : '0.001s'}
+                  repeatCount={index === 2 ? 'indefinite' : '1'}
+                  path="M46 18 H136"
+                />
+              </circle>
+            </motion.svg>
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
@@ -290,6 +432,15 @@ export default function ExplainerVideoPlayer() {
               className="mx-btn-quiet !px-4 !py-2.5 !text-[0.8rem]"
             >
               {muted ? eco.video.unmute : eco.video.mute}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setCaptions((previous) => !previous)}
+              aria-pressed={captions}
+              className="mx-btn-quiet !px-4 !py-2.5 !text-[0.8rem]"
+            >
+              {captions ? eco.video.captionsOn : eco.video.captionsOff}
             </button>
           </div>
         </div>

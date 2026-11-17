@@ -14,13 +14,13 @@ export default function SiteFooter() {
 
   const links = [
     { href: '/', label: t.nav.home },
-    { href: '/store', label: eco.nav.plans },
     { href: '/mining', label: eco.nav.mining },
+    { href: '/store', label: eco.nav.plans },
     { href: '/markets', label: eco.nav.markets },
     { href: '/news', label: eco.nav.news },
     { href: '/insights', label: eco.nav.insights },
     { href: '/rewards', label: eco.nav.rewards },
-    { href: '/contact', label: eco.nav.support },
+    { href: '/support', label: eco.nav.support },
     { href: '/notes', label: t.nav.notes },
   ];
 

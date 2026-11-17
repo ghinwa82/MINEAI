@@ -577,6 +577,64 @@
 }
 
 /* ------------------------------------------------------------------ *
+ * Mining terminal motion
+ * ------------------------------------------------------------------ */
+@keyframes mx-coin-tilt {
+  0%,
+  100% {
+    transform: rotateY(-15deg) rotateX(5deg);
+  }
+  50% {
+    transform: rotateY(15deg) rotateX(-5deg);
+  }
+}
+
+@keyframes mx-flow {
+  to {
+    stroke-dashoffset: -26;
+  }
+}
+
+@keyframes mx-node-ring {
+  0% {
+    transform: scale(0.65);
+    opacity: 0.65;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@layer components {
+  /* A coin that turns in space rather than a flat badge. */
+  .mx-coin-stage {
+    perspective: 900px;
+  }
+
+  .mx-coin-tilt {
+    transform-style: preserve-3d;
+    animation: mx-coin-tilt 14s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  .mx-coin-stage:hover .mx-coin-tilt {
+    animation-play-state: paused;
+  }
+
+  /* Packet flow along a node link while mining is live. */
+  .mx-flow {
+    stroke-dasharray: 4 9;
+    animation: mx-flow 1.6s linear infinite;
+  }
+
+  .mx-node-ring {
+    transform-origin: center;
+    animation: mx-node-ring 2.6s ease-out infinite;
+  }
+}
+
+/* ------------------------------------------------------------------ *
  * Motion preferences
  * ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {

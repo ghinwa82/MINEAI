@@ -46,7 +46,7 @@ export default function HomeView() {
           <div className="mt-9 flex flex-wrap items-center gap-3">
             <Link
               href={to('/register')}
-              className="inline-flex items-center gap-2 rounded-xl bg-[linear-gradient(100deg,#d4af37,#fff3b0)] px-6 py-3 text-sm font-bold text-[#120d02] shadow-[0_16px_40px_-18px_rgba(212,175,55,0.9)] transition hover:brightness-110"
+              className="inline-flex items-center gap-2 rounded-xl bg-[linear-gradient(100deg,#d4af37,#fff3b0)] px-6 py-3 text-sm font-bold text-[#120d02] ring-1 ring-cyan-300/60 shadow-[0_16px_40px_-18px_rgba(212,175,55,0.9),0_0_24px_-6px_rgba(34,224,255,0.55)] transition hover:brightness-110"
             >
               {eco.nav.startFree}
               <svg width="14" height="10" viewBox="0 0 14 10" aria-hidden>
@@ -139,6 +139,13 @@ export default function HomeView() {
       {/* ------------------------------------------------------ Markets */}
       <section className="pb-20">
         <LiveMarketTracker variant="strip" />
+      </section>
+
+      {/* ------------------------------------- Coin preview + plans */}
+      <CoinShowcase />
+
+      <section className="border-t border-white/8 py-20">
+        <MiningPlans />
       </section>
 
       {/* ------------------------------------------------------- Systems */}
@@ -250,13 +257,6 @@ export default function HomeView() {
       {/* ------------------------------------------- Reserves posture */}
       <section className="border-t border-white/8 py-16">
         <ProofOfReservesBar />
-      </section>
-
-      {/* --------------------------------------------------------- Plans */}
-      <CoinShowcase />
-
-      <section className="border-t border-white/8 py-20">
-        <MiningPlans />
       </section>
 
       {/* ----------------------------------------------------------- FAQ */}

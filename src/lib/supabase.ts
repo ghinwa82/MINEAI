@@ -26,6 +26,49 @@ export function supabaseConfigured(): boolean {
   return credentials() !== null;
 }
 
+/**
+ * The service-role path.
+ *
+ * Server routes use this when they must write a row that belongs to no browser
+ * session — a support ticket, an accrual, a payout record. It is never exposed
+ * to the client: the key lives only in the server environment.
+ */
+function serviceCredentials(): { url: string; key: string } | null {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+  if (!url || !key || url.includes('placeholder') || key.includes('placeholder')) return null;
+  return { url, key };
+}
+
+export function serviceRoleConfigured(): boolean {
+  return serviceCredentials() !== null;
+}
+
+/** Inserts one row with the service role. Returns false when it is unconfigured. */
+export async function insertServiceRow(
+  table: string,
+  payload: Record<string, unknown>,
+): Promise<boolean> {
+  const creds = serviceCredentials();
+  if (!creds) return false;
+
+  try {
+    const res = await fetch(`${creds.url}/rest/v1/${table}`, {
+      method: 'POST',
+      headers: {
+        apikey: creds.key,
+        Authorization: `Bearer ${creds.key}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal',
+      },
+      body: JSON.stringify(payload),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 export async function logEventToDatabase(
   event: SupabaseRecord,
 ): Promise<{ success: boolean; mode: SupabaseMode }> {

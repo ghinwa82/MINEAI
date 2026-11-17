@@ -179,6 +179,7 @@ const TELEMETRY_COPY: Record<
     standby: string;
     mhs: string;
     ths: string;
+    portfolio: string;
   }
 > = {
   en: {
@@ -193,6 +194,7 @@ const TELEMETRY_COPY: Record<
     standby: 'Waiting for data',
     mhs: 'MH/s',
     ths: 'TH/s',
+    portfolio: 'Power split',
   },
   ar: {
     title: 'قياس التعدين المباشر',
@@ -206,6 +208,7 @@ const TELEMETRY_COPY: Record<
     standby: 'بانتظار البيانات',
     mhs: 'ميغاهاش/ث',
     ths: 'تيراهاش/ث',
+    portfolio: 'توزيع القوة',
   },
   fr: {
     title: 'Télémétrie de minage en direct',
@@ -219,6 +222,7 @@ const TELEMETRY_COPY: Record<
     standby: 'En attente de données',
     mhs: 'MH/s',
     ths: 'TH/s',
+    portfolio: 'Répartition de la puissance',
   },
   es: {
     title: 'Telemetría de minería en vivo',
@@ -232,6 +236,7 @@ const TELEMETRY_COPY: Record<
     standby: 'Esperando datos',
     mhs: 'MH/s',
     ths: 'TH/s',
+    portfolio: 'Reparto de potencia',
   },
   zh: {
     title: '实时挖矿遥测',
@@ -245,6 +250,7 @@ const TELEMETRY_COPY: Record<
     standby: '等待数据',
     mhs: 'MH/s',
     ths: 'TH/s',
+    portfolio: '算力分配',
   },
   hi: {
     title: 'लाइव माइनिंग टेलीमेट्री',
@@ -258,12 +264,21 @@ const TELEMETRY_COPY: Record<
     standby: 'डेटा की प्रतीक्षा',
     mhs: 'MH/s',
     ths: 'TH/s',
+    portfolio: 'पावर विभाजन',
   },
 };
 
 type TelemetryCopy = (typeof TELEMETRY_COPY)['en'];
 
-function TelemetryPanel({ snapshot, copy }: { snapshot: Snapshot | null; copy: TelemetryCopy }) {
+function TelemetryPanel({
+  snapshot,
+  allocation,
+  copy,
+}: {
+  snapshot: Snapshot | null;
+  allocation: Record<string, number> | null;
+  copy: TelemetryCopy;
+}) {
   const hashrate = snapshot?.hashrateMhs ?? 0;
   const useTera = hashrate >= 1000;
   const shown = useTera ? hashrate / 1000 : hashrate;
@@ -290,6 +305,39 @@ function TelemetryPanel({ snapshot, copy }: { snapshot: Snapshot | null; copy: T
   const usd = (value: number) =>
     value.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
   const nodes = ['edge-01', 'edge-02', 'edge-03'];
+
+  const PALETTE = ['#ffd27a', '#22e0ff', '#4ade9f', '#a78bfa', '#fb923c', '#facc15', '#60a5fa', '#f472b6'];
+  const shares = Object.entries(allocation ?? {})
+    .filter(([, value]) => Number.isFinite(value) && value > 0)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+
+  let cursor = 0;
+  const sliceTotal = shares.reduce((sum, [, value]) => sum + value, 0) || 1;
+  const slices = shares.map(([coin, raw], index) => {
+    const value = (raw / sliceTotal) * 100;
+    const from = cursor;
+    cursor += value;
+    return {
+      coin: coin === 'mineai' ? '$MINEAI' : coin.toUpperCase(),
+      value,
+      color: PALETTE[index % PALETTE.length],
+      from,
+      to: cursor,
+    };
+  });
+
+  const donutBackground = slices.length
+    ? `conic-gradient(${slices.map((slice) => `${slice.color} ${slice.from * 3.6}deg ${slice.to * 3.6}deg`).join(', ')})`
+    : 'conic-gradient(#1a2233 0deg 360deg)';
+  const leadShare = slices[0]?.value ?? 0;
+
+  const hub = { x: 140, y: 42 };
+  const satellites = [
+    { x: 46, y: 58 },
+    { x: 140, y: 18 },
+    { x: 234, y: 58 },
+  ];
 
   return (
     <section className="mt-6 grid gap-6 rounded-2xl border border-white/8 bg-[#080d18] p-6 sm:p-7 lg:grid-cols-[0.78fr_1.22fr] lg:items-center">
@@ -325,6 +373,16 @@ function TelemetryPanel({ snapshot, copy }: { snapshot: Snapshot | null; copy: T
             <text x="80" y="95" textAnchor="middle" fill="#8b93a7" style={{ fontSize: 10 }}>
               {unit}
             </text>
+            {snapshot ? (
+              <g aria-hidden>
+                <circle r="2.4" fill="#ffd27a">
+                  <animateMotion dur="6s" repeatCount="indefinite" path="M80 22 a58 58 0 1 1 -0.1 0" />
+                </circle>
+                <circle r="1.6" fill="#22e0ff" opacity="0.9">
+                  <animateMotion dur="9.5s" begin="1.1s" repeatCount="indefinite" path="M80 22 a58 58 0 1 1 -0.1 0" />
+                </circle>
+              </g>
+            ) : null}
           </svg>
 
           <dl>
@@ -342,6 +400,51 @@ function TelemetryPanel({ snapshot, copy }: { snapshot: Snapshot | null; copy: T
       <div className="grid gap-5">
         <div>
           <h3 className="text-[0.6rem] tracking-[0.14em] text-ink-faint uppercase">{copy.nodes}</h3>
+
+          <div className="mt-2.5 rounded-xl border border-white/8 bg-[#04060d]/70 px-3 py-2">
+            <svg viewBox="0 0 280 76" className="h-20 w-full" aria-hidden>
+              <defs>
+                <linearGradient id="topology-link" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="rgba(212,175,55,0.65)" />
+                  <stop offset="100%" stopColor="rgba(34,224,255,0.65)" />
+                </linearGradient>
+              </defs>
+
+              {satellites.map((node) => (
+                <path
+                  key={`link-${node.x}-${node.y}`}
+                  d={`M${hub.x} ${hub.y} Q${(hub.x + node.x) / 2} ${(hub.y + node.y) / 2 - 14} ${node.x} ${node.y}`}
+                  fill="none"
+                  stroke="url(#topology-link)"
+                  strokeWidth="1.1"
+                  className={snapshot ? 'mx-flow' : undefined}
+                  opacity={snapshot ? 0.95 : 0.35}
+                />
+              ))}
+
+              <circle cx={hub.x} cy={hub.y} r="6" fill="#d4af37" opacity="0.22" />
+              <circle cx={hub.x} cy={hub.y} r="3.4" fill="#ffd27a" />
+
+              {satellites.map((node) => (
+                <g key={`node-${node.x}-${node.y}`}>
+                  {snapshot ? (
+                    <circle
+                      cx={node.x}
+                      cy={node.y}
+                      r="5"
+                      fill="none"
+                      stroke="#4ade9f"
+                      strokeWidth="1"
+                      className="mx-node-ring"
+                    />
+                  ) : null}
+                  <circle cx={node.x} cy={node.y} r="4" fill={snapshot ? '#4ade9f' : '#39435a'} />
+                  <circle cx={node.x} cy={node.y} r="8" fill="none" stroke="rgba(255,255,255,0.1)" />
+                </g>
+              ))}
+            </svg>
+          </div>
+
           <ul className="mt-2.5 grid gap-2 sm:grid-cols-3">
             {nodes.map((node) => (
               <li
@@ -381,6 +484,47 @@ function TelemetryPanel({ snapshot, copy }: { snapshot: Snapshot | null; copy: T
             <span>Day 1</span>
             <span>Day 4</span>
             <span>Day 7</span>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-white/8 bg-[#04060d]/70 p-4">
+          <div className="flex items-baseline justify-between gap-2">
+            <h3 className="text-[0.78rem] font-semibold text-ink">{copy.portfolio}</h3>
+            <span className="mx-numeric text-[0.72rem] text-ink-faint">
+              {slices.length ? `${Math.round(leadShare)}%` : '—'}
+            </span>
+          </div>
+
+          <div className="mt-3 flex items-center gap-4">
+            <div
+              className="relative h-24 w-24 shrink-0 rounded-full"
+              style={{ background: donutBackground }}
+              role="img"
+              aria-label={copy.portfolio}
+            >
+              <div className="absolute inset-[19%] rounded-full bg-[#04060d]" />
+              <div className="absolute inset-0 grid place-items-center">
+                <span className="mx-numeric text-[0.78rem] font-bold text-ink">
+                  {slices.length ? `${Math.round(leadShare)}%` : '—'}
+                </span>
+              </div>
+            </div>
+
+            <ul className="min-w-0 flex-1 space-y-1.5">
+              {slices.length ? (
+                slices.map((slice) => (
+                  <li key={slice.coin} className="flex items-center justify-between gap-3 text-[0.68rem]">
+                    <span className="inline-flex min-w-0 items-center gap-2 text-ink-soft">
+                      <span className="h-2 w-2 rounded-full" style={{ background: slice.color }} aria-hidden />
+                      <span className="truncate">{slice.coin}</span>
+                    </span>
+                    <span className="mx-numeric text-ink-faint">{Math.round(slice.value)}%</span>
+                  </li>
+                ))
+              ) : (
+                <li className="text-[0.68rem] text-ink-faint">—</li>
+              )}
+            </ul>
           </div>
         </div>
       </div>
@@ -570,7 +714,11 @@ export default function MiningView() {
         </div>
 
         <div className="flex items-center justify-center gap-8">
-          <MineAICoinLogo size={190} />
+          <div className="mx-coin-stage">
+            <div className="mx-coin-tilt">
+              <MineAICoinLogo size={190} />
+            </div>
+          </div>
           <dl className="space-y-4">
             <div>
               <dt className="text-[0.62rem] tracking-[0.14em] text-ink-faint uppercase">{copy.hashrate}</dt>
@@ -647,7 +795,7 @@ export default function MiningView() {
         />
       </section>
 
-      <TelemetryPanel snapshot={snapshot} copy={telemetry} />
+      <TelemetryPanel snapshot={snapshot} allocation={allocation} copy={telemetry} />
 
       {/* -------------------------------------------------- Coin terminal */}
       <section className="mt-6 overflow-hidden rounded-2xl border border-amber/20 bg-[linear-gradient(135deg,rgba(212,175,55,0.06),rgba(8,13,24,0.97)_46%)]">

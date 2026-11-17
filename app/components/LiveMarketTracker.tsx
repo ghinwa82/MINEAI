@@ -303,11 +303,14 @@ function Spark({ points, positive }: { points: number[]; positive: boolean }) {
 const PLACEHOLDER: Quote[] = [
   { symbol: '^GSPC', name: 'S&P 500', category: 'indices', price: 5840.2, change: 12.4, changePercent: 0.21, currency: 'USD', spark: [], source: 'fallback' },
   { symbol: '^IXIC', name: 'Nasdaq', category: 'indices', price: 19120.4, change: -42.1, changePercent: -0.22, currency: 'USD', spark: [], source: 'fallback' },
-  { symbol: 'EURUSD=X', name: 'EUR / USD', category: 'forex', price: 1.0842, change: 0.001, changePercent: 0.09, currency: 'USD', spark: [], source: 'fallback' },
+  { symbol: 'USDEGP=X', name: 'USD / EGP', category: 'forex', price: 48.65, change: 0.08, changePercent: 0.16, currency: 'EGP', spark: [], source: 'fallback' },
   { symbol: 'GC=F', name: 'Gold', category: 'commodities', price: 2648.4, change: 8.2, changePercent: 0.31, currency: 'USD', spark: [], source: 'fallback' },
   { symbol: 'BTC-USD', name: 'Bitcoin', category: 'crypto', price: 96450, change: 1240, changePercent: 1.3, currency: 'USD', spark: [], source: 'fallback' },
   { symbol: 'ETH-USD', name: 'Ethereum', category: 'crypto', price: 3284, change: -18.2, changePercent: -0.55, currency: 'USD', spark: [], source: 'fallback' },
   { symbol: 'SOL-USD', name: 'Solana', category: 'crypto', price: 192.4, change: 3.1, changePercent: 1.64, currency: 'USD', spark: [], source: 'fallback' },
+  { symbol: 'BNB-USD', name: 'BNB', category: 'crypto', price: 648.2, change: 4.6, changePercent: 0.71, currency: 'USD', spark: [], source: 'fallback' },
+  { symbol: 'TON11419-USD', name: 'Toncoin', category: 'crypto', price: 5.42, change: 0.06, changePercent: 1.12, currency: 'USD', spark: [], source: 'fallback' },
+  { symbol: 'DOGE-USD', name: 'Dogecoin', category: 'crypto', price: 0.168, change: 0.002, changePercent: 1.2, currency: 'USD', spark: [], source: 'fallback' },
   { symbol: 'LTC-USD', name: 'Litecoin', category: 'crypto', price: 88.4, change: 0.9, changePercent: 1.02, currency: 'USD', spark: [], source: 'fallback' },
   { symbol: 'MINEAI', name: 'Mine AI', category: 'internal', price: 4.85, change: 0.05, changePercent: 1.04, currency: 'USD', spark: [], source: 'internal' },
 ];

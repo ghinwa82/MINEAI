@@ -29,7 +29,7 @@ const TOPICS: Array<Extract<SupportIntent, 'register' | 'mining' | 'plans' | 'pa
   'security',
 ];
 
-export default function SupportChat() {
+export default function SupportChat({ dense = false }: { dense?: boolean }) {
   const { lang } = useI18n();
   const copy = useMemo(() => supportCopy(lang), [lang]);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -74,12 +74,18 @@ export default function SupportChat() {
   };
 
   return (
-    <section className="mb-10 overflow-hidden rounded-2xl border border-amber/20 bg-[linear-gradient(150deg,rgba(212,175,55,0.08),rgba(8,13,24,0.97)_55%)]">
-      <div className="border-b border-white/8 p-6 sm:p-7">
+    <section
+      className={`overflow-hidden rounded-2xl border border-amber/20 bg-[linear-gradient(150deg,rgba(212,175,55,0.08),rgba(8,13,24,0.97)_55%)] ${
+        dense ? '' : 'mb-10'
+      }`}
+    >
+      <div className={`border-b border-white/8 ${dense ? 'p-4' : 'p-6 sm:p-7'}`}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-bold text-ink">{copy.title}</h2>
-            <p className="mt-2 max-w-2xl text-[0.82rem] leading-relaxed text-ink-mute">{copy.lead}</p>
+            {dense ? null : (
+              <p className="mt-2 max-w-2xl text-[0.82rem] leading-relaxed text-ink-mute">{copy.lead}</p>
+            )}
           </div>
           <span className="mx-chip !border-mint/40 !text-mint">
             <span className="relative flex h-1.5 w-1.5">
@@ -105,7 +111,12 @@ export default function SupportChat() {
         </div>
       </div>
 
-      <div ref={listRef} role="log" aria-live="polite" className="max-h-80 space-y-3 overflow-y-auto p-6 sm:p-7">
+      <div
+        ref={listRef}
+        role="log"
+        aria-live="polite"
+        className={`space-y-3 overflow-y-auto ${dense ? 'max-h-64 p-4' : 'max-h-80 p-6 sm:p-7'}`}
+      >
         {messages.map((message) => (
           <div
             key={message.id}
@@ -158,7 +169,7 @@ export default function SupportChat() {
         </button>
       </form>
 
-      <p className="border-t border-white/8 px-6 py-3 text-[0.66rem] leading-relaxed text-ink-faint">
+      <p className={`border-t border-white/8 text-[0.66rem] leading-relaxed text-ink-faint ${dense ? 'px-4 py-2.5' : 'px-6 py-3'}`}>
         {copy.disclaimer}
       </p>
     </section>

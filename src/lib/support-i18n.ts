@@ -37,6 +37,18 @@ type Copy = {
   topics: Record<'register' | 'mining' | 'plans' | 'payment' | 'withdraw' | 'security', string>;
   answers: Record<SupportIntent, string>;
   suggestions: string[];
+  widget: { open: string; close: string; title: string };
+  page: {
+    eyebrow: string;
+    title: string;
+    lead: string;
+    channelsTitle: string;
+    channelsLead: string;
+    supportLabel: string;
+    billingLabel: string;
+    privacyLabel: string;
+    topicsTitle: string;
+  };
 };
 
 const COPY: Record<SupportedLanguage, Copy> = {
@@ -78,6 +90,19 @@ const COPY: Record<SupportedLanguage, Copy> = {
         'I did not catch that. You can ask about creating an account, how mining works, plans and prices, paying by card or crypto, withdrawing to your wallet, or password and 2FA.',
     },
     suggestions: ['Create an account', 'How mining works', 'Withdraw to wallet'],
+    widget: { open: 'Need help?', close: 'Close help', title: '24/7 help' },
+    page: {
+      eyebrow: 'Help centre',
+      title: 'We are here any time of day',
+      lead: 'Ask the assistant about signing up, mining, plans, payments or withdrawals. It answers in simple words, in your language, at any hour.',
+      channelsTitle: 'Talk to a person',
+      channelsLead:
+        'For anything the assistant cannot decide — a payment, a refund or your account — write to the right inbox. Never send a password, a seed phrase or a card number.',
+      supportLabel: 'General help',
+      billingLabel: 'Billing and refunds',
+      privacyLabel: 'Privacy requests',
+      topicsTitle: 'What you can ask',
+    },
   },
   ar: {
     title: 'مساعد الدعم على مدار الساعة',
@@ -117,6 +142,19 @@ const COPY: Record<SupportedLanguage, Copy> = {
         'لم أفهم ذلك. يمكنك السؤال عن إنشاء حساب، أو كيف يعمل التعدين، أو الخطط والأسعار، أو الدفع بالبطاقة أو العملات، أو السحب إلى محفظتك، أو كلمة المرور والتحقق بخطوتين.',
     },
     suggestions: ['إنشاء حساب', 'كيف يعمل التعدين', 'السحب إلى المحفظة'],
+    widget: { open: 'تحتاج مساعدة؟', close: 'إغلاق المساعدة', title: 'مساعدة على مدار الساعة' },
+    page: {
+      eyebrow: 'مركز المساعدة',
+      title: 'نحن هنا في أي وقت',
+      lead: 'اسأل المساعد عن التسجيل أو التعدين أو الخطط أو الدفع أو السحب. يجيب بكلمات بسيطة وبلغتك وفي أي ساعة.',
+      channelsTitle: 'تحدث إلى شخص',
+      channelsLead:
+        'لأي أمر لا يستطيع المساعد حسمه — دفعة أو استرداد أو حسابك — اكتب إلى البريد المناسب. لا ترسل كلمة مرور أو عبارة استرداد أو رقم بطاقة.',
+      supportLabel: 'مساعدة عامة',
+      billingLabel: 'الفواتير والاسترداد',
+      privacyLabel: 'طلبات الخصوصية',
+      topicsTitle: 'ما يمكنك السؤال عنه',
+    },
   },
   fr: {
     title: 'Assistant d’aide 24 h/24',
@@ -156,6 +194,19 @@ const COPY: Record<SupportedLanguage, Copy> = {
         'Je n’ai pas compris. Vous pouvez demander comment créer un compte, comment fonctionne le minage, les offres et prix, le paiement par carte ou crypto, le retrait vers votre portefeuille, ou le mot de passe et la 2FA.',
     },
     suggestions: ['Créer un compte', 'Comment ça marche', 'Retirer vers un portefeuille'],
+    widget: { open: 'Besoin d’aide ?', close: 'Fermer l’aide', title: 'Aide 24 h/24' },
+    page: {
+      eyebrow: 'Centre d’aide',
+      title: 'Nous sommes là à toute heure',
+      lead: 'Interrogez l’assistant sur l’inscription, le minage, les offres, le paiement ou les retraits. Il répond simplement, dans votre langue, à toute heure.',
+      channelsTitle: 'Parler à une personne',
+      channelsLead:
+        'Pour ce que l’assistant ne peut pas décider — un paiement, un remboursement ou votre compte — écrivez à la bonne adresse. N’envoyez jamais mot de passe, phrase de récupération ni numéro de carte.',
+      supportLabel: 'Aide générale',
+      billingLabel: 'Facturation et remboursements',
+      privacyLabel: 'Demandes de confidentialité',
+      topicsTitle: 'Ce que vous pouvez demander',
+    },
   },
   es: {
     title: 'Asistente de ayuda 24/7',
@@ -195,6 +246,19 @@ const COPY: Record<SupportedLanguage, Copy> = {
         'No lo entendí. Puedes preguntar cómo crear una cuenta, cómo funciona la minería, planes y precios, pagar con tarjeta o cripto, retirar a tu cartera, o contraseña y 2FA.',
     },
     suggestions: ['Crear una cuenta', 'Cómo funciona', 'Retirar a la cartera'],
+    widget: { open: '¿Necesitas ayuda?', close: 'Cerrar ayuda', title: 'Ayuda 24/7' },
+    page: {
+      eyebrow: 'Centro de ayuda',
+      title: 'Estamos aquí a cualquier hora',
+      lead: 'Pregunta al asistente por el registro, la minería, los planes, los pagos o los retiros. Responde con palabras sencillas, en tu idioma y a cualquier hora.',
+      channelsTitle: 'Hablar con una persona',
+      channelsLead:
+        'Para lo que el asistente no puede decidir —un pago, un reembolso o tu cuenta— escribe al buzón correcto. Nunca envíes contraseña, frase de recuperación ni número de tarjeta.',
+      supportLabel: 'Ayuda general',
+      billingLabel: 'Facturación y reembolsos',
+      privacyLabel: 'Solicitudes de privacidad',
+      topicsTitle: 'Qué puedes preguntar',
+    },
   },
   zh: {
     title: '24/7 在线帮助',
@@ -234,6 +298,19 @@ const COPY: Record<SupportedLanguage, Copy> = {
         '我没有理解。你可以问如何创建账户、挖矿如何运作、套餐与价格、用卡或加密货币支付、提现到钱包，或密码与两步验证。',
     },
     suggestions: ['创建账户', '挖矿如何运作', '提现到钱包'],
+    widget: { open: '需要帮助？', close: '关闭帮助', title: '24/7 帮助' },
+    page: {
+      eyebrow: '帮助中心',
+      title: '我们随时都在',
+      lead: '可以询问注册、挖矿、套餐、支付或提现。助手会用简单的话、你的语言，在任何时间回答。',
+      channelsTitle: '联系人工',
+      channelsLead:
+        '遇到助手无法决定的事——付款、退款或你的账户——请写信到对应邮箱。切勿发送密码、助记词或卡号。',
+      supportLabel: '一般帮助',
+      billingLabel: '账单与退款',
+      privacyLabel: '隐私请求',
+      topicsTitle: '你可以问什么',
+    },
   },
   hi: {
     title: '24/7 सहायता सहायक',
@@ -273,6 +350,19 @@ const COPY: Record<SupportedLanguage, Copy> = {
         'मैं समझ नहीं पाया। आप खाता बनाने, माइनिंग कैसे काम करती है, प्लान और कीमतें, कार्ड या क्रिप्टो से भुगतान, वॉलेट में निकासी, या पासवर्ड और 2FA के बारे में पूछ सकते हैं।',
     },
     suggestions: ['खाता बनाएँ', 'माइनिंग कैसे काम करती है', 'वॉलेट में निकासी'],
+    widget: { open: 'मदद चाहिए?', close: 'मदद बंद करें', title: '24/7 सहायता' },
+    page: {
+      eyebrow: 'सहायता केंद्र',
+      title: 'हम हर समय उपलब्ध हैं',
+      lead: 'सहायक से पंजीकरण, माइनिंग, प्लान, भुगतान या निकासी के बारे में पूछें। यह आसान शब्दों में, आपकी भाषा में, किसी भी समय जवाब देता है।',
+      channelsTitle: 'किसी व्यक्ति से बात करें',
+      channelsLead:
+        'जो बात सहायक तय नहीं कर सकता — भुगतान, रिफ़ंड या आपका खाता — उसके लिए सही पते पर लिखें। पासवर्ड, रिकवरी वाक्यांश या कार्ड नंबर कभी न भेजें।',
+      supportLabel: 'सामान्य सहायता',
+      billingLabel: 'बिलिंग और रिफ़ंड',
+      privacyLabel: 'गोपनीयता अनुरोध',
+      topicsTitle: 'आप क्या पूछ सकते हैं',
+    },
   },
 };
 

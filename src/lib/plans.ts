@@ -181,7 +181,7 @@ export const MINING_PLANS: MiningPlan[] = [
         badge: 'الأكثر شعبية',
       },
       fr: {
-        name: 'Cloud Pro v2',
+        name: 'Nuage Pro v2',
         tier: 'Pro',
         tagline: 'Le plus populaire · 99,99 $',
         description: 'Une grappe multi-pièces rapide avec paiements prioritaires et aucun frais d’entretien.',
@@ -190,7 +190,7 @@ export const MINING_PLANS: MiningPlan[] = [
         badge: 'Le plus populaire',
       },
       es: {
-        name: 'Cloud Pro v2',
+        name: 'Nube Pro v2',
         tier: 'Pro',
         tagline: 'La más popular · $99.99',
         description: 'Un clúster rápido de varias monedas con pagos prioritarios y sin cuotas de mantenimiento.',
@@ -244,7 +244,7 @@ export const MINING_PLANS: MiningPlan[] = [
         cta: 'اختر إيليت',
       },
       fr: {
-        name: 'Cloud Elite v3',
+        name: 'Nuage Élite v3',
         tier: 'Elite',
         tagline: 'Paiement unique de 299,99 $',
         description: 'Allocation cloud institutionnelle avec répartition automatique vers les meilleures pièces.',
@@ -252,7 +252,7 @@ export const MINING_PLANS: MiningPlan[] = [
         cta: 'Choisir Elite',
       },
       es: {
-        name: 'Cloud Elite v3',
+        name: 'Nube Élite v3',
         tier: 'Elite',
         tagline: 'Pago único de $299.99',
         description: 'Asignación en la nube institucional con reparto automático hacia las mejores monedas.',
@@ -303,7 +303,7 @@ export const MINING_PLANS: MiningPlan[] = [
         cta: 'اختر السيادة',
       },
       fr: {
-        name: 'Sovereign Master v4',
+        name: 'Nuage Souverain v4',
         tier: 'Souverain',
         tagline: 'Paiement unique de 799,99 $',
         description: 'Puissance cloud maximale avec un multiplicateur royal de 3,0x et une voie de paiement VIP instantanée.',
@@ -311,7 +311,7 @@ export const MINING_PLANS: MiningPlan[] = [
         cta: 'Devenir Souverain',
       },
       es: {
-        name: 'Sovereign Master v4',
+        name: 'Nube Soberana v4',
         tier: 'Soberano',
         tagline: 'Pago único de $799.99',
         description: 'Máxima potencia en la nube con un multiplicador real de 3.0x y una vía de pago VIP instantánea.',
