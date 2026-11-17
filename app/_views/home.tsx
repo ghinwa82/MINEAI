@@ -9,6 +9,7 @@ import { formatUsd } from '@/lib/treasury';
 import ExplainerVideoPlayer from '../components/ExplainerVideoPlayer';
 import LiveMarketTracker from '../components/LiveMarketTracker';
 import MineAICoinLogo from '../components/MineAICoinLogo';
+import CoinShowcase from '../components/CoinShowcase';
 import MiningPlans from '../components/MiningPlans';
 import PayoutTicker from '../components/PayoutTicker';
 import ProofOfReservesBar from '../components/ProofOfReservesBar';
@@ -252,6 +253,8 @@ export default function HomeView() {
       </section>
 
       {/* --------------------------------------------------------- Plans */}
+      <CoinShowcase />
+
       <section className="border-t border-white/8 py-20">
         <MiningPlans />
       </section>
