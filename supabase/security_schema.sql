@@ -75,6 +75,16 @@ create table if not exists public.mining_positions (
 
 create index if not exists mining_positions_owner_id_idx on public.mining_positions (owner_id);
 
+-- Multi-coin ledger. `coins` holds one balance per rail (12 decimals of
+-- precision, stored as jsonb so adding a rail never needs a migration);
+-- `allocations` holds the percentage split the operator chose; the accrual
+-- watermark makes a sweep idempotent across a restarted cron.
+alter table public.mining_positions
+  add column if not exists coins jsonb not null default '{}'::jsonb,
+  add column if not exists allocations jsonb not null default '{}'::jsonb,
+  add column if not exists last_accrual_at timestamptz,
+  add column if not exists vip_tier text not null default 'observer';
+
 drop trigger if exists mining_positions_touch on public.mining_positions;
 create trigger mining_positions_touch
   before update on public.mining_positions
@@ -184,10 +194,103 @@ create index if not exists audit_log_operator_ref_idx on public.audit_log (opera
 create index if not exists audit_log_action_idx on public.audit_log (action);
 create index if not exists audit_log_created_at_idx on public.audit_log (created_at desc);
 
+-- ---------------------------------------------------- mining sub-ledgers ---
+
+-- One row per operator and rail. Kept beside `mining_positions` rather than
+-- inside it so a per-coin query never has to unpack the whole position.
+create table if not exists public.mining_allocations (
+  id            uuid primary key default gen_random_uuid(),
+  owner_id      uuid references auth.users (id) on delete set null,
+  operator_ref  text not null,
+  coin          text not null
+                check (coin in ('mineai', 'btc', 'eth', 'sol', 'bnb', 'ton', 'doge')),
+  share_pct     numeric(6, 2) not null default 0 check (share_pct >= 0 and share_pct <= 100),
+  updated_at    timestamptz not null default now(),
+  constraint mining_allocations_one_per_coin unique (operator_ref, coin),
+  constraint mining_allocations_operator_ref_format
+    check (operator_ref ~ '^[A-Za-z0-9_-]{8,48}$')
+);
+
+create index if not exists mining_allocations_operator_idx on public.mining_allocations (operator_ref);
+
+drop trigger if exists mining_allocations_touch on public.mining_allocations;
+create trigger mining_allocations_touch
+  before update on public.mining_allocations
+  for each row execute function public.set_updated_at();
+
+-- Append-only accrual journal. The cron writes one row per rail per sweep; the
+-- sum of a position's rows must equal its lifetime mined balance.
+create table if not exists public.mining_accruals (
+  id            bigint generated always as identity primary key,
+  owner_id      uuid references auth.users (id) on delete set null,
+  operator_ref  text not null,
+  coin          text not null
+                check (coin in ('mineai', 'btc', 'eth', 'sol', 'bnb', 'ton', 'doge')),
+  tokens        numeric(38, 12) not null check (tokens >= 0),
+  usd           numeric(18, 6) not null default 0 check (usd >= 0),
+  accrued_at    timestamptz not null default now()
+);
+
+create index if not exists mining_accruals_operator_idx on public.mining_accruals (operator_ref, accrued_at desc);
+
+-- On-chain withdrawal requests, one row per rail. `status` is only ever moved
+-- by the service role after a broadcast is observed on a public RPC.
+create table if not exists public.mining_withdrawals (
+  id            uuid primary key default gen_random_uuid(),
+  owner_id      uuid references auth.users (id) on delete set null,
+  operator_ref  text not null,
+  coin          text not null
+                check (coin in ('mineai', 'btc', 'eth', 'sol', 'bnb', 'ton', 'doge')),
+  symbol        text not null,
+  chain         text not null,
+  wallet_masked text not null,
+  tokens        numeric(38, 12) not null check (tokens > 0),
+  usd           numeric(18, 6) not null default 0 check (usd >= 0),
+  status        text not null default 'queued'
+                check (status in ('queued', 'broadcasting', 'paid', 'failed', 'cancelled')),
+  tx_hash       text,
+  requested_at  timestamptz not null default now(),
+  settled_at    timestamptz
+);
+
+create index if not exists mining_withdrawals_operator_idx on public.mining_withdrawals (operator_ref);
+create index if not exists mining_withdrawals_status_idx on public.mining_withdrawals (status);
+
+-- ------------------------------------------------ contract deployment registry ---
+
+-- Written by the owner's browser wallet through /api/admin/contract. The route
+-- refuses any deployer other than OWNER_EVM_WALLET and re-reads eth_getCode
+-- before inserting, so a row here always points at real bytecode.
+create table if not exists public.contract_deployments (
+  chain_id      integer primary key,
+  network       text not null,
+  address       text not null,
+  deployer      text not null,
+  tx_hash       text,
+  compiler      text,
+  deployed_at   timestamptz not null default now(),
+  updated_at    timestamptz not null default now()
+);
+
+drop trigger if exists contract_deployments_touch on public.contract_deployments;
+create trigger contract_deployments_touch
+  before update on public.contract_deployments
+  for each row execute function public.set_updated_at();
+
+-- Payment rails grew a processor; widen the original constraint in place.
+alter table public.deposits drop constraint if exists deposits_rail_check;
+alter table public.deposits
+  add constraint deposits_rail_check
+  check (rail in ('kashier', 'paymob', 'lemonsqueezy', 'stripe', 'crypto'));
+
 -- ------------------------------------------------------------- RLS setup ---
 
 alter table public.profiles            enable row level security;
 alter table public.mining_positions    enable row level security;
+alter table public.mining_allocations  enable row level security;
+alter table public.mining_accruals     enable row level security;
+alter table public.mining_withdrawals  enable row level security;
+alter table public.contract_deployments enable row level security;
 alter table public.deposits            enable row level security;
 alter table public.withdrawals         enable row level security;
 alter table public.referral_edges      enable row level security;
@@ -216,6 +319,29 @@ drop policy if exists mining_positions_select_own on public.mining_positions;
 create policy mining_positions_select_own on public.mining_positions
   for select to authenticated
   using (owner_id = auth.uid());
+
+-- per-coin ledgers: the owner reads their own rows, the service role writes.
+drop policy if exists mining_allocations_select_own on public.mining_allocations;
+create policy mining_allocations_select_own on public.mining_allocations
+  for select to authenticated
+  using (owner_id = auth.uid());
+
+drop policy if exists mining_accruals_select_own on public.mining_accruals;
+create policy mining_accruals_select_own on public.mining_accruals
+  for select to authenticated
+  using (owner_id = auth.uid());
+
+drop policy if exists mining_withdrawals_select_own on public.mining_withdrawals;
+create policy mining_withdrawals_select_own on public.mining_withdrawals
+  for select to authenticated
+  using (owner_id = auth.uid());
+
+-- the deployment registry is public identity data: the token endpoint reads it
+-- to render the contract address. Writes stay service-role only.
+drop policy if exists contract_deployments_public_read on public.contract_deployments;
+create policy contract_deployments_public_read on public.contract_deployments
+  for select to anon, authenticated
+  using (true);
 
 -- deposits: owner sees their own; writes are service-role only because a
 -- client must never be able to mark a deposit verified.
@@ -252,9 +378,15 @@ revoke all on public.audit_log from anon, authenticated;
 revoke insert, update, delete on public.deposits from anon, authenticated;
 revoke insert, update, delete on public.withdrawals from anon, authenticated;
 revoke insert, update, delete on public.mining_positions from anon, authenticated;
+revoke insert, update, delete on public.mining_allocations from anon, authenticated;
+revoke insert, update, delete on public.mining_accruals from anon, authenticated;
+revoke insert, update, delete on public.mining_withdrawals from anon, authenticated;
+revoke insert, update, delete on public.contract_deployments from anon, authenticated;
 
 grant select on public.profiles, public.mining_positions, public.deposits,
-  public.withdrawals, public.referral_edges to authenticated;
+  public.withdrawals, public.referral_edges, public.mining_allocations,
+  public.mining_accruals, public.mining_withdrawals to authenticated;
+grant select on public.contract_deployments to anon, authenticated;
 grant insert, update on public.profiles to authenticated;
 
 comment on table public.two_factor_secrets is

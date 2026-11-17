@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { pushAgentLog } from '@/lib/agents';
-import { createFiatCheckout, ownerProfile, railStatuses } from '@/lib/payments';
+import { createFiatCheckout, exchangeRates, ownerProfile, railStatuses } from '@/lib/payments';
 import { clientKey, checkRateLimit } from '@/lib/rate-limit';
 import { logEventToDatabase } from '@/lib/supabase';
 import { describeIssues, fiatCheckoutSchema } from '@/lib/validation';
@@ -15,6 +15,7 @@ export async function GET() {
   return NextResponse.json({
     ok: true,
     rails: railStatuses(),
+    rates: exchangeRates(),
     owner: {
       bank: {
         accountHolder: owner.bank.accountHolder,

@@ -12,6 +12,7 @@ export const metadata: Metadata = buildMetadata({
     'A single terminal for global indices, commodities, currencies and the top digital assets, refreshed continuously. $MINEAI trades on its own utility index alongside them.',
   path: '/markets',
   keywords: ['live markets', 'market terminal', 'crypto prices', 'MINEAI token', 'gold price', 'forex rates'],
+  image: null,
 });
 
 export default function MarketsPage() {

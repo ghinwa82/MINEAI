@@ -48,12 +48,15 @@ const DEFINITIONS: Definition[] = [
   { symbol: 'EURUSD=X', name: 'EUR / USD', category: 'forex', fallback: 1.0842, currency: 'USD' },
   { symbol: 'GBPUSD=X', name: 'GBP / USD', category: 'forex', fallback: 1.2715, currency: 'USD' },
   { symbol: 'USDJPY=X', name: 'USD / JPY', category: 'forex', fallback: 154.28, currency: 'JPY' },
+  { symbol: 'USDEGP=X', name: 'USD / EGP', category: 'forex', fallback: 48.65, currency: 'EGP' },
   { symbol: 'GC=F', name: 'Gold', category: 'commodities', fallback: 2_648.4, currency: 'USD' },
   { symbol: 'CL=F', name: 'Crude Oil', category: 'commodities', fallback: 71.35, currency: 'USD' },
   { symbol: 'BTC-USD', name: 'Bitcoin', category: 'crypto', fallback: 96_450, currency: 'USD' },
   { symbol: 'ETH-USD', name: 'Ethereum', category: 'crypto', fallback: 3_284, currency: 'USD' },
   { symbol: 'SOL-USD', name: 'Solana', category: 'crypto', fallback: 192.4, currency: 'USD' },
   { symbol: 'BNB-USD', name: 'BNB', category: 'crypto', fallback: 648.2, currency: 'USD' },
+  { symbol: 'TON11419-USD', name: 'Toncoin', category: 'crypto', fallback: 5.42, currency: 'USD' },
+  { symbol: 'DOGE-USD', name: 'Dogecoin', category: 'crypto', fallback: 0.168, currency: 'USD' },
 ];
 
 interface Cache {

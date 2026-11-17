@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 
 import PaymentCheckout from '../components/PaymentCheckout';
 import { useI18n } from '@/lib/i18n-provider';
+import { getLegalCopy } from '@/lib/legal-i18n';
 import { useMesh } from '@/lib/use-mesh';
 import { getCatalogue } from '@/lib/catalog';
 import { formatUsd } from '@/lib/treasury';
@@ -25,7 +27,8 @@ interface Toast {
  * response, never by an optimistic guess.
  */
 export default function StoreView() {
-  const { t, lang } = useI18n();
+  const { t, eco, lang, href } = useI18n();
+  const legal = getLegalCopy(lang);
   const { state, loading, dispatch } = useMesh(12_000);
   const catalogue = getCatalogue(lang);
 
@@ -169,6 +172,82 @@ export default function StoreView() {
           {toast.text}
         </div>
       ) : null}
+
+      {/* ------------------------------------------------------ Payment rails */}
+      <section className="mb-12 overflow-hidden rounded-[1.5rem] border border-amber/20 bg-[linear-gradient(135deg,rgba(212,175,55,0.07),rgba(8,13,24,0.96)_46%)]">
+        <div className="grid gap-0 lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="p-7 sm:p-9">
+            <div className="flex flex-wrap items-center gap-3">
+              <p className="mx-eyebrow">{eco.rails.eyebrow}</p>
+              <span className="rounded-full border border-mint/40 bg-mint/10 px-2.5 py-1 text-[0.6rem] font-bold tracking-[0.14em] text-mint uppercase">
+                {eco.rails.feeBadge}
+              </span>
+            </div>
+
+            <h2 className="mt-5 max-w-xl text-[clamp(1.35rem,2.4vw,1.9rem)] leading-[1.15] font-bold tracking-[-0.02em] text-ink">
+              {eco.rails.title}
+            </h2>
+            <p className="mt-4 max-w-xl text-[0.88rem] leading-relaxed text-ink-mute">{eco.rails.lead}</p>
+
+            <div className="mt-6 flex flex-wrap items-center gap-2">
+              {['VISA', 'Mastercard', 'Debit · Meeza'].map((brand) => (
+                <span
+                  key={brand}
+                  className="rounded-lg border border-white/12 bg-white/[0.04] px-3 py-1.5 text-[0.66rem] font-semibold tracking-[0.1em] text-ink-soft uppercase"
+                >
+                  {brand}
+                </span>
+              ))}
+              <span className="mx-numeric text-[0.66rem] text-amber">USD $ · EGP ج.م</span>
+            </div>
+
+            <p className="mt-5 text-[0.72rem] leading-relaxed text-ink-faint">{eco.rails.currencies}</p>
+
+            <div className="mt-6 flex flex-wrap gap-x-4 gap-y-1.5 text-[0.7rem]">
+              {[
+                { path: '/terms', label: legal.nav.terms },
+                { path: '/privacy', label: legal.nav.privacy },
+                { path: '/refund-policy', label: legal.nav.refund },
+                { path: '/contact', label: legal.nav.contact },
+              ].map((link) => (
+                <Link
+                  key={link.path}
+                  href={href(link.path)}
+                  className="text-ink-faint underline decoration-white/15 underline-offset-4 transition hover:text-amber"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-px bg-white/8 sm:grid-cols-2 lg:grid-cols-1">
+            <div className="bg-[#070c17] p-7 sm:p-8">
+              <h3 className="flex items-center gap-2 text-[0.95rem] font-bold text-ink">
+                <span aria-hidden className="text-amber">◆</span>
+                {eco.rails.cardTitle}
+              </h3>
+              <p className="mt-2.5 text-[0.8rem] leading-relaxed text-ink-mute">{eco.rails.cardBody}</p>
+              <p className="mt-3 text-[0.66rem] tracking-[0.1em] text-ink-faint uppercase">
+                {eco.checkout.railKashier} · {eco.checkout.railPaymob}
+              </p>
+            </div>
+
+            <div className="bg-[#070c17] p-7 sm:p-8">
+              <h3 className="flex items-center gap-2 text-[0.95rem] font-bold text-ink">
+                <span aria-hidden className="text-cyan">◈</span>
+                {eco.rails.cryptoTitle}
+              </h3>
+              <p className="mt-2.5 text-[0.8rem] leading-relaxed text-ink-mute">{eco.rails.cryptoBody}</p>
+              <p className="mt-3 text-[0.66rem] tracking-[0.1em] text-ink-faint uppercase">USDT · BTC · ETH · SOL · TON</p>
+            </div>
+          </div>
+        </div>
+
+        <p className="border-t border-white/8 bg-[#050810]/70 px-7 py-3 text-[0.66rem] text-ink-faint sm:px-9">
+          {eco.rails.compliance}
+        </p>
+      </section>
 
       {/* ---------------------------------------------------------- Tiers */}
       <section className="grid gap-5 lg:grid-cols-3">

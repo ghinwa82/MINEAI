@@ -19,6 +19,7 @@ export function buildMetadata({
   lang = 'en',
   keywords = [],
   type = 'website',
+  image,
 }: {
   title: string;
   description: string;
@@ -26,12 +27,15 @@ export function buildMetadata({
   lang?: SupportedLanguage;
   keywords?: string[];
   type?: 'website' | 'article' | 'product';
+  /** Absolute or root-relative social card; `null` lets a route's own opengraph-image file win. */
+  image?: string | null;
 }): Metadata {
   const canonical = absoluteUrl(localizedPath(lang, path));
   const alternates = Object.fromEntries(
     Object.entries(alternatesFor(path)).map(([locale, target]) => [locale, absoluteUrl(target)]),
   );
   const openGraphType = type === 'product' ? 'website' : type;
+  const ogImage = image === null ? undefined : absoluteUrl(image ?? '/og.png');
 
   return {
     title,
@@ -52,20 +56,24 @@ export function buildMetadata({
       alternateLocale: Object.values(LANGUAGES)
         .filter((meta) => meta.code !== lang)
         .map((meta) => meta.ogLocale),
-      images: [
-        {
-          url: absoluteUrl('/og.png'),
-          width: 1200,
-          height: 630,
-          alt: `${title} — MineAI Node`,
-        },
-      ],
+      ...(ogImage
+        ? {
+            images: [
+              {
+                url: ogImage,
+                width: 1200,
+                height: 630,
+                alt: `${title} — MineAI Node`,
+              },
+            ],
+          }
+        : {}),
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [absoluteUrl('/og.png')],
+      ...(ogImage ? { images: [ogImage] } : {}),
     },
     other: {
       'x-default-url': absoluteUrl(localizedPath('en', path)),

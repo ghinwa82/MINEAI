@@ -12,8 +12,9 @@ import { z } from 'zod';
 const amount = z.coerce.number().finite().positive().max(100_000);
 
 export const fiatCheckoutSchema = z.object({
-  rail: z.enum(['paymob', 'lemonsqueezy', 'stripe']),
+  rail: z.enum(['kashier', 'paymob', 'lemonsqueezy', 'stripe']),
   amountUsd: amount,
+  currency: z.enum(['USD', 'EGP']).default('USD'),
   tier: z.string().trim().min(1).max(80),
   nodeId: z.string().trim().min(1).max(40),
   locale: z.enum(['en', 'ar', 'fr', 'es', 'zh', 'hi']).default('en'),
@@ -43,24 +44,38 @@ export const uidSchema = z
   .trim()
   .regex(/^[A-Za-z0-9_-]{8,48}$/, 'A session id must be 8–48 url-safe characters');
 
+const miningCoin = z.enum(['mineai', 'btc', 'eth', 'sol', 'bnb', 'ton', 'doge']);
+
+/** Allocation shares are percentages; they are normalised server-side. */
+const allocationShare = z.coerce.number().finite().min(0).max(100);
+
 export const miningActionSchema = z.discriminatedUnion('action', [
   z.object({ action: z.literal('claim-streak'), uid: uidSchema }),
   z.object({ action: z.literal('stake'), uid: uidSchema, amount }),
   z.object({ action: z.literal('unstake'), uid: uidSchema, amount }),
   z.object({
+    action: z.literal('allocate'),
+    uid: uidSchema,
+    allocation: z
+      .object({
+        mineai: allocationShare.optional(),
+        btc: allocationShare.optional(),
+        eth: allocationShare.optional(),
+        sol: allocationShare.optional(),
+        bnb: allocationShare.optional(),
+        ton: allocationShare.optional(),
+        doge: allocationShare.optional(),
+      })
+      .refine((value) => Object.values(value).some((share) => (share ?? 0) > 0), {
+        message: 'Allocate at least one share to a coin',
+      }),
+  }),
+  z.object({
     action: z.literal('withdraw'),
     uid: uidSchema,
+    coin: miningCoin,
     amount,
     wallet: z.string().trim().min(20).max(120),
-    network: z.enum([
-      'usdt-bep20',
-      'usdt-arbitrum',
-      'usdt-erc20',
-      'usdt-trc20',
-      'sol',
-      'ton',
-      'btc',
-    ]),
     /** Required only once the operator has enrolled TOTP. */
     code: z.string().trim().min(6).max(12).optional(),
   }),

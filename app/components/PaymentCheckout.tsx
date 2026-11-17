@@ -24,7 +24,7 @@ interface CheckoutPlan {
 }
 
 interface RailStatus {
-  rail: 'paymob' | 'lemonsqueezy' | 'stripe';
+  rail: 'kashier' | 'paymob' | 'lemonsqueezy' | 'stripe';
   mode: 'live' | 'test' | 'sandbox';
   configured: boolean;
   detail: string;
@@ -74,10 +74,13 @@ interface Verdict {
 }
 
 const RAIL_LABEL: Record<RailStatus['rail'], string> = {
+  kashier: 'Kashier',
   paymob: 'Paymob',
   lemonsqueezy: 'Lemon Squeezy',
   stripe: 'Stripe',
 };
+
+const EGP_PER_USD = 48.65;
 
 export default function PaymentCheckout({
   plan,
@@ -100,6 +103,8 @@ export default function PaymentCheckout({
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [currency, setCurrency] = useState<'USD' | 'EGP'>('USD');
+  const [egpRate, setEgpRate] = useState(EGP_PER_USD);
 
   const [intent, setIntent] = useState<DepositIntent | null>(null);
   const [txHash, setTxHash] = useState('');
@@ -119,10 +124,15 @@ export default function PaymentCheckout({
         ]);
 
         if (fiatResponse.ok) {
-          const payload = (await fiatResponse.json()) as { rails?: RailStatus[]; owner?: { bank?: OwnerBank } };
+          const payload = (await fiatResponse.json()) as {
+            rails?: RailStatus[];
+            owner?: { bank?: OwnerBank };
+            rates?: { USD?: number; EGP?: number };
+          };
           if (cancelled) return;
           setRails(payload.rails ?? []);
           setOwner(payload.owner?.bank ?? null);
+          if (payload.rates?.EGP && payload.rates.EGP > 0) setEgpRate(payload.rates.EGP);
           const firstArmed = payload.rails?.find((item) => item.configured);
           if (firstArmed) setRail(firstArmed.rail);
         }
@@ -170,6 +180,7 @@ export default function PaymentCheckout({
   );
 
   const numericAmount = Number(amount);
+  const chargeAmount = currency === 'EGP' ? numericAmount * egpRate : numericAmount;
   const minutesLeft = intent
     ? Math.max(0, Math.ceil((new Date(intent.expiresAt).getTime() - now) / 60_000))
     : 0;
@@ -195,12 +206,19 @@ export default function PaymentCheckout({
     setNotice(null);
 
     try {
-      const response = await fetch('/api/payments/checkout', {
+      const endpoint =
+        rail === 'kashier'
+          ? '/api/checkout/kashier'
+          : rail === 'paymob'
+            ? '/api/checkout/paymob'
+            : '/api/payments/checkout';
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           rail,
           amountUsd: numericAmount,
+          currency,
           tier: plan.tierLabel,
           nodeId: plan.id,
           locale: lang,
@@ -333,7 +351,11 @@ export default function PaymentCheckout({
               <p className="text-[0.6rem] font-semibold tracking-[0.16em] text-ink-faint uppercase">
                 {copy.amountDue}
               </p>
-              <p className="mx-numeric mt-1 text-2xl font-bold text-ink">${plan.priceUsd.toFixed(2)}</p>
+              <p className="mx-numeric mt-1 text-2xl font-bold text-ink">
+                {currency === 'EGP'
+                  ? `ج.م ${(plan.priceUsd * egpRate).toFixed(2)}`
+                  : `$${plan.priceUsd.toFixed(2)}`}
+              </p>
             </div>
             <button
               type="button"
@@ -396,8 +418,44 @@ export default function PaymentCheckout({
                 className="mt-6 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]"
               >
                 <div>
-                  <p className="text-[0.7rem] font-semibold tracking-[0.14em] text-ink-faint uppercase">
-                    {copy.payWith}
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-[0.7rem] font-semibold tracking-[0.14em] text-ink-faint uppercase">
+                      {copy.payWith}
+                    </p>
+                    <div className="flex rounded-lg border border-white/10 bg-[#04060d] p-0.5" role="group" aria-label={copy.amountLabel}>
+                      {(
+                        [
+                          { code: 'USD' as const, label: 'USD $' },
+                          { code: 'EGP' as const, label: 'EGP ج.م' },
+                        ]
+                      ).map((item) => (
+                        <button
+                          key={item.code}
+                          type="button"
+                          onClick={() => setCurrency(item.code)}
+                          aria-pressed={currency === item.code}
+                          className={`rounded-md px-2.5 py-1 text-[0.66rem] font-semibold transition ${
+                            currency === item.code
+                              ? 'bg-cyan/15 text-cyan'
+                              : 'text-ink-faint hover:text-ink'
+                          }`}
+                        >
+                          {item.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <p className="mx-numeric mt-2 text-[0.68rem] text-ink-faint">
+                    {copy.amountDue}:{' '}
+                    <span className="text-ink-soft">
+                      {currency === 'EGP'
+                        ? `ج.م ${chargeAmount.toFixed(2)}`
+                        : `$${chargeAmount.toFixed(2)}`}
+                    </span>
+                    {currency === 'EGP' ? (
+                      <span className="ms-2 opacity-70">1 USD = {egpRate.toFixed(2)} EGP</span>
+                    ) : null}
                   </p>
 
                   <div className="mt-3 space-y-2.5">

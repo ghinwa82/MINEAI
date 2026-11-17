@@ -21,6 +21,19 @@ export interface EcosystemCopy {
     mining: string;
     markets: string;
     rewards: string;
+    news: string;
+  };
+  rails: {
+    eyebrow: string;
+    title: string;
+    lead: string;
+    cardTitle: string;
+    cardBody: string;
+    currencies: string;
+    cryptoTitle: string;
+    cryptoBody: string;
+    feeBadge: string;
+    compliance: string;
   };
   checkout: {
     title: string;
@@ -30,6 +43,7 @@ export interface EcosystemCopy {
     cryptoTitle: string;
     cryptoLead: string;
     payWith: string;
+    railKashier: string;
     railPaymob: string;
     railLemon: string;
     railStripe: string;
@@ -113,6 +127,18 @@ export interface EcosystemCopy {
     edgeBody: string;
     compliance: string;
     cron: string;
+    terminalTitle: string;
+    terminalBody: string;
+    allocation: string;
+    allocationHint: string;
+    saveAllocation: string;
+    savingAllocation: string;
+    coin: string;
+    bonus: string;
+    portfolio: string;
+    perDay: string;
+    allocationSaved: string;
+    addressHint: string;
   };
   markets: {
     eyebrow: string;
@@ -173,7 +199,21 @@ export interface EcosystemCopy {
 }
 
 const EN: EcosystemCopy = {
-  nav: { mining: 'Cloud Mining', markets: 'Markets', rewards: 'Rewards' },
+  nav: { mining: 'Cloud Mining', markets: 'Markets', rewards: 'Rewards', news: 'News' },
+  rails: {
+    eyebrow: 'Payment rails',
+    title: 'Pay by card, or settle on-chain with zero platform fee',
+    lead: 'Visa, Mastercard and debit cards settle through Kashier and Paymob in US dollars or Egyptian pounds. Direct USDT and BTC settlement skips the processor entirely.',
+    cardTitle: 'Global & local cards',
+    cardBody:
+      'Kashier and Paymob authorise Visa, Mastercard and Meeza debit cards, then settle to the merchant bank account by webhook. The card form is hosted by the processor — no card number touches this server.',
+    currencies: 'Priced in USD $ · Charged in EGP ج.م at the displayed rate',
+    cryptoTitle: 'Borderless crypto',
+    cryptoBody:
+      'USDT and BTC settle straight to the published owner wallet on the network you choose. A deposit is credited only after the transaction hash is verified against a public RPC.',
+    feeBadge: '0% platform fee',
+    compliance: 'Terms, privacy, refund policy and contact are published for processor review.',
+  },
   checkout: {
     title: 'Settle this node',
     lead: 'Two rails, one destination. Card and wallet payments clear through the fiat processor; crypto clears on-chain and is verified before the treasury is credited.',
@@ -182,6 +222,7 @@ const EN: EcosystemCopy = {
     cryptoTitle: 'On-chain rail',
     cryptoLead: 'Seven networks, one deposit address per network, verified by transaction hash.',
     payWith: 'Pay with',
+    railKashier: 'Kashier',
     railPaymob: 'Paymob',
     railLemon: 'Lemon Squeezy',
     railStripe: 'Stripe',
@@ -265,6 +306,19 @@ const EN: EcosystemCopy = {
     edgeBody: 'A serverless cron accrues every active position, even while this tab is closed.',
     compliance: 'Cloud-terms compliant',
     cron: 'Last accrual',
+    terminalTitle: 'Multi-coin emission terminal',
+    terminalBody:
+      'One fixed dollar budget, split across seven rails. $MINEAI carries a 3× bonus, so an equal share earns three times the budget — the total yield never changes.',
+    allocation: 'Allocation',
+    allocationHint: 'Shares are normalised; they do not need to add up to 100.',
+    saveAllocation: 'Save allocation',
+    savingAllocation: 'Saving…',
+    coin: 'Coin',
+    bonus: 'Bonus',
+    portfolio: 'Portfolio value',
+    perDay: 'Emission / day',
+    allocationSaved: 'Emission split updated.',
+    addressHint: 'Withdrawal address for the selected chain.',
   },
   markets: {
     eyebrow: 'Institutional terminal',
@@ -342,7 +396,21 @@ const EN: EcosystemCopy = {
 };
 
 const AR: EcosystemCopy = {
-  nav: { mining: 'التعدين السحابي', markets: 'الأسواق', rewards: 'المكافآت' },
+  nav: { mining: 'التعدين السحابي', markets: 'الأسواق', rewards: 'المكافآت', news: 'الأخبار' },
+  rails: {
+    eyebrow: 'مسارات الدفع',
+    title: 'ادفع بالبطاقة، أو سوِّ على السلسلة دون أي رسوم منصة',
+    lead: 'تُسوّى بطاقات Visa وMastercard والبطاقات المدينة عبر Kashier وPaymob بالدولار الأمريكي أو الجنيه المصري. أما تسوية USDT وBTC المباشرة فتتجاوز بوابة الدفع بالكامل.',
+    cardTitle: 'بطاقات عالمية ومحلية',
+    cardBody:
+      'تُجيز Kashier وPaymob بطاقات Visa وMastercard وMeeza المدينة ثم تسوّيان إلى حساب التاجر البنكي عبر webhook. تستضيف البوابة نموذج البطاقة — لا يمر رقم بطاقة عبر هذا الخادم.',
+    currencies: 'السعر بالدولار $ · التحصيل بالجنيه ج.م بالسعر المعروض',
+    cryptoTitle: 'عملات رقمية بلا حدود',
+    cryptoBody:
+      'تُسوّى USDT وBTC مباشرة إلى محفظة المالك المنشورة على الشبكة التي تختارها. لا يُضاف الإيداع إلا بعد التحقق من بصمة المعاملة عبر RPC عام.',
+    feeBadge: '0% رسوم منصة',
+    compliance: 'الشروط والخصوصية وسياسة الاسترداد والاتصال منشورة لمراجعة بوابة الدفع.',
+  },
   checkout: {
     title: 'أتمم شراء هذه العقدة',
     lead: 'مساران ووجهة واحدة. تُحصّل مدفوعات البطاقات والمحافظ عبر معالج الدفع، وتُحصّل العملات الرقمية على السلسلة ويتم التحقق منها قبل إضافة الرصيد.',
@@ -351,6 +419,7 @@ const AR: EcosystemCopy = {
     cryptoTitle: 'مسار السلسلة',
     cryptoLead: 'سبع شبكات، عنوان إيداع واحد لكل شبكة، يُتحقق منه عبر بصمة المعاملة.',
     payWith: 'ادفع بواسطة',
+    railKashier: 'Kashier',
     railPaymob: 'Paymob',
     railLemon: 'Lemon Squeezy',
     railStripe: 'Stripe',
@@ -434,6 +503,19 @@ const AR: EcosystemCopy = {
     edgeBody: 'كرون بلا خادم يراكم كل مركز نشط حتى وإغلاق هذه النافذة.',
     compliance: 'متوافق مع شروط السحابة',
     cron: 'آخر استحقاق',
+    terminalTitle: 'طرفية الإصدار متعددة العملات',
+    terminalBody:
+      'ميزانية دولارية ثابتة واحدة تُقسَّم على سبعة مسارات. يحمل $MINEAI مكافأة 3×، فالحصة المتساوية تكسب ثلاثة أضعاف الميزانية — ولا يتغيّر إجمالي العائد أبداً.',
+    allocation: 'التوزيع',
+    allocationHint: 'تُوحَّد الحصص؛ لا يلزم أن تجمع 100.',
+    saveAllocation: 'حفظ التوزيع',
+    savingAllocation: 'جارٍ الحفظ…',
+    coin: 'العملة',
+    bonus: 'المكافأة',
+    portfolio: 'قيمة المحفظة',
+    perDay: 'الإصدار / يوم',
+    allocationSaved: 'تم تحديث تقسيم الإصدار.',
+    addressHint: 'عنوان السحب للسلسلة المختارة.',
   },
   markets: {
     eyebrow: 'محطة مؤسسية',
@@ -511,7 +593,22 @@ const AR: EcosystemCopy = {
 };
 
 const FR: EcosystemCopy = {
-  nav: { mining: 'Minage cloud', markets: 'Marchés', rewards: 'Récompenses' },
+  nav: { mining: 'Minage cloud', markets: 'Marchés', rewards: 'Récompenses', news: 'Actualités' },
+  rails: {
+    eyebrow: 'Rails de paiement',
+    title: "Payez par carte, ou réglez on-chain sans frais de plateforme",
+    lead: "Les cartes Visa, Mastercard et de débit sont réglées via Kashier et Paymob en dollars américains ou en livres égyptiennes. Le règlement direct USDT et BTC contourne entièrement le processeur.",
+    cardTitle: 'Cartes mondiales et locales',
+    cardBody:
+      "Kashier et Paymob autorisent les cartes Visa, Mastercard et Meeza, puis règlent le compte bancaire du marchand par webhook. Le formulaire de carte est hébergé par le processeur — aucun numéro de carte ne transite par ce serveur.",
+    currencies: 'Prix en USD $ · Débit en EGP ج.م au taux affiché',
+    cryptoTitle: 'Crypto sans frontières',
+    cryptoBody:
+      "USDT et BTC sont réglés directement sur le portefeuille du propriétaire publié, sur le réseau choisi. Un dépôt n'est crédité qu'après vérification du hash auprès d'un RPC public.",
+    feeBadge: '0 % de frais de plateforme',
+    compliance:
+      "Conditions, confidentialité, politique de remboursement et contact sont publiés pour l'examen du processeur.",
+  },
   checkout: {
     title: 'Régler ce nœud',
     lead: "Deux rails, une seule destination. Les cartes et portefeuilles passent par le processeur fiat ; la crypto est réglée on-chain et vérifiée avant crédit.",
@@ -520,6 +617,7 @@ const FR: EcosystemCopy = {
     cryptoTitle: 'Rail on-chain',
     cryptoLead: "Sept réseaux, une adresse de dépôt par réseau, vérifiée par hash de transaction.",
     payWith: 'Payer avec',
+    railKashier: 'Kashier',
     railPaymob: 'Paymob',
     railLemon: 'Lemon Squeezy',
     railStripe: 'Stripe',
@@ -603,6 +701,19 @@ const FR: EcosystemCopy = {
     edgeBody: 'Un cron serverless accumule chaque position active, même onglet fermé.',
     compliance: 'Conforme aux conditions cloud',
     cron: 'Dernière accumulation',
+    terminalTitle: "Terminal d'émission multi-coin",
+    terminalBody:
+      'Un budget dollar fixe, réparti sur sept rails. $MINEAI porte un bonus de 3× : une part égale gagne trois fois le budget, sans jamais augmenter le rendement total.',
+    allocation: 'Allocation',
+    allocationHint: 'Les parts sont normalisées ; elles n’ont pas besoin de totaliser 100.',
+    saveAllocation: "Enregistrer l'allocation",
+    savingAllocation: 'Enregistrement…',
+    coin: 'Jeton',
+    bonus: 'Bonus',
+    portfolio: 'Valeur du portefeuille',
+    perDay: 'Émission / jour',
+    allocationSaved: 'Répartition de l’émission mise à jour.',
+    addressHint: 'Adresse de retrait pour la chaîne sélectionnée.',
   },
   markets: {
     eyebrow: 'Terminal institutionnel',
@@ -680,7 +791,22 @@ const FR: EcosystemCopy = {
 };
 
 const ES: EcosystemCopy = {
-  nav: { mining: 'Minería cloud', markets: 'Mercados', rewards: 'Recompensas' },
+  nav: { mining: 'Minería cloud', markets: 'Mercados', rewards: 'Recompensas', news: 'Noticias' },
+  rails: {
+    eyebrow: 'Canales de pago',
+    title: 'Paga con tarjeta o liquida on-chain sin comisión de plataforma',
+    lead: 'Las tarjetas Visa, Mastercard y de débito se liquidan con Kashier y Paymob en dólares estadounidenses o libras egipcias. La liquidación directa en USDT y BTC evita por completo al procesador.',
+    cardTitle: 'Tarjetas globales y locales',
+    cardBody:
+      'Kashier y Paymob autorizan tarjetas Visa, Mastercard y Meeza, y liquidan a la cuenta bancaria del comercio por webhook. El formulario de tarjeta lo aloja el procesador: ningún número de tarjeta pasa por este servidor.',
+    currencies: 'Precio en USD $ · Cargo en EGP ج.م al tipo mostrado',
+    cryptoTitle: 'Cripto sin fronteras',
+    cryptoBody:
+      'USDT y BTC se liquidan directamente a la cartera del propietario publicada, en la red que elijas. Un depósito se acredita solo tras verificar el hash contra un RPC público.',
+    feeBadge: '0% de comisión de plataforma',
+    compliance:
+      'Los términos, la privacidad, la política de reembolso y el contacto están publicados para la revisión del procesador.',
+  },
   checkout: {
     title: 'Liquidar este nodo',
     lead: 'Dos raíles, un destino. Las tarjetas y carteras pasan por el procesador fiat; la cripto se liquida on-chain y se verifica antes de abonar.',
@@ -689,6 +815,7 @@ const ES: EcosystemCopy = {
     cryptoTitle: 'Raíl on-chain',
     cryptoLead: 'Siete redes, una dirección de depósito por red, verificada por hash de transacción.',
     payWith: 'Pagar con',
+    railKashier: 'Kashier',
     railPaymob: 'Paymob',
     railLemon: 'Lemon Squeezy',
     railStripe: 'Stripe',
@@ -772,6 +899,19 @@ const ES: EcosystemCopy = {
     edgeBody: 'Un cron serverless acumula cada posición activa, incluso con la pestaña cerrada.',
     compliance: 'Conforme a términos cloud',
     cron: 'Última acumulación',
+    terminalTitle: 'Terminal de emisión multicripto',
+    terminalBody:
+      'Un presupuesto fijo en dólares, repartido entre siete canales. $MINEAI lleva un bono de 3×: una cuota igual gana tres veces el presupuesto sin aumentar el rendimiento total.',
+    allocation: 'Asignación',
+    allocationHint: 'Las cuotas se normalizan; no necesitan sumar 100.',
+    saveAllocation: 'Guardar asignación',
+    savingAllocation: 'Guardando…',
+    coin: 'Moneda',
+    bonus: 'Bono',
+    portfolio: 'Valor de la cartera',
+    perDay: 'Emisión / día',
+    allocationSaved: 'Reparto de emisión actualizado.',
+    addressHint: 'Dirección de retiro para la cadena seleccionada.',
   },
   markets: {
     eyebrow: 'Terminal institucional',
@@ -849,7 +989,21 @@ const ES: EcosystemCopy = {
 };
 
 const ZH: EcosystemCopy = {
-  nav: { mining: '云端挖矿', markets: '市场行情', rewards: '奖励中心' },
+  nav: { mining: '云端挖矿', markets: '市场行情', rewards: '奖励中心', news: '新闻' },
+  rails: {
+    eyebrow: '支付通道',
+    title: '银行卡支付，或链上结算零平台费',
+    lead: 'Visa、Mastercard 与借记卡经 Kashier 和 Paymob 以美元或埃及镑结算；USDT 与 BTC 直接结算，完全绕过支付机构。',
+    cardTitle: '全球与本地银行卡',
+    cardBody:
+      'Kashier 与 Paymob 受理 Visa、Mastercard 与 Meeza 借记卡，并通过 webhook 结算至商户银行账户。卡片表单由支付机构托管——本服务器不接触任何卡号。',
+    currencies: '以美元 $ 标价 · 按显示汇率以埃及镑 ج.م 扣款',
+    cryptoTitle: '无国界加密支付',
+    cryptoBody:
+      'USDT 与 BTC 直接结算至所公布的所有者钱包，网络由你选择。仅在通过公共 RPC 验证交易哈希后才会入账。',
+    feeBadge: '0% 平台费',
+    compliance: '服务条款、隐私政策、退款政策与联系方式已公布，供支付机构审核。',
+  },
   checkout: {
     title: '结算此节点',
     lead: '两条通道，一个去向。银行卡与钱包经法币通道结算；加密货币在链上结算，验证后才计入余额。',
@@ -858,6 +1012,7 @@ const ZH: EcosystemCopy = {
     cryptoTitle: '链上通道',
     cryptoLead: '七条网络，每条网络一个充值地址，通过交易哈希验证。',
     payWith: '支付方式',
+    railKashier: 'Kashier',
     railPaymob: 'Paymob',
     railLemon: 'Lemon Squeezy',
     railStripe: 'Stripe',
@@ -941,6 +1096,19 @@ const ZH: EcosystemCopy = {
     edgeBody: '无服务器定时任务为每个活跃仓位累计收益，即使关闭页面也不停。',
     compliance: '符合云服务条款',
     cron: '最近累计',
+    terminalTitle: '多币种发行终端',
+    terminalBody:
+      '固定的美元发行预算，按七条通道拆分。$MINEAI 享 3× 加成，同等份额可获得三倍预算——总收益始终不变。',
+    allocation: '分配',
+    allocationHint: '份额会自动归一化，无需合计为 100。',
+    saveAllocation: '保存分配',
+    savingAllocation: '保存中…',
+    coin: '币种',
+    bonus: '加成',
+    portfolio: '持仓价值',
+    perDay: '每日发行',
+    allocationSaved: '发行分配已更新。',
+    addressHint: '所选链的提现地址。',
   },
   markets: {
     eyebrow: '机构级终端',
@@ -1018,7 +1186,21 @@ const ZH: EcosystemCopy = {
 };
 
 const HI: EcosystemCopy = {
-  nav: { mining: 'क्लाउड माइनिंग', markets: 'बाज़ार', rewards: 'इनाम' },
+  nav: { mining: 'क्लाउड माइनिंग', markets: 'बाज़ार', rewards: 'इनाम', news: 'समाचार' },
+  rails: {
+    eyebrow: 'भुगतान रेल',
+    title: 'कार्ड से भुगतान करें, या शून्य प्लेटफ़ॉर्म शुल्क पर ऑन-चेन निपटान',
+    lead: 'Visa, Mastercard और डेबिट कार्ड Kashier और Paymob के माध्यम से अमेरिकी डॉलर या मिस्री पाउंड में निपटते हैं। सीधा USDT और BTC निपटान प्रोसेसर को पूरी तरह छोड़ देता है।',
+    cardTitle: 'वैश्विक और स्थानीय कार्ड',
+    cardBody:
+      'Kashier और Paymob Visa, Mastercard और Meeza डेबिट कार्ड अधिकृत करते हैं, फिर webhook से व्यापारी के बैंक खाते में निपटान करते हैं। कार्ड फ़ॉर्म प्रोसेसर होस्ट करता है — कोई कार्ड नंबर इस सर्वर से नहीं गुज़रता।',
+    currencies: 'कीमत USD $ में · दिखाई गई दर पर EGP ج.م में शुल्क',
+    cryptoTitle: 'सीमा-रहित क्रिप्टो',
+    cryptoBody:
+      'USDT और BTC सीधे प्रकाशित ओनर वॉलेट में, आपके चुने नेटवर्क पर निपटते हैं। लेन-देन हैश सार्वजनिक RPC से सत्यापित होने के बाद ही जमा श्रेय पाता है।',
+    feeBadge: '0% प्लेटफ़ॉर्म शुल्क',
+    compliance: 'शर्तें, गोपनीयता, धनवापसी नीति और संपर्क प्रोसेसर समीक्षा के लिए प्रकाशित हैं।',
+  },
   checkout: {
     title: 'इस नोड का भुगतान करें',
     lead: 'दो रेल, एक गंतव्य। कार्ड और वॉलेट फिएट प्रोसेसर से निपटते हैं; क्रिप्टो ऑन-चेन निपटता है और क्रेडिट से पहले सत्यापित होता है।',
@@ -1027,6 +1209,7 @@ const HI: EcosystemCopy = {
     cryptoTitle: 'ऑन-चेन रेल',
     cryptoLead: 'सात नेटवर्क, हर नेटवर्क के लिए एक जमा पता, ट्रांज़ैक्शन हैश से सत्यापित।',
     payWith: 'भुगतान करें',
+    railKashier: 'Kashier',
     railPaymob: 'Paymob',
     railLemon: 'Lemon Squeezy',
     railStripe: 'Stripe',
@@ -1110,6 +1293,19 @@ const HI: EcosystemCopy = {
     edgeBody: 'सर्वरलेस क्रॉन हर सक्रिय स्थिति में इनाम जोड़ता है, टैब बंद होने पर भी।',
     compliance: 'क्लाउड शर्तों के अनुरूप',
     cron: 'अंतिम संचय',
+    terminalTitle: 'मल्टी-कॉइन उत्सर्जन टर्मिनल',
+    terminalBody:
+      'एक निश्चित डॉलर बजट, सात रेलों में विभाजित। $MINEAI पर 3× बोनस है, इसलिए समान हिस्सा तीन गुना बजट कमाता है — कुल प्रतिफल कभी नहीं बढ़ता।',
+    allocation: 'आवंटन',
+    allocationHint: 'हिस्से सामान्यीकृत होते हैं; उनका योग 100 होना आवश्यक नहीं।',
+    saveAllocation: 'आवंटन सहेजें',
+    savingAllocation: 'सहेजा जा रहा है…',
+    coin: 'कॉइन',
+    bonus: 'बोनस',
+    portfolio: 'पोर्टफ़ोलियो मूल्य',
+    perDay: 'उत्सर्जन / दिन',
+    allocationSaved: 'उत्सर्जन विभाजन अद्यतन हुआ।',
+    addressHint: 'चयनित चेन के लिए निकासी पता।',
   },
   markets: {
     eyebrow: 'संस्थागत टर्मिनल',

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 
 import { pushAgentLog } from '@/lib/agents';
 import {
+  toUsd,
+  verifyKashierSignature,
   verifyLemonSignature,
   verifyPaymobHmac,
   verifyStripeSignature,
@@ -21,12 +23,15 @@ export const runtime = 'nodejs';
  * an unverified webhook is worse than a missing one.
  */
 
-type Provider = 'paymob' | 'lemonsqueezy' | 'stripe';
+type Provider = 'kashier' | 'paymob' | 'lemonsqueezy' | 'stripe';
 
 function providerFrom(request: Request): Provider | null {
   const url = new URL(request.url);
   const explicit = url.searchParams.get('provider');
-  if (explicit === 'paymob' || explicit === 'lemonsqueezy' || explicit === 'stripe') return explicit;
+  if (explicit === 'kashier' || explicit === 'paymob' || explicit === 'lemonsqueezy' || explicit === 'stripe') {
+    return explicit;
+  }
+  if (request.headers.get('x-kashier-signature')) return 'kashier';
   if (request.headers.get('stripe-signature')) return 'stripe';
   if (request.headers.get('x-signature')) return 'lemonsqueezy';
   if (url.searchParams.get('hmac')) return 'paymob';
@@ -43,13 +48,64 @@ export async function POST(request: Request) {
 
   if (!provider) {
     return NextResponse.json(
-      { ok: false, error: 'Unknown provider. Append ?provider=paymob|lemonsqueezy|stripe.' },
+      { ok: false, error: 'Unknown provider. Append ?provider=kashier|paymob|lemonsqueezy|stripe.' },
       { status: 400 },
     );
   }
 
   const raw = await request.text();
   const url = new URL(request.url);
+
+  if (provider === 'kashier') {
+    let payload: { data?: Record<string, unknown>; signature?: string };
+    try {
+      payload = JSON.parse(raw);
+    } catch {
+      return NextResponse.json({ ok: false, error: 'Malformed JSON' }, { status: 400 });
+    }
+
+    const data = payload.data ?? (payload as unknown as Record<string, unknown>);
+    const signature =
+      payload.signature ?? request.headers.get('x-kashier-signature') ?? url.searchParams.get('signature');
+
+    if (!verifyKashierSignature(data, signature)) {
+      return NextResponse.json(
+        { ok: false, error: 'Kashier signature missing or invalid' },
+        { status: process.env.KASHIER_WEBHOOK_SECRET || process.env.KASHIER_SECRET_KEY ? 401 : 503 },
+      );
+    }
+
+    const status = String(data.status ?? data.paymentStatus ?? '').toLowerCase();
+    if (status !== 'success' && status !== 'captured' && status !== 'paid') {
+      return NextResponse.json({ ok: true, credited: 0, detail: 'Transaction not successful; ignored.' });
+    }
+
+    const amount = Number(data.amount ?? 0);
+    const amountUsd = toUsd(amount, String(data.currency ?? 'USD'));
+    if (amountUsd <= 0) {
+      return NextResponse.json({ ok: false, error: 'Zero-value transaction' }, { status: 422 });
+    }
+
+    creditTreasury(amountUsd, 'Kashier card settlement', String(data.transactionId ?? data.orderId ?? 'kashier'));
+    pushAgentLog({
+      agentName: 'FinancialPayout',
+      action: `Kashier settled ${amountUsd} USD on the owner bank rail.`,
+      status: 'success',
+      details: { provider: 'kashier', transactionId: data.transactionId, amountUsd },
+    });
+    await logEventToDatabase({
+      table: 'payment_webhooks',
+      payload: {
+        provider: 'kashier',
+        event: status,
+        amount_usd: amountUsd,
+        reference: String(data.transactionId ?? data.orderId ?? ''),
+        created_at: new Date().toISOString(),
+      },
+    });
+
+    return NextResponse.json({ ok: true, credited: amountUsd });
+  }
 
   if (provider === 'paymob') {
     let payload: { type?: string; obj?: Record<string, unknown> };
@@ -71,7 +127,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true, credited: 0, detail: 'Transaction not successful; ignored.' });
     }
 
-    const amountUsd = cents(transaction.amount_cents);
+    const amountUsd = toUsd(cents(transaction.amount_cents), String(transaction.currency ?? 'USD'));
     if (amountUsd <= 0) {
       return NextResponse.json({ ok: false, error: 'Zero-value transaction' }, { status: 422 });
     }

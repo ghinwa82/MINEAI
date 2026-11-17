@@ -5,10 +5,12 @@ import Link from 'next/link';
 
 import Logo from './Logo';
 import { useI18n } from '@/lib/i18n-provider';
+import { getLegalCopy } from '@/lib/legal-i18n';
 import { LANGUAGE_CODES, LANGUAGES } from '@/lib/languages';
 
 export default function SiteFooter() {
   const { t, lang, eco, href: to, setLang } = useI18n();
+  const legal = getLegalCopy(lang);
 
   const links = [
     { href: '/', label: t.nav.home },
@@ -16,13 +18,21 @@ export default function SiteFooter() {
     { href: '/mining', label: eco.nav.mining },
     { href: '/markets', label: eco.nav.markets },
     { href: '/rewards', label: eco.nav.rewards },
+    { href: '/news', label: eco.nav.news },
     { href: '/notes', label: t.nav.notes },
+  ];
+
+  const legalLinks = [
+    { href: '/terms', label: legal.nav.terms },
+    { href: '/privacy', label: legal.nav.privacy },
+    { href: '/refund-policy', label: legal.nav.refund },
+    { href: '/contact', label: legal.nav.contact },
   ];
 
   return (
     <footer className="relative mt-24 border-t border-white/8 bg-[#04060d]/80">
       <div className="mx-auto w-full max-w-[84rem] px-4 py-14 sm:px-6 lg:px-8">
-        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
+        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.4fr_0.8fr_0.8fr_1fr]">
           <div className="max-w-md">
             <Logo showTagline={false} />
             <p className="mt-5 text-sm leading-relaxed text-ink-mute">{t.footer.tagline}</p>
@@ -48,6 +58,30 @@ export default function SiteFooter() {
                   </Link>
                 </li>
               ))}
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="mx-eyebrow">{t.footer.legalTitle}</h2>
+            <ul className="mt-5 flex flex-col gap-3">
+              {legalLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={to(link.href)}
+                    className="text-sm text-ink-mute transition hover:text-amber"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <a
+                  href={`mailto:${legal.common.supportEmail}`}
+                  className="text-sm text-ink-faint transition hover:text-amber"
+                >
+                  {legal.common.supportEmail}
+                </a>
+              </li>
             </ul>
           </div>
 

@@ -11,6 +11,7 @@ import ExplainerVideoPlayer from '../components/ExplainerVideoPlayer';
 import LiveMarketTracker from '../components/LiveMarketTracker';
 import MineAICoinLogo from '../components/MineAICoinLogo';
 import PayoutTicker from '../components/PayoutTicker';
+import ProofOfReservesBar from '../components/ProofOfReservesBar';
 
 /**
  * The overview.
@@ -238,6 +239,11 @@ export default function HomeView() {
             <PayoutTicker limit={6} />
           </div>
         </div>
+      </section>
+
+      {/* ------------------------------------------- Reserves posture */}
+      <section className="border-t border-white/8 py-16">
+        <ProofOfReservesBar />
       </section>
 
       {/* ---------------------------------------------------- Catalogue */}

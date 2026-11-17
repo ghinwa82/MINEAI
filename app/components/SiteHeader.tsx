@@ -6,6 +6,8 @@ import { usePathname } from 'next/navigation';
 
 import Logo from './Logo';
 import LanguageSwitcher from './LanguageSwitcher';
+import BreakingNewsTicker from './BreakingNewsTicker';
+import ReferralCapture from './ReferralCapture';
 import { useI18n } from '@/lib/i18n-provider';
 import { useMesh } from '@/lib/use-mesh';
 import { stripLocale } from '@/lib/routes';
@@ -29,6 +31,7 @@ export default function SiteHeader() {
     { href: '/mining', label: eco.nav.mining },
     { href: '/markets', label: eco.nav.markets },
     { href: '/rewards', label: eco.nav.rewards },
+    { href: '/news', label: eco.nav.news },
     { href: '/notes', label: t.nav.notes },
   ];
 
@@ -41,6 +44,7 @@ export default function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/8 bg-[#04060d]/72 backdrop-blur-2xl">
+      <ReferralCapture />
       <div className="mx-auto flex h-16 w-full max-w-[84rem] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Logo />
 
@@ -89,6 +93,8 @@ export default function SiteHeader() {
           </Link>
         </div>
       </div>
+
+      <BreakingNewsTicker />
 
       <nav
         aria-label="Primary mobile"

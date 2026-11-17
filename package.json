@@ -9,6 +9,7 @@
     "lint": "next lint",
     "contract:install": "npm --prefix hardhat install",
     "contract:compile": "npm --prefix hardhat run compile",
+    "contract:artifact": "node scripts/export-mineai-artifact.js",
     "contract:deploy:testnet": "npm --prefix hardhat run deploy:testnet",
     "contract:deploy:bsc": "npm --prefix hardhat run deploy:bsc"
   },

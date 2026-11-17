@@ -13,8 +13,9 @@ import { createCheckoutSession, stripeMode, type CheckoutSession } from '@/lib/s
  * can still be exercised without pretending a card was charged.
  */
 
-export type FiatRail = 'paymob' | 'lemonsqueezy' | 'stripe';
+export type FiatRail = 'kashier' | 'paymob' | 'lemonsqueezy' | 'stripe';
 export type RailMode = 'live' | 'test' | 'sandbox';
+export type FiatCurrency = 'USD' | 'EGP';
 
 export interface RailStatus {
   rail: FiatRail;
@@ -31,6 +32,7 @@ export interface FiatCheckoutRequest {
   nodeId: string;
   locale: string;
   origin: string;
+  currency?: FiatCurrency;
   email?: string;
 }
 
@@ -106,6 +108,41 @@ export function paymobMode(): RailMode {
   return /_test|test_/i.test(key) ? 'test' : 'live';
 }
 
+export function kashierMode(): RailMode {
+  const merchant = env('KASHIER_MERCHANT_ID');
+  const secret = env('KASHIER_SECRET_KEY');
+  if (!merchant || !secret) return 'sandbox';
+  const declared = env('KASHIER_MODE').toLowerCase();
+  if (declared === 'live' || declared === 'test') return declared;
+  return /_test|test_/i.test(secret) ? 'test' : 'live';
+}
+
+/**
+ * The owner prices every node in USD. Local card rails need a local amount, so
+ * the conversion rate is a deployment setting with a conservative default —
+ * never a hard-coded number baked into a component.
+ */
+export function egpPerUsd(): number {
+  const configured = Number(env('EGP_PER_USD'));
+  return Number.isFinite(configured) && configured > 0 ? configured : 48.65;
+}
+
+export function exchangeRates(): Record<FiatCurrency, number> {
+  return { USD: 1, EGP: egpPerUsd() };
+}
+
+/** Converts a USD list price into the currency the processor will charge. */
+export function amountInCurrency(amountUsd: number, currency: FiatCurrency = 'USD'): number {
+  return Number((amountUsd * exchangeRates()[currency]).toFixed(2));
+}
+
+/** Converts a settled processor amount back to the USD treasury unit. */
+export function toUsd(amount: number, currency: string | null | undefined): number {
+  const code = (currency ?? 'USD').toUpperCase();
+  if (code === 'EGP') return Number((amount / egpPerUsd()).toFixed(2));
+  return Number(amount.toFixed(2));
+}
+
 export function lemonMode(): RailMode {
   const key = env('LEMONSQUEEZY_API_KEY');
   if (!key) return 'sandbox';
@@ -113,11 +150,22 @@ export function lemonMode(): RailMode {
 }
 
 export function railStatuses(): RailStatus[] {
+  const kashier = kashierMode();
   const paymob = paymobMode();
   const lemon = lemonMode();
   const stripe = stripeMode();
 
   return [
+    {
+      rail: 'kashier',
+      mode: kashier,
+      configured: kashier !== 'sandbox',
+      detail:
+        kashier === 'sandbox'
+          ? 'Add KASHIER_MERCHANT_ID and KASHIER_SECRET_KEY to accept Visa, Mastercard and Meeza in USD and EGP.'
+          : `Kashier is armed in ${kashier} mode and settles to the owner bank account in USD or EGP.`,
+      supports: ['Visa', 'Mastercard', 'Meeza', 'Debit', 'EGP', 'USD'],
+    },
     {
       rail: 'paymob',
       mode: paymob,
@@ -152,6 +200,7 @@ export function railStatuses(): RailStatus[] {
 }
 
 function sandboxResult(request: FiatCheckoutRequest, rail: FiatRail, detail: string): FiatCheckoutResult {
+  const currency = request.currency ?? 'USD';
   const sessionId = `sandbox_${rail}_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
   return {
     ok: true,
@@ -160,9 +209,69 @@ function sandboxResult(request: FiatCheckoutRequest, rail: FiatRail, detail: str
     sessionId,
     checkoutUrl: `${request.origin}/store?checkout=sandbox&rail=${rail}&session_id=${sessionId}`,
     amountUsd: request.amountUsd,
-    currency: 'USD',
+    currency,
     provider: rail,
     detail,
+  };
+}
+
+function kashierHash(params: Record<string, string>): string {
+  const secret = env('KASHIER_SECRET_KEY');
+  if (!secret) return '';
+  const ordered = Object.keys(params)
+    .sort()
+    .map((key) => `${key}=${params[key]}`)
+    .join('&');
+  return createHmac('sha256', secret).update(`/?${ordered}`).digest('hex');
+}
+
+/**
+ * Kashier hosted checkout.
+ *
+ * The card form is hosted by Kashier, so no card number ever reaches this
+ * server. The amount is charged in the requested currency (USD or EGP) and the
+ * signed redirect returns the visitor to the storefront.
+ */
+async function kashierCheckout(request: FiatCheckoutRequest): Promise<FiatCheckoutResult> {
+  const merchantId = env('KASHIER_MERCHANT_ID');
+  const secret = env('KASHIER_SECRET_KEY');
+
+  if (!merchantId || !secret) {
+    return sandboxResult(request, 'kashier', 'Kashier keys are absent — sandbox session minted.');
+  }
+
+  const currency = request.currency ?? 'USD';
+  const amount = amountInCurrency(request.amountUsd, currency);
+  const orderId = `MINEAI-${request.nodeId}-${Date.now().toString(36).toUpperCase()}`;
+  const mode = kashierMode() === 'live' ? 'live' : 'test';
+
+  const params: Record<string, string> = {
+    merchantId,
+    orderId,
+    amount: amount.toFixed(2),
+    currency,
+    mode,
+    type: 'external',
+    allowedMethods: 'card',
+    display: request.locale === 'ar' ? 'ar' : 'en',
+    merchantRedirect: `${request.origin}/store?checkout=success&rail=kashier`,
+    failureRedirect: `${request.origin}/store?checkout=failed&rail=kashier`,
+    serverWebhook: `${request.origin}/api/webhooks/payment?provider=kashier`,
+  };
+
+  const hash = kashierHash(params);
+  const query = new URLSearchParams({ ...params, hash }).toString();
+
+  return {
+    ok: true,
+    rail: 'kashier',
+    mode: kashierMode(),
+    sessionId: orderId,
+    checkoutUrl: `https://payments.kashier.io/?${query}`,
+    amountUsd: request.amountUsd,
+    currency,
+    provider: 'Kashier',
+    detail: `Kashier hosted checkout created in ${mode} mode for ${amount.toFixed(2)} ${currency}. Settlement routes to the owner bank account.`,
   };
 }
 
@@ -187,7 +296,8 @@ async function paymobCheckout(request: FiatCheckoutRequest): Promise<FiatCheckou
   const auth = (await authResponse.json()) as { token?: string };
   if (!auth.token) throw new Error('Paymob auth returned no token');
 
-  const amountCents = Math.round(request.amountUsd * 100);
+  const amountCents = Math.round(amountInCurrency(request.amountUsd, request.currency ?? 'USD') * 100);
+  const chargeCurrency = request.currency ?? 'USD';
   const merchantOrderId = `MINEAI-${request.nodeId}-${Date.now().toString(36).toUpperCase()}`;
 
   const orderResponse = await fetch(`${base}/ecommerce/orders`, {
@@ -197,7 +307,7 @@ async function paymobCheckout(request: FiatCheckoutRequest): Promise<FiatCheckou
       auth_token: auth.token,
       delivery_needed: false,
       amount_cents: amountCents,
-      currency: 'USD',
+      currency: chargeCurrency,
       merchant_order_id: merchantOrderId,
       items: [
         {
@@ -237,7 +347,7 @@ async function paymobCheckout(request: FiatCheckoutRequest): Promise<FiatCheckou
         country: 'NA',
         state: 'NA',
       },
-      currency: 'USD',
+      currency: chargeCurrency,
       integration_id: Number(integrationId),
       lock_order_when_paid: true,
     }),
@@ -254,7 +364,7 @@ async function paymobCheckout(request: FiatCheckoutRequest): Promise<FiatCheckou
     sessionId: merchantOrderId,
     checkoutUrl: `${base}/acceptance/iframes/${iframeId}?payment_token=${paymentKey.token}`,
     amountUsd: request.amountUsd,
-    currency: 'USD',
+    currency: chargeCurrency,
     provider: 'Paymob',
     detail: 'Paymob iframe session created. Settlement routes to the owner bank account.',
   };
@@ -324,6 +434,8 @@ export async function createFiatCheckout(request: FiatCheckoutRequest): Promise<
   const normalised = { ...request, origin };
 
   try {
+    if (normalised.rail === 'kashier') return await kashierCheckout(normalised);
+
     if (normalised.rail === 'paymob') return await paymobCheckout(normalised);
 
     if (normalised.rail === 'lemonsqueezy') return await lemonCheckout(normalised);
@@ -448,4 +560,38 @@ export function verifyStripeSignature(
 
   const expected = createHmac('sha256', secret).update(`${parts.t}.${rawBody}`).digest('hex');
   return parts.v1 ? safeEqual(expected, parts.v1) : false;
+}
+
+/**
+ * Kashier signs the transaction payload with HMAC-SHA256.
+ *
+ * Depending on the integration, the payload arrives either as a JSON string in
+ * a `data` field or as a plain object. Both shapes are accepted, and the
+ * signature is compared in constant time. A missing secret always fails.
+ */
+export function verifyKashierSignature(
+  payload: unknown,
+  signature: string | null,
+  secret = env('KASHIER_WEBHOOK_SECRET') || env('KASHIER_SECRET_KEY'),
+): boolean {
+  if (!signature || !secret) return false;
+
+  let source: string;
+  if (typeof payload === 'string') {
+    source = payload;
+  } else if (payload && typeof payload === 'object') {
+    const record = payload as Record<string, unknown>;
+    const ordered = Object.keys(record)
+      .sort()
+      .reduce<Record<string, unknown>>((acc, key) => {
+        acc[key] = record[key];
+        return acc;
+      }, {});
+    source = JSON.stringify(ordered);
+  } else {
+    return false;
+  }
+
+  const expected = createHmac('sha256', secret).update(source).digest('hex');
+  return safeEqual(expected, signature.replace(/^sha256=/i, ''));
 }

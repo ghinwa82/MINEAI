@@ -21,7 +21,7 @@ export type CryptoNetworkId =
   | 'ton'
   | 'btc';
 
-export type ChainFamily = 'evm' | 'tron' | 'solana' | 'ton' | 'bitcoin';
+export type ChainFamily = 'evm' | 'tron' | 'solana' | 'ton' | 'bitcoin' | 'dogecoin';
 
 export interface CryptoNetwork {
   id: CryptoNetworkId;
@@ -135,6 +135,7 @@ const ADDRESS_PATTERNS: Record<ChainFamily, RegExp> = {
   solana: /^[1-9A-HJ-NP-Za-km-z]{32,44}$/,
   ton: /^(?:[EU]Q[A-Za-z0-9_-]{46}|-?[0-9]:[a-fA-F0-9]{64})$/,
   bitcoin: /^(?:bc1[a-z0-9]{25,62}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$/,
+  dogecoin: /^(?:D[5-9A-HJ-NP-Za-km-z]{33}|[9A][1-9A-HJ-NP-Za-km-z]{33})$/,
 };
 
 export function isValidAddress(family: ChainFamily, address: string): boolean {

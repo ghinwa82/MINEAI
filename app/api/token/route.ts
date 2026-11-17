@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 
+import { readDeployments } from '@/lib/deployments';
 import { MINING_CONSTANTS, VIP_TIERS, networkStats, tokenPriceUsd } from '@/lib/mining';
 
 export const dynamic = 'force-dynamic';
@@ -17,9 +18,16 @@ const SEED_HOLDERS = 18_420;
  * never links to a contract that does not exist.
  */
 export async function GET() {
-  const bsc = process.env.NEXT_PUBLIC_MINEAI_BSC_CONTRACT?.trim() ?? '';
+  const bscEnv = process.env.NEXT_PUBLIC_MINEAI_BSC_CONTRACT?.trim() ?? '';
+  const bscTestnetEnv = process.env.NEXT_PUBLIC_MINEAI_BSC_TESTNET_CONTRACT?.trim() ?? '';
   const eth = process.env.NEXT_PUBLIC_MINEAI_ETH_CONTRACT?.trim() ?? '';
   const dex = process.env.NEXT_PUBLIC_MINEAI_DEX_URL?.trim() ?? '';
+
+  // The owner deploys from a browser wallet after the build, so the registry is
+  // read at request time and wins over the build-time environment fallback.
+  const deployments = await readDeployments();
+  const bsc = deployments.find((entry) => entry.chainId === 56)?.address ?? bscEnv;
+  const bscTestnet = deployments.find((entry) => entry.chainId === 97)?.address ?? bscTestnetEnv;
 
   const burned = SEED_BURNED;
   const price = tokenPriceUsd();
@@ -44,9 +52,10 @@ export async function GET() {
       ],
       contracts: {
         bsc: bsc || null,
+        bscTestnet: bscTestnet || null,
         eth: eth || null,
         dex: dex || null,
-        deployed: Boolean(bsc || eth),
+        deployed: Boolean(bsc || bscTestnet || eth),
       },
       constants: MINING_CONSTANTS,
       tiers: VIP_TIERS,

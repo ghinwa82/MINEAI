@@ -1,10 +1,14 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import Link from 'next/link';
 
 import PayoutTicker from '../components/PayoutTicker';
+import ProofOfReservesBar from '../components/ProofOfReservesBar';
+import ShareRow from '../components/ShareRow';
+import VipMembershipCard from '../components/VipMembershipCard';
+import { REFERRAL_STORAGE_KEY } from '../components/ReferralCapture';
 import { useI18n } from '@/lib/i18n-provider';
 import { useUid } from '@/lib/use-uid';
 
@@ -163,6 +167,29 @@ export default function RewardsView() {
     },
     [uid, notify, copy.copied, t.common.error],
   );
+
+  /**
+   * Referral links arrive on any page and are stashed by `ReferralCapture`.
+   * The first time this console sees an unattached operator, the stored code
+   * is offered back to the server once — guarded by a ref so a failed attempt
+   * (an expired code, a self-referral) never loops.
+   */
+  const autoReferral = useRef(false);
+  useEffect(() => {
+    if (!snapshot || snapshot.referredBy || autoReferral.current) return;
+    autoReferral.current = true;
+
+    let stored = '';
+    try {
+      stored = window.localStorage.getItem(REFERRAL_STORAGE_KEY) ?? '';
+    } catch {
+      return;
+    }
+
+    if (!stored || stored === snapshot.referralCode) return;
+    setCode(stored);
+    act('apply-referral', { code: stored });
+  }, [snapshot, act]);
 
   const enroll = async () => {
     if (!uid) return;
@@ -413,26 +440,37 @@ export default function RewardsView() {
           </span>
         </div>
 
-        <div className="mt-6 grid gap-px overflow-hidden rounded-xl border border-white/8 bg-white/8 sm:grid-cols-2 xl:grid-cols-4">
-          {tiers.map((tier) => {
-            const active = snapshot?.vipTier === tier.tier;
-            return (
-              <div
-                key={tier.tier}
-                className={`bg-[#070c17] p-5 ${active ? 'ring-1 ring-inset ring-amber/45' : ''}`}
-              >
-                <p className={`text-[0.8rem] font-bold capitalize ${active ? 'text-amber' : 'text-ink'}`}>
-                  {tier.tier}
-                </p>
-                <p className="mx-numeric mt-2 text-2xl font-extrabold text-cyan">{tier.multiplier.toFixed(2)}x</p>
-                <p className="mx-numeric mt-1 text-[0.62rem] text-ink-faint">
-                  {number.format(tier.minStake)} $MINEAI
-                </p>
-              </div>
-            );
-          })}
+        <div className="mt-6 grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
+          <VipMembershipCard
+            tier={snapshot?.vipTier ?? 'observer'}
+            code={snapshot?.referralCode ?? null}
+            multiplier={snapshot?.effectiveMultiplier ?? 1}
+            staked={snapshot?.stakedTokens ?? 0}
+          />
+
+          <div className="grid gap-px overflow-hidden rounded-xl border border-white/8 bg-white/8 sm:grid-cols-2">
+            {tiers.map((tier) => {
+              const active = snapshot?.vipTier === tier.tier;
+              return (
+                <div
+                  key={tier.tier}
+                  className={`bg-[#070c17] p-5 ${active ? 'ring-1 ring-inset ring-amber/45' : ''}`}
+                >
+                  <p className={`text-[0.8rem] font-bold capitalize ${active ? 'text-amber' : 'text-ink'}`}>
+                    {tier.tier}
+                  </p>
+                  <p className="mx-numeric mt-2 text-2xl font-extrabold text-cyan">{tier.multiplier.toFixed(2)}x</p>
+                  <p className="mx-numeric mt-1 text-[0.62rem] text-ink-faint">
+                    {number.format(tier.minStake)} $MINEAI
+                  </p>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
+
+      <ProofOfReservesBar className="mt-6" />
 
       {/* --------------------------------------------- Referral + board */}
       <section className="mt-6 grid gap-5 lg:grid-cols-[0.95fr_1.05fr]">
@@ -448,6 +486,16 @@ export default function RewardsView() {
             <button type="button" onClick={copyCode} className="mx-btn-quiet !px-4 !py-3 !text-[0.76rem]">
               {copied ? copy.copied : copy.copy}
             </button>
+          </div>
+
+          <div className="mt-4">
+            <ShareRow
+              code={snapshot?.referralCode ?? null}
+              path={to('/rewards')}
+              text={copy.referralBody}
+              label={copy.referralTitle}
+              shareTitle={copy.referralTitle}
+            />
           </div>
 
           <dl className="mt-6 grid grid-cols-2 gap-4">

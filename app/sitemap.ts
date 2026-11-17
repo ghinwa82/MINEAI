@@ -42,7 +42,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   push('/mining', 0.9, 'daily');
   push('/markets', 0.85, 'daily');
   push('/rewards', 0.8, 'daily');
+  push('/news', 0.9, 'daily');
   push('/notes', 0.7, 'daily');
+  push('/terms', 0.3, 'monthly');
+  push('/privacy', 0.3, 'monthly');
+  push('/refund-policy', 0.3, 'monthly');
+  push('/contact', 0.4, 'monthly');
 
   for (const plan of catalogue) {
     push(`/store/${planSlug(plan)}`, 0.8, 'weekly');

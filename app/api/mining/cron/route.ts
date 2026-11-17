@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { pushAgentLog } from '@/lib/agents';
-import { accrueAll } from '@/lib/mining';
+import { accrueAll, persistAllPositions } from '@/lib/mining';
 import { secretsMatch } from '@/lib/security';
 import { logEventToDatabase } from '@/lib/supabase';
 
@@ -15,6 +15,9 @@ export const runtime = 'nodejs';
  * sends the deployment secret as a bearer token. A caller without the secret
  * gets nothing, and if no secret is configured the route refuses to run rather
  * than becoming a public faucet.
+ *
+ * Accrual is time-based on read, so this sweep is the durability pass: it
+ * advances every position and writes each multi-coin balance to Supabase.
  */
 function authorised(request: Request): boolean {
   const expected = process.env.CRON_SECRET?.trim() ?? '';
@@ -41,9 +44,11 @@ export async function GET(request: Request) {
   }
 
   const result = accrueAll();
+  const persisted = await persistAllPositions();
+
   pushAgentLog({
     agentName: 'TelemetryAuditor',
-    action: `Edge accrual swept ${result.positions} position${result.positions === 1 ? '' : 's'} and emitted ${result.tokens} $MINEAI.`,
+    action: `Edge accrual swept ${result.positions} position${result.positions === 1 ? '' : 's'} and emitted ${result.tokens} $MINEAI across seven coin rails (${result.usd} USD).`,
     status: 'success',
     details: result,
   });
@@ -53,9 +58,12 @@ export async function GET(request: Request) {
     payload: {
       positions: result.positions,
       tokens: result.tokens,
+      usd: result.usd,
+      coins: result.coins,
+      persisted,
       ran_at: new Date().toISOString(),
     },
   });
 
-  return NextResponse.json({ ok: true, ranAt: new Date().toISOString(), ...result });
+  return NextResponse.json({ ok: true, ranAt: new Date().toISOString(), persisted, ...result });
 }

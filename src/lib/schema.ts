@@ -142,13 +142,44 @@ export function tokenSchema(priceUsd = 4.85): Record<string, unknown> {
   };
 }
 
-export function faqSchema(items: FaqEntry[]): Record<string, unknown> {  return {
+export function faqSchema(items: FaqEntry[]): Record<string, unknown> {
+  return {
     '@type': 'FAQPage',
     mainEntity: items.map((item) => ({
       '@type': 'Question',
       name: item.question,
       acceptedAnswer: { '@type': 'Answer', text: item.answer },
     })),
+  };
+}
+
+/**
+ * $MINEAI as a financial product.
+ *
+ * Separate from `tokenSchema` (a Product offer) because search engines index
+ * the two differently: FinancialProduct carries the provider, the fee
+ * specification and the risk-bearing identity of the issuer.
+ */
+export function financialProductSchema(priceUsd = 4.85): Record<string, unknown> {
+  return {
+    '@type': 'FinancialProduct',
+    '@id': `${siteUrl()}/#mineai-financial`,
+    name: '$MINEAI utility token',
+    description:
+      'Fixed-supply utility token that meters cloud-mining yield, VIP staking multipliers and referral settlement across the MineAI Node compute mesh.',
+    category: 'Digital asset',
+    url: absoluteUrl('/markets'),
+    provider: { '@id': `${siteUrl()}/#organization` },
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'USD',
+      price: priceUsd.toFixed(2),
+      availability: 'https://schema.org/PreOrder',
+      seller: { '@id': `${siteUrl()}/#organization` },
+    },
+    feesAndCommissionsSpecification:
+      '0% platform fee on direct multi-chain USDT and BTC settlement. Card rails settle through Kashier or Paymob at the displayed rate.',
+    interestRate: 0,
   };
 }
 

@@ -53,6 +53,39 @@ export async function logEventToDatabase(
 }
 
 /**
+ * Upserts a row through PostgREST. Used by the mining ledger, where one row per
+ * operator is the durable state and repeated writes must merge rather than
+ * duplicate. Falls back to the in-memory mode when Supabase is absent.
+ */
+export async function upsertRecord(
+  table: string,
+  payload: Record<string, unknown>,
+  onConflict: string,
+): Promise<{ success: boolean; mode: SupabaseMode }> {
+  const creds = credentials();
+  if (!creds) {
+    return { success: true, mode: 'in-memory' };
+  }
+
+  try {
+    const params = new URLSearchParams({ on_conflict: onConflict });
+    const res = await fetch(`${creds.url}/rest/v1/${table}?${params.toString()}`, {
+      method: 'POST',
+      headers: {
+        apikey: creds.key,
+        Authorization: `Bearer ${creds.key}`,
+        'Content-Type': 'application/json',
+        Prefer: 'resolution=merge-duplicates,return=minimal',
+      },
+      body: JSON.stringify(payload),
+    });
+    return { success: res.ok, mode: 'supabase' };
+  } catch {
+    return { success: true, mode: 'in-memory' };
+  }
+}
+
+/**
  * Reads rows from a PostgREST table. Returns an empty array when Supabase is
  * not configured or unreachable.
  */

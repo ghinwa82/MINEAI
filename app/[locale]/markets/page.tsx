@@ -24,6 +24,7 @@ export async function generateMetadata({ params }: LocaleMarketsProps): Promise<
     path: '/markets',
     lang,
     keywords: ['live markets', 'crypto prices', 'MINEAI token', 'gold price', 'forex rates'],
+    image: null,
   });
 }
 

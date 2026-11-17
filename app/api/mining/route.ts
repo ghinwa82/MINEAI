@@ -5,11 +5,14 @@ import { decryptField } from '@/lib/encryption';
 import {
   MINING_CONSTANTS,
   VIP_TIERS,
+  allocate,
   applyReferral,
   claimStreak,
   getPosition,
+  hydratePosition,
   isValidUid,
-  requestWithdrawal,
+  persistPosition,
+  requestCoinWithdrawal,
   snapshotFor,
   stake,
   unstake,
@@ -36,6 +39,10 @@ export async function GET(request: Request) {
       { status: 400 },
     );
   }
+
+  // A cold serverless instance seeds the position from the durable row before
+  // the first accrual, so balances survive a redeploy.
+  await hydratePosition(uid);
 
   return NextResponse.json({
     ok: true,
@@ -69,11 +76,14 @@ export async function POST(request: Request) {
   const input = parsed.data;
 
   try {
+    await hydratePosition(input.uid);
+
     if (input.action === 'claim-streak') {
       const result = claimStreak(input.uid);
       if (!result.ok) {
         return NextResponse.json({ ok: false, error: result.error, ...snapshotFor(input.uid, 'en') }, { status: 409 });
       }
+      await persistPosition(input.uid);
       pushAgentLog({
         agentName: 'GrowthHacker',
         action: `Daily streak claimed: day ${result.position.streakDays}, bonus ${result.bonus} $MINEAI.`,
@@ -89,6 +99,24 @@ export async function POST(request: Request) {
       if (!result.ok) {
         return NextResponse.json({ ok: false, error: result.error, ...snapshotFor(input.uid, 'en') }, { status: 409 });
       }
+      await persistPosition(input.uid);
+      return NextResponse.json({ ok: true, ...snapshotFor(input.uid, 'en') });
+    }
+
+    if (input.action === 'allocate') {
+      const result = allocate(input.uid, input.allocation);
+      if (!result.ok) {
+        return NextResponse.json({ ok: false, error: result.error, ...snapshotFor(input.uid, 'en') }, { status: 409 });
+      }
+      await persistPosition(input.uid);
+      await logEventToDatabase({
+        table: 'mining_allocations',
+        payload: {
+          uid: input.uid,
+          allocations: result.position.allocations,
+          created_at: new Date().toISOString(),
+        },
+      });
       return NextResponse.json({ ok: true, ...snapshotFor(input.uid, 'en') });
     }
 
@@ -112,13 +140,15 @@ export async function POST(request: Request) {
         }
       }
 
-      const result = requestWithdrawal(input.uid, input.amount, input.wallet, input.network);
+      const result = requestCoinWithdrawal(input.uid, input.coin, input.amount, input.wallet);
       if (!result.ok || !result.payout) {
         return NextResponse.json({ ok: false, error: result.error, ...snapshotFor(input.uid, 'en') }, { status: 422 });
       }
+
+      await persistPosition(input.uid);
       pushAgentLog({
         agentName: 'FinancialPayout',
-        action: `Mining withdrawal ${result.payout.id} of ${result.payout.tokens} $MINEAI queued to ${result.payout.wallet}.`,
+        action: `Mining withdrawal ${result.payout.id} of ${result.payout.tokens} ${result.payout.symbol} queued to ${result.payout.wallet}.`,
         status: 'success',
         details: { payout: result.payout },
       });
@@ -127,8 +157,10 @@ export async function POST(request: Request) {
         payload: {
           payout_id: result.payout.id,
           uid: input.uid,
-          network: input.network,
-          tokens: result.payout.tokens,
+          coin: result.payout.coin,
+          symbol: result.payout.symbol,
+          network: result.payout.network,
+          amount: result.payout.tokens,
           usd: result.payout.usd,
           wallet_masked: result.payout.wallet,
           created_at: new Date().toISOString(),
@@ -141,6 +173,7 @@ export async function POST(request: Request) {
     if (!result.ok) {
       return NextResponse.json({ ok: false, error: result.error, ...snapshotFor(input.uid, 'en') }, { status: 409 });
     }
+    await persistPosition(input.uid);
     return NextResponse.json({ ok: true, ...snapshotFor(input.uid, 'en') });
   } catch {
     return NextResponse.json({ ok: false, error: 'The mining engine rejected that action' }, { status: 500 });

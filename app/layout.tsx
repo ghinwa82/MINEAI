@@ -9,6 +9,7 @@ import { LANGUAGES, LANGUAGE_CODES } from '@/lib/languages';
 import {
   ORGANIZATION,
   absoluteUrl,
+  financialProductSchema,
   siteUrl,
   softwareApplicationSchema,
   webSiteSchema,
@@ -94,7 +95,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="antialiased">
         <CinematicBackdrop />
         <I18nProvider>
-          <JsonLd data={[ORGANIZATION, webSiteSchema('en'), softwareApplicationSchema()]} />
+          <JsonLd
+            data={[
+              ORGANIZATION,
+              webSiteSchema('en'),
+              softwareApplicationSchema(),
+              financialProductSchema(),
+            ]}
+          />
           {children}
         </I18nProvider>
       </body>

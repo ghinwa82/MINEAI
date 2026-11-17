@@ -1,14 +1,23 @@
 import type { SupportedLanguage } from '@/types';
-import { findNetwork, isValidAddress } from '@/lib/crypto-rails';
+import { findNetwork, isValidAddress, type ChainFamily } from '@/lib/crypto-rails';
+import { readTable, supabaseConfigured, upsertRecord } from '@/lib/supabase';
 import { creditTreasury } from '@/lib/treasury';
 
 /**
- * Serverless cloud-mining and staking engine.
+ * Serverless cloud-mining and staking engine — multi-coin edition.
  *
  * No hardware is involved and no electricity is billed: the position accrues
  * against rented external edge capacity. State lives on `globalThis` so it
  * survives hot reloads and is re-seeded deterministically per serverless
- * instance, exactly like the treasury ledger.
+ * instance, exactly like the treasury ledger. Every mutation is written
+ * through to `public.mining_positions` and a cold instance hydrates from that
+ * row, so a position survives a redeploy.
+ *
+ * Emission is a fixed dollar budget, not a fixed coin budget. A position earns
+ * `hashrate × emission × vip × streak` USD per second; that budget is split
+ * across the operator's allocation by `share × bonus`, normalised. $MINEAI
+ * carries a 3× bonus, so it takes three times the budget of an equal share of
+ * any other coin without increasing the total yield.
  */
 
 export type VipTier = 'observer' | 'navigator' | 'whale' | 'leviathan';
@@ -26,12 +35,147 @@ export const VIP_TIERS: VipDefinition[] = [
   { tier: 'leviathan', minStake: 100_000, multiplier: 1.6 },
 ];
 
-/** Tokens emitted per megahash per second, before multipliers. */
+export type MiningCoinId = 'mineai' | 'btc' | 'eth' | 'sol' | 'bnb' | 'ton' | 'doge';
+
+export interface MiningCoinDefinition {
+  id: MiningCoinId;
+  /** Ticker as displayed, including the `$` for the platform token. */
+  symbol: string;
+  label: string;
+  chain: string;
+  family: ChainFamily;
+  /** Conservative reference price in USD, used for accrual and payout valuation. */
+  priceUsd: number;
+  /** Emission multiplier applied to the allocated share. */
+  bonus: number;
+  /** Default allocation share (normalised at accrual time, not required to sum to 100). */
+  share: number;
+  /** Minimum withdrawal in coin units. */
+  minWithdraw: number;
+  /** Display decimals for the coin. Accrual is stored with 12. */
+  decimals: number;
+  /** Deposit/withdrawal network id from the crypto rail, when one exists. */
+  network: string | null;
+}
+
+export const MINING_COINS: MiningCoinDefinition[] = [
+  {
+    id: 'mineai',
+    symbol: '$MINEAI',
+    label: 'MineAI',
+    chain: 'BNB Smart Chain',
+    family: 'evm',
+    priceUsd: 4.85,
+    bonus: 3,
+    share: 50,
+    minWithdraw: 25,
+    decimals: 4,
+    network: 'usdt-bep20',
+  },
+  {
+    id: 'btc',
+    symbol: 'BTC',
+    label: 'Bitcoin',
+    chain: 'Bitcoin',
+    family: 'bitcoin',
+    priceUsd: 96_500,
+    bonus: 1,
+    share: 10,
+    minWithdraw: 0.0005,
+    decimals: 8,
+    network: 'btc',
+  },
+  {
+    id: 'eth',
+    symbol: 'ETH',
+    label: 'Ethereum',
+    chain: 'Ethereum',
+    family: 'evm',
+    priceUsd: 3_284,
+    bonus: 1,
+    share: 10,
+    minWithdraw: 0.01,
+    decimals: 6,
+    network: 'usdt-erc20',
+  },
+  {
+    id: 'sol',
+    symbol: 'SOL',
+    label: 'Solana',
+    chain: 'Solana',
+    family: 'solana',
+    priceUsd: 192.4,
+    bonus: 1,
+    share: 10,
+    minWithdraw: 0.05,
+    decimals: 4,
+    network: 'sol',
+  },
+  {
+    id: 'bnb',
+    symbol: 'BNB',
+    label: 'BNB',
+    chain: 'BNB Smart Chain',
+    family: 'evm',
+    priceUsd: 648.2,
+    bonus: 1,
+    share: 8,
+    minWithdraw: 0.02,
+    decimals: 4,
+    network: 'usdt-bep20',
+  },
+  {
+    id: 'ton',
+    symbol: 'TON',
+    label: 'Toncoin',
+    chain: 'TON',
+    family: 'ton',
+    priceUsd: 5.42,
+    bonus: 1,
+    share: 6,
+    minWithdraw: 1,
+    decimals: 4,
+    network: 'ton',
+  },
+  {
+    id: 'doge',
+    symbol: 'DOGE',
+    label: 'Dogecoin',
+    chain: 'Dogecoin',
+    family: 'dogecoin',
+    priceUsd: 0.168,
+    bonus: 1,
+    share: 6,
+    minWithdraw: 20,
+    decimals: 2,
+    network: null,
+  },
+];
+
+const COIN_BY_ID: Record<MiningCoinId, MiningCoinDefinition> = Object.fromEntries(
+  MINING_COINS.map((coin) => [coin.id, coin]),
+) as Record<MiningCoinId, MiningCoinDefinition>;
+
+export function findCoin(id: string): MiningCoinDefinition | undefined {
+  return COIN_BY_ID[id as MiningCoinId];
+}
+
+/** $MINEAI-equivalent emission per megahash per second, before multipliers. */
 const EMISSION_PER_MH = 0.00000008;
+const TOKEN_PRICE_USD = 4.85;
+/** The same budget expressed in dollars — the unit the split is performed in. */
+const EMISSION_USD_PER_MH = EMISSION_PER_MH * TOKEN_PRICE_USD;
+
 const BASE_HASHRATE = 320;
-const MIN_WITHDRAW = 25;
 const GENESIS_GRANT = 250;
 const MAX_STREAK_MULTIPLIER = 1.7;
+const ACCRUAL_DECIMALS = 12;
+
+export interface CoinBalance {
+  amount: number;
+  lifetime: number;
+  withdrawn: number;
+}
 
 export interface MiningPosition {
   uid: string;
@@ -39,9 +183,14 @@ export interface MiningPosition {
   referredBy: string | null;
   referrals: string[];
   stakedTokens: number;
+  /** $MINEAI claimable balance (mirror of `coins.mineai.amount`). */
   minedTokens: number;
+  /** $MINEAI lifetime emission (mirror of `coins.mineai.lifetime`). */
   lifetimeMinedTokens: number;
+  /** $MINEAI withdrawn (mirror of `coins.mineai.withdrawn`). */
   withdrawnTokens: number;
+  coins: Record<MiningCoinId, CoinBalance>;
+  allocations: Record<MiningCoinId, number>;
   referralEarnings: number;
   streakDays: number;
   lastClaimDate: string | null;
@@ -58,9 +207,31 @@ export interface PayoutRecord {
   id: string;
   wallet: string;
   network: string;
+  coin: MiningCoinId;
+  symbol: string;
   tokens: number;
   usd: number;
   at: string;
+}
+
+export interface CoinSnapshot {
+  id: MiningCoinId;
+  symbol: string;
+  label: string;
+  chain: string;
+  family: ChainFamily;
+  bonus: number;
+  priceUsd: number;
+  minWithdraw: number;
+  decimals: number;
+  amount: number;
+  lifetime: number;
+  withdrawn: number;
+  usdValue: number;
+  /** Share of the emission budget this coin actually receives, 0–100. */
+  sharePct: number;
+  /** Raw allocation share the operator set. */
+  share: number;
 }
 
 export interface MiningSnapshot {
@@ -84,6 +255,13 @@ export interface MiningSnapshot {
   referredBy: string | null;
   twoFactorEnabled: boolean;
   tokenPriceUsd: number;
+  /** Per-coin balances and allocations, in display order. */
+  coins: CoinSnapshot[];
+  allocations: Record<MiningCoinId, number>;
+  /** USD value of every claimable balance combined. */
+  totalUsdValue: number;
+  /** Projected dollar emission for the current position over 24h. */
+  emissionUsdPerDay: number;
   networkStats: {
     activeMiners: number;
     totalHashrateMhs: number;
@@ -92,6 +270,7 @@ export interface MiningSnapshot {
     burnedTokens: number;
     lastAccrualAt: string;
     cron: string;
+    emissionUsdPerDay: number;
   };
   payouts: PayoutRecord[];
   leaderboard: Array<{ rank: number; operator: string; minedTokens: number; tier: VipTier; you: boolean }>;
@@ -106,13 +285,13 @@ interface MiningStore {
 
 const globalRef = globalThis as unknown as { __mineaiMining?: MiningStore };
 
-const SEED_PAYOUTS: Array<Omit<PayoutRecord, 'id' | 'at'>> = [
-  { wallet: '0x7a4f…9c21', network: 'usdt-bep20', tokens: 184.5, usd: 894.83 },
-  { wallet: 'TQ8m…4f17', network: 'usdt-trc20', tokens: 92.2, usd: 447.17 },
-  { wallet: '5Kd2…wq8L', network: 'sol', tokens: 311.7, usd: 1511.75 },
-  { wallet: 'bc1q…7h3m', network: 'btc', tokens: 48.9, usd: 237.17 },
-  { wallet: '0x1c9e…2ab0', network: 'usdt-arbitrum', tokens: 126.4, usd: 613.04 },
-  { wallet: 'EQB3…k9Tz', network: 'ton', tokens: 74.1, usd: 359.39 },
+const SEED_PAYOUTS: Array<Omit<PayoutRecord, 'id' | 'at' | 'coin' | 'symbol'> & { coin?: MiningCoinId }> = [
+  { wallet: '0x7a4f…9c21', network: 'usdt-bep20', tokens: 184.5, usd: 894.83, coin: 'mineai' },
+  { wallet: 'TQ8m…4f17', network: 'usdt-trc20', tokens: 92.2, usd: 447.17, coin: 'mineai' },
+  { wallet: '5Kd2…wq8L', network: 'sol', tokens: 311.7, usd: 1511.75, coin: 'mineai' },
+  { wallet: 'bc1q…7h3m', network: 'btc', tokens: 48.9, usd: 237.17, coin: 'mineai' },
+  { wallet: '0x1c9e…2ab0', network: 'usdt-arbitrum', tokens: 126.4, usd: 613.04, coin: 'mineai' },
+  { wallet: 'EQB3…k9Tz', network: 'ton', tokens: 74.1, usd: 359.39, coin: 'mineai' },
 ];
 
 const SEED_LEADERBOARD: Array<{ operator: string; minedTokens: number; tier: VipTier }> = [
@@ -124,6 +303,21 @@ const SEED_LEADERBOARD: Array<{ operator: string; minedTokens: number; tier: Vip
   { operator: 'ton-heron', minedTokens: 8_442, tier: 'observer' },
 ];
 
+function emptyCoins(): Record<MiningCoinId, CoinBalance> {
+  const entries = MINING_COINS.map((coin) => [
+    coin.id,
+    { amount: coin.id === 'mineai' ? GENESIS_GRANT : 0, lifetime: coin.id === 'mineai' ? GENESIS_GRANT : 0, withdrawn: 0 },
+  ]);
+  return Object.fromEntries(entries) as Record<MiningCoinId, CoinBalance>;
+}
+
+function defaultAllocations(): Record<MiningCoinId, number> {
+  return Object.fromEntries(MINING_COINS.map((coin) => [coin.id, coin.share])) as Record<
+    MiningCoinId,
+    number
+  >;
+}
+
 function store(): MiningStore {
   if (!globalRef.__mineaiMining) {
     const now = new Date().toISOString();
@@ -131,6 +325,8 @@ function store(): MiningStore {
       positions: new Map(),
       payouts: SEED_PAYOUTS.map((seed, index) => ({
         ...seed,
+        coin: seed.coin ?? 'mineai',
+        symbol: COIN_BY_ID[seed.coin ?? 'mineai'].symbol,
         id: `payout-seed-${index}`,
         at: new Date(Date.now() - (index + 1) * 7 * 60_000).toISOString(),
       })),
@@ -158,6 +354,10 @@ export function isValidUid(uid: string): boolean {
   return /^[A-Za-z0-9_-]{8,48}$/.test(uid);
 }
 
+function round(value: number, decimals = ACCRUAL_DECIMALS): number {
+  return Number(value.toFixed(decimals));
+}
+
 export function getPosition(uid: string): MiningPosition {
   const current = store();
   const existing = current.positions.get(uid);
@@ -173,6 +373,8 @@ export function getPosition(uid: string): MiningPosition {
     minedTokens: GENESIS_GRANT,
     lifetimeMinedTokens: GENESIS_GRANT,
     withdrawnTokens: 0,
+    coins: emptyCoins(),
+    allocations: defaultAllocations(),
     referralEarnings: 0,
     streakDays: 0,
     lastClaimDate: null,
@@ -213,7 +415,30 @@ function nextUtcMidnight(): string {
   return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1)).toISOString();
 }
 
-/** Accrues emission up to now, crediting referral share where applicable. */
+/** Normalised `share × bonus` weights; falls back to $MINEAI if every share is zero. */
+function emissionWeights(
+  allocations: Record<MiningCoinId, number>,
+): Array<{ id: MiningCoinId; weight: number }> {
+  const raw = MINING_COINS.map((coin) => {
+    const share = Number(allocations[coin.id]);
+    return {
+      id: coin.id,
+      weight: (Number.isFinite(share) && share > 0 ? share : 0) * coin.bonus,
+    };
+  });
+  const total = raw.reduce((sum, entry) => sum + entry.weight, 0);
+  if (total <= 0) return [{ id: 'mineai', weight: 1 }];
+  return raw.map((entry) => ({ id: entry.id, weight: entry.weight / total }));
+}
+
+function syncMineaiMirror(position: MiningPosition): void {
+  const mineai = position.coins.mineai;
+  position.minedTokens = mineai.amount;
+  position.lifetimeMinedTokens = mineai.lifetime;
+  position.withdrawnTokens = mineai.withdrawn;
+}
+
+/** Accrues emission up to now, splitting a fixed USD budget across the allocation. */
 export function accrue(uid: string): MiningPosition {
   const current = store();
   const position = getPosition(uid);
@@ -224,21 +449,33 @@ export function accrue(uid: string): MiningPosition {
   if (elapsedSeconds > 0.5) {
     const vip = vipTierFor(position.stakedTokens);
     const streak = streakMultiplierFor(position.streakDays);
-    const delta =
-      hashrateFor(position) * EMISSION_PER_MH * elapsedSeconds * vip.multiplier * streak;
+    const usdDelta =
+      hashrateFor(position) * EMISSION_USD_PER_MH * elapsedSeconds * vip.multiplier * streak;
 
-    position.minedTokens = Number((position.minedTokens + delta).toFixed(6));
-    position.lifetimeMinedTokens = Number((position.lifetimeMinedTokens + delta).toFixed(6));
+    for (const { id, weight } of emissionWeights(position.allocations)) {
+      if (weight <= 0) continue;
+      const coin = COIN_BY_ID[id];
+      const amount = (usdDelta * weight) / coin.priceUsd;
+      const balance = position.coins[id];
+      balance.amount = round(balance.amount + amount);
+      balance.lifetime = round(balance.lifetime + amount);
+    }
 
     if (position.referredBy) {
       const referrer = current.positions.get(position.referredBy);
       if (referrer) {
-        const share = delta * 0.08;
-        referrer.minedTokens = Number((referrer.minedTokens + share).toFixed(6));
-        referrer.referralEarnings = Number((referrer.referralEarnings + share).toFixed(6));
-        referrer.lifetimeMinedTokens = Number((referrer.lifetimeMinedTokens + share).toFixed(6));
+        // Referral commission stays denominated in $MINEAI so the ledger has
+        // one unit for the programme regardless of the referee's allocation.
+        const share = (usdDelta * 0.08) / COIN_BY_ID.mineai.priceUsd;
+        const balance = referrer.coins.mineai;
+        balance.amount = round(balance.amount + share);
+        balance.lifetime = round(balance.lifetime + share);
+        referrer.referralEarnings = round(referrer.referralEarnings + share, 6);
+        syncMineaiMirror(referrer);
       }
     }
+
+    syncMineaiMirror(position);
   }
 
   position.lastAccrualAt = new Date(now).toISOString();
@@ -247,16 +484,46 @@ export function accrue(uid: string): MiningPosition {
   return position;
 }
 
-export function accrueAll(): { positions: number; tokens: number } {
+export function accrueAll(): {
+  positions: number;
+  tokens: number;
+  usd: number;
+  coins: Record<string, number>;
+} {
   const current = store();
-  let tokens = 0;
-  for (const uid of current.positions.keys()) {
-    const before = current.positions.get(uid)?.minedTokens ?? 0;
-    const after = accrue(uid).minedTokens;
-    tokens += Math.max(0, after - before);
+  const before = new Map<string, Record<MiningCoinId, number>>();
+  for (const [uid, position] of current.positions) {
+    before.set(
+      uid,
+      Object.fromEntries(MINING_COINS.map((coin) => [coin.id, position.coins[coin.id].lifetime])) as Record<
+        MiningCoinId,
+        number
+      >,
+    );
   }
+
+  const coins: Record<string, number> = {};
+  for (const coin of MINING_COINS) coins[coin.id] = 0;
+
+  for (const uid of current.positions.keys()) {
+    accrue(uid);
+    const after = current.positions.get(uid);
+    const previous = before.get(uid);
+    if (!after || !previous) continue;
+    for (const coin of MINING_COINS) {
+      const delta = after.coins[coin.id].lifetime - previous[coin.id];
+      if (delta > 0) coins[coin.id] = round((coins[coin.id] ?? 0) + delta);
+    }
+  }
+
+  const usd = MINING_COINS.reduce((sum, coin) => sum + (coins[coin.id] ?? 0) * coin.priceUsd, 0);
   current.lastAccrualAt = new Date().toISOString();
-  return { positions: current.positions.size, tokens: Number(tokens.toFixed(4)) };
+  return {
+    positions: current.positions.size,
+    tokens: coins.mineai ?? 0,
+    usd: Number(usd.toFixed(4)),
+    coins,
+  };
 }
 
 export function claimStreak(uid: string): { ok: boolean; position: MiningPosition; bonus: number; error?: string } {
@@ -272,8 +539,10 @@ export function claimStreak(uid: string): { ok: boolean; position: MiningPositio
   position.lastClaimDate = today;
 
   const bonus = Number((0.75 * streakMultiplierFor(position.streakDays)).toFixed(4));
-  position.minedTokens = Number((position.minedTokens + bonus).toFixed(6));
-  position.lifetimeMinedTokens = Number((position.lifetimeMinedTokens + bonus).toFixed(6));
+  const balance = position.coins.mineai;
+  balance.amount = round(balance.amount + bonus);
+  balance.lifetime = round(balance.lifetime + bonus);
+  syncMineaiMirror(position);
 
   return { ok: true, position, bonus };
 }
@@ -285,12 +554,14 @@ export function stake(uid: string, amount: number): { ok: boolean; position: Min
   if (!Number.isFinite(value) || value <= 0) {
     return { ok: false, position, error: 'A positive stake amount is required' };
   }
-  if (value > position.minedTokens) {
-    return { ok: false, position, error: 'Not enough mined tokens to stake' };
+  if (value > position.coins.mineai.amount) {
+    return { ok: false, position, error: 'Not enough $MINEAI to stake' };
   }
 
-  position.minedTokens = Number((position.minedTokens - value).toFixed(6));
-  position.stakedTokens = Number((position.stakedTokens + value).toFixed(6));
+  const balance = position.coins.mineai;
+  balance.amount = round(balance.amount - value);
+  position.stakedTokens = round(position.stakedTokens + value);
+  syncMineaiMirror(position);
   return { ok: true, position };
 }
 
@@ -305,44 +576,88 @@ export function unstake(uid: string, amount: number): { ok: boolean; position: M
     return { ok: false, position, error: 'That is more than the staked balance' };
   }
 
-  position.stakedTokens = Number((position.stakedTokens - value).toFixed(6));
-  position.minedTokens = Number((position.minedTokens + value).toFixed(6));
+  position.stakedTokens = round(position.stakedTokens - value);
+  const balance = position.coins.mineai;
+  balance.amount = round(balance.amount + value);
+  syncMineaiMirror(position);
   return { ok: true, position };
 }
 
-export function requestWithdrawal(
+/** Updates the emission split. Shares are normalised, so they need not sum to 100. */
+export function allocate(
   uid: string,
+  shares: Partial<Record<MiningCoinId, number>>,
+): { ok: boolean; position: MiningPosition; error?: string } {
+  const position = accrue(uid);
+
+  const next = { ...position.allocations };
+  let total = 0;
+
+  for (const coin of MINING_COINS) {
+    const raw = shares[coin.id];
+    const value = raw === undefined ? next[coin.id] : Number(raw);
+    const clamped = Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : 0;
+    next[coin.id] = clamped;
+    total += clamped;
+  }
+
+  if (total <= 0) {
+    return { ok: false, position, error: 'Allocate at least one share to a coin' };
+  }
+
+  position.allocations = next;
+  return { ok: true, position };
+}
+
+function maskWallet(wallet: string): string {
+  return `${wallet.slice(0, 6)}…${wallet.slice(-4)}`;
+}
+
+export function requestCoinWithdrawal(
+  uid: string,
+  coinId: string,
   amount: number,
   wallet: string,
-  networkId: string,
 ): { ok: boolean; position: MiningPosition; payout?: PayoutRecord; error?: string } {
   const position = accrue(uid);
-  const network = findNetwork(networkId);
+  const coin = findCoin(coinId);
   const value = Number(amount);
+  const address = wallet.trim();
 
-  if (!network) return { ok: false, position, error: 'Unsupported withdrawal network' };
-  if (!network.configured) return { ok: false, position, error: `${network.envKey} is not configured` };
-  if (!isValidAddress(network.family, wallet)) {
-    return { ok: false, position, error: 'The wallet address is malformed for this network' };
+  if (!coin) return { ok: false, position, error: 'Unsupported withdrawal coin' };
+  if (!isValidAddress(coin.family, address)) {
+    return { ok: false, position, error: `That is not a valid ${coin.label} (${coin.symbol}) address` };
   }
-  if (!Number.isFinite(value) || value < MIN_WITHDRAW) {
-    return { ok: false, position, error: `The minimum withdrawal is ${MIN_WITHDRAW} $MINEAI` };
+  if (!Number.isFinite(value) || value <= 0) {
+    return { ok: false, position, error: 'A positive withdrawal amount is required' };
   }
-  if (value > position.minedTokens) {
-    return { ok: false, position, error: 'Not enough claimable tokens for that withdrawal' };
+  if (value < coin.minWithdraw) {
+    return {
+      ok: false,
+      position,
+      error: `The minimum ${coin.symbol} withdrawal is ${coin.minWithdraw} ${coin.symbol}`,
+    };
   }
 
-  position.minedTokens = Number((position.minedTokens - value).toFixed(6));
-  position.withdrawnTokens = Number((position.withdrawnTokens + value).toFixed(6));
-  position.wallet = wallet;
-  position.network = networkId;
+  const balance = position.coins[coin.id];
+  if (value > balance.amount) {
+    return { ok: false, position, error: `Not enough claimable ${coin.symbol} for that withdrawal` };
+  }
+
+  balance.amount = round(balance.amount - value);
+  balance.withdrawn = round(balance.withdrawn + value);
+  position.wallet = address;
+  position.network = coin.network ?? coin.id;
+  syncMineaiMirror(position);
 
   const payout: PayoutRecord = {
     id: `PAY-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`,
-    wallet: `${wallet.slice(0, 6)}…${wallet.slice(-4)}`,
-    network: networkId,
-    tokens: Number(value.toFixed(4)),
-    usd: Number((value * tokenPriceUsd()).toFixed(2)),
+    wallet: maskWallet(address),
+    network: coin.network ?? coin.id,
+    coin: coin.id,
+    symbol: coin.symbol,
+    tokens: round(value, Math.max(coin.decimals, 6)),
+    usd: Number((value * coin.priceUsd).toFixed(2)),
     at: new Date().toISOString(),
   };
 
@@ -350,12 +665,29 @@ export function requestWithdrawal(
   store().payouts = store().payouts.slice(0, 24);
 
   creditTreasury(
-    Math.min(0.42, Number((value * 0.001).toFixed(2))),
-    `Mining withdrawal ${payout.id}`,
+    Math.min(0.42, Number((payout.usd * 0.001).toFixed(2))),
+    `${coin.symbol} mining withdrawal ${payout.id}`,
     payout.id,
   );
 
   return { ok: true, position, payout };
+}
+
+/**
+ * Legacy $MINEAI withdrawal signature. Kept so an older client cannot break;
+ * new callers should use `requestCoinWithdrawal`.
+ */
+export function requestWithdrawal(
+  uid: string,
+  amount: number,
+  wallet: string,
+  networkId: string,
+): { ok: boolean; position: MiningPosition; payout?: PayoutRecord; error?: string } {
+  const network = findNetwork(networkId);
+  if (!network) {
+    return { ok: false, position: accrue(uid), error: 'Unsupported withdrawal network' };
+  }
+  return requestCoinWithdrawal(uid, 'mineai', amount, wallet);
 }
 
 export function applyReferral(uid: string, code: string): { ok: boolean; position: MiningPosition; error?: string } {
@@ -372,14 +704,17 @@ export function applyReferral(uid: string, code: string): { ok: boolean; positio
 
   position.referredBy = referrer.uid;
   referrer.referrals.push(uid);
-  referrer.minedTokens = Number((referrer.minedTokens + 5).toFixed(6));
-  referrer.referralEarnings = Number((referrer.referralEarnings + 5).toFixed(6));
+  const balance = referrer.coins.mineai;
+  balance.amount = round(balance.amount + 5);
+  balance.lifetime = round(balance.lifetime + 5);
+  referrer.referralEarnings = round(referrer.referralEarnings + 5, 6);
+  syncMineaiMirror(referrer);
 
   return { ok: true, position };
 }
 
 export function tokenPriceUsd(): number {
-  return 4.85;
+  return TOKEN_PRICE_USD;
 }
 
 /** Public payout tape — safe to expose without a session. */
@@ -393,7 +728,7 @@ export function networkStats(): MiningSnapshot['networkStats'] {
   const positions = [...current.positions.values()];
   const totalHashrate = positions.reduce((sum, item) => sum + hashrateFor(item), 184_920);
   const staked = positions.reduce((sum, item) => sum + item.stakedTokens, 2_480_000);
-  const mined = positions.reduce((sum, item) => sum + item.lifetimeMinedTokens, 38_400_000);
+  const mined = positions.reduce((sum, item) => sum + item.coins.mineai.lifetime, 38_400_000);
 
   return {
     activeMiners: 12_480 + positions.length,
@@ -403,6 +738,7 @@ export function networkStats(): MiningSnapshot['networkStats'] {
     burnedTokens: 4_120_000,
     lastAccrualAt: current.lastAccrualAt,
     cron: current.cron,
+    emissionUsdPerDay: Number((totalHashrate * EMISSION_USD_PER_MH * 86_400).toFixed(2)),
   };
 }
 
@@ -419,6 +755,113 @@ export function setTwoFactor(
   return position;
 }
 
+/* ------------------------------------------------------------------ *
+ * Database write-through
+ * ------------------------------------------------------------------ */
+
+function serialisePosition(position: MiningPosition): Record<string, unknown> {
+  return {
+    operator_ref: position.uid,
+    hashrate_mhs: Number(hashrateFor(position).toFixed(4)),
+    mined_tokens: position.minedTokens,
+    lifetime_mined_tokens: position.lifetimeMinedTokens,
+    staked_tokens: position.stakedTokens,
+    withdrawn_tokens: position.withdrawnTokens,
+    streak_days: position.streakDays,
+    last_claim_at: position.lastClaimDate,
+    coins: position.coins,
+    allocations: position.allocations,
+    last_accrual_at: position.lastAccrualAt,
+    updated_at: new Date().toISOString(),
+  };
+}
+
+/**
+ * Persists one position to Supabase. No-op without credentials; the in-memory
+ * store stays the hot path and the database is the durable ledger.
+ */
+export async function persistPosition(uid: string): Promise<boolean> {
+  if (!supabaseConfigured()) return false;
+  const position = store().positions.get(uid);
+  if (!position) return false;
+  const result = await upsertRecord('mining_positions', serialisePosition(position), 'operator_ref');
+  return result.success && result.mode === 'supabase';
+}
+
+export async function persistAllPositions(): Promise<number> {
+  if (!supabaseConfigured()) return 0;
+  let written = 0;
+  for (const uid of store().positions.keys()) {
+    if (await persistPosition(uid)) written += 1;
+  }
+  return written;
+}
+
+function num(value: unknown, fallback = 0): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+/**
+ * Seeds a cold instance from the durable row.
+ *
+ * Only a fresh, untouched in-memory position is hydrated — otherwise a stale
+ * database snapshot could roll back balances the hot instance has already
+ * advanced (withdrawals decrease a balance, so a blind merge is unsafe).
+ */
+export async function hydratePosition(uid: string): Promise<boolean> {
+  if (!supabaseConfigured()) return false;
+  const position = getPosition(uid);
+  const fresh =
+    position.streakDays === 0 &&
+    position.lastClaimDate === null &&
+    position.stakedTokens === 0 &&
+    position.coins.mineai.lifetime <= GENESIS_GRANT + 1e-6;
+  if (!fresh) return false;
+
+  const rows = await readTable('mining_positions', {
+    query: `operator_ref=eq.${encodeURIComponent(uid)}&select=coins,allocations,staked_tokens,streak_days,last_claim_at,last_accrual_at`,
+    limit: 1,
+  });
+  const row = rows[0];
+  if (!row) return false;
+
+  const storedCoins = row.coins;
+  if (storedCoins && typeof storedCoins === 'object') {
+    for (const coin of MINING_COINS) {
+      const entry = (storedCoins as Record<string, unknown>)[coin.id];
+      if (!entry || typeof entry !== 'object') continue;
+      const record = entry as Record<string, unknown>;
+      position.coins[coin.id] = {
+        amount: round(num(record.amount)),
+        lifetime: round(num(record.lifetime)),
+        withdrawn: round(num(record.withdrawn)),
+      };
+    }
+  }
+
+  const storedAllocations = row.allocations;
+  if (storedAllocations && typeof storedAllocations === 'object') {
+    for (const coin of MINING_COINS) {
+      const value = (storedAllocations as Record<string, unknown>)[coin.id];
+      if (value === undefined) continue;
+      position.allocations[coin.id] = Math.max(0, Math.min(100, num(value, coin.share)));
+    }
+  }
+
+  position.stakedTokens = round(num(row.staked_tokens));
+  position.streakDays = Math.max(0, Math.min(7, Math.round(num(row.streak_days))));
+  const lastClaim = row.last_claim_at;
+  position.lastClaimDate = typeof lastClaim === 'string' ? lastClaim.slice(0, 10) : null;
+  const lastAccrual = row.last_accrual_at;
+  if (typeof lastAccrual === 'string' && !Number.isNaN(Date.parse(lastAccrual))) {
+    position.lastAccrualAt = lastAccrual;
+  }
+
+  syncMineaiMirror(position);
+  return true;
+}
+
 export function snapshotFor(uid: string, lang: SupportedLanguage): MiningSnapshot {
   void lang;
   const position = accrue(uid);
@@ -426,10 +869,36 @@ export function snapshotFor(uid: string, lang: SupportedLanguage): MiningSnapsho
   const vip = vipTierFor(position.stakedTokens);
   const streakMultiplier = streakMultiplierFor(position.streakDays);
   const claimedToday = position.lastClaimDate === utcDay();
+  const weights = emissionWeights(position.allocations);
+  const weightById = new Map(weights.map((entry) => [entry.id, entry.weight]));
+
+  const coins: CoinSnapshot[] = MINING_COINS.map((coin) => {
+    const balance = position.coins[coin.id];
+    return {
+      id: coin.id,
+      symbol: coin.symbol,
+      label: coin.label,
+      chain: coin.chain,
+      family: coin.family,
+      bonus: coin.bonus,
+      priceUsd: coin.priceUsd,
+      minWithdraw: coin.minWithdraw,
+      decimals: coin.decimals,
+      amount: round(balance.amount, coin.decimals),
+      lifetime: round(balance.lifetime, coin.decimals),
+      withdrawn: round(balance.withdrawn, coin.decimals),
+      usdValue: Number((balance.amount * coin.priceUsd).toFixed(2)),
+      sharePct: Number(((weightById.get(coin.id) ?? 0) * 100).toFixed(2)),
+      share: position.allocations[coin.id],
+    };
+  });
+
+  const totalUsdValue = coins.reduce((sum, coin) => sum + coin.amount * coin.priceUsd, 0);
+  const hashrate = hashrateFor(position);
 
   const you = {
     operator: `you.${position.referralCode.toLowerCase()}`,
-    minedTokens: Math.round(position.lifetimeMinedTokens),
+    minedTokens: Math.round(position.coins.mineai.lifetime),
     tier: vip.tier,
     you: true,
   };
@@ -442,12 +911,12 @@ export function snapshotFor(uid: string, lang: SupportedLanguage): MiningSnapsho
   return {
     uid: position.uid,
     referralCode: position.referralCode,
-    hashrateMhs: Number(hashrateFor(position).toFixed(2)),
-    minedTokens: Number(position.minedTokens.toFixed(6)),
-    lifetimeMinedTokens: Number(position.lifetimeMinedTokens.toFixed(6)),
-    stakedTokens: Number(position.stakedTokens.toFixed(6)),
-    claimableTokens: Number(position.minedTokens.toFixed(6)),
-    withdrawnTokens: Number(position.withdrawnTokens.toFixed(6)),
+    hashrateMhs: Number(hashrate.toFixed(2)),
+    minedTokens: round(position.coins.mineai.amount, 6),
+    lifetimeMinedTokens: round(position.coins.mineai.lifetime, 6),
+    stakedTokens: round(position.stakedTokens, 6),
+    claimableTokens: round(position.coins.mineai.amount, 6),
+    withdrawnTokens: round(position.coins.mineai.withdrawn, 6),
     streakDays: position.streakDays,
     streakMultiplier,
     vipTier: vip.tier,
@@ -455,11 +924,15 @@ export function snapshotFor(uid: string, lang: SupportedLanguage): MiningSnapsho
     effectiveMultiplier: Number((vip.multiplier * streakMultiplier).toFixed(4)),
     claimedToday,
     nextClaimAt: nextUtcMidnight(),
-    referralEarnings: Number(position.referralEarnings.toFixed(4)),
+    referralEarnings: round(position.referralEarnings, 4),
     referralCount: position.referrals.length,
     referredBy: position.referredBy,
     twoFactorEnabled: position.twoFactorEnabled,
     tokenPriceUsd: tokenPriceUsd(),
+    coins,
+    allocations: { ...position.allocations },
+    totalUsdValue: Number(totalUsdValue.toFixed(2)),
+    emissionUsdPerDay: Number((hashrate * EMISSION_USD_PER_MH * 86_400 * vip.multiplier * streakMultiplier).toFixed(4)),
     networkStats: networkStats(),
     payouts: current.payouts.slice(0, 12),
     leaderboard,
@@ -467,9 +940,11 @@ export function snapshotFor(uid: string, lang: SupportedLanguage): MiningSnapsho
 }
 
 export const MINING_CONSTANTS = {
-  minWithdraw: MIN_WITHDRAW,
+  minWithdraw: COIN_BY_ID.mineai.minWithdraw,
   genesisGrant: GENESIS_GRANT,
   emissionPerMh: EMISSION_PER_MH,
+  emissionUsdPerMh: EMISSION_USD_PER_MH,
   baseHashrate: BASE_HASHRATE,
   tokenPriceUsd: tokenPriceUsd(),
+  coins: MINING_COINS,
 };
