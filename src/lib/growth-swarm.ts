@@ -55,6 +55,7 @@ interface Phrases {
   loss: string;
   flat: string;
   readMore: string;
+  newsFocus: string;
   cta: string;
   why: string;
   what: string;
@@ -77,6 +78,7 @@ const PHRASES: Record<SupportedLanguage, Phrases> = {
     loss: 'down',
     flat: 'almost flat',
     readMore: 'Read the full brief',
+    newsFocus: 'In focus',
     cta: 'Start free cloud mining and earn $MINEAI every day.',
     why: 'Why it moved',
     what: 'What it means for you',
@@ -97,6 +99,7 @@ const PHRASES: Record<SupportedLanguage, Phrases> = {
     loss: 'هابط',
     flat: 'شبه ثابت',
     readMore: 'اقرأ الموجز الكامل',
+    newsFocus: 'في الواجهة',
     cta: 'ابدأ التعدين السحابي المجاني واكسب $MINEAI كل يوم.',
     why: 'لماذا تحرك',
     what: 'ماذا يعني لك',
@@ -117,6 +120,7 @@ const PHRASES: Record<SupportedLanguage, Phrases> = {
     loss: 'en baisse',
     flat: 'presque stable',
     readMore: 'Lire le brief complet',
+    newsFocus: 'À la une',
     cta: 'Commencez le minage cloud gratuit et gagnez des $MINEAI chaque jour.',
     why: 'Pourquoi il a bougé',
     what: 'Ce que cela signifie pour vous',
@@ -137,6 +141,7 @@ const PHRASES: Record<SupportedLanguage, Phrases> = {
     loss: 'baja',
     flat: 'casi plano',
     readMore: 'Leer el resumen completo',
+    newsFocus: 'En portada',
     cta: 'Empieza la minería en la nube gratis y gana $MINEAI cada día.',
     why: 'Por qué se movió',
     what: 'Qué significa para ti',
@@ -157,6 +162,7 @@ const PHRASES: Record<SupportedLanguage, Phrases> = {
     loss: '下跌',
     flat: '基本持平',
     readMore: '阅读完整简报',
+    newsFocus: '焦点新闻',
     cta: '开始免费云挖矿，每天赚取 $MINEAI。',
     why: '为什么波动',
     what: '这对你意味着什么',
@@ -177,6 +183,7 @@ const PHRASES: Record<SupportedLanguage, Phrases> = {
     loss: 'नीचे',
     flat: 'लगभग स्थिर',
     readMore: 'पूरा ब्रीफ पढ़ें',
+    newsFocus: 'चर्चा में',
     cta: 'मुफ़्त क्लाउड माइनिंग शुरू करें और हर दिन $MINEAI कमाएँ।',
     why: 'यह क्यों हिला',
     what: 'आपके लिए इसका मतलब',
@@ -250,13 +257,13 @@ function buildBrief({ topic, date, lang, quotes, headline }: BuildInput): Growth
   const summary =
     topic === 'mining'
       ? `${p.miningLine} ${p.price} ${priceText}.`
-      : `${name} is ${dir} ${changeText} ${p.today}. ${p.price}: ${priceText}.`;
+      : `${name} ${dir} ${changeText} ${p.today}. ${p.price}: ${priceText}.`;
 
   const sections: BriefSection[] = [
     {
       heading: p.why,
       body: `${name} ${dir} ${changeText}. ${
-        headline ? `News in focus: ${headline}` : p.scriptHook + '.'
+        headline ? `${p.newsFocus}: ${headline}` : p.scriptHook + '.'
       }`,
     },
     {
