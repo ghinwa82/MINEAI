@@ -41,6 +41,27 @@ type Deployment = {
 
 type Step = { at: string; tone: 'info' | 'ok' | 'error'; text: string };
 
+type GrowthState = {
+  lastRunAt: string | null;
+  lastRunTrigger: 'cron' | 'manual' | null;
+  runs: number;
+  briefsGenerated: number;
+  scriptsGenerated: number;
+  indexedUrls: number;
+  indexPings: number;
+  shares: number;
+  signups: number;
+  logs: Array<{ id: string; at: string; agent: string; action: string; status: string }>;
+  campaigns: Array<{
+    id: string;
+    slug: string;
+    lang: string;
+    network: string;
+    script: string;
+    createdAt: string;
+  }>;
+};
+
 const CHAINS: Record<
   number,
   {
@@ -67,6 +88,14 @@ const CHAINS: Record<
     rpc: ['https://bsc-dataseed.bnbchain.org', 'https://bsc-rpc.publicnode.com'],
     explorer: 'https://bscscan.com',
   },
+  11155111: {
+    label: 'Ethereum Sepolia',
+    hex: '0xaa36a7',
+    currency: { name: 'Sepolia Ether', symbol: 'ETH', decimals: 18 },
+    rpc: ['https://ethereum-sepolia-rpc.publicnode.com', 'https://rpc.sepolia.org'],
+    explorer: 'https://sepolia.etherscan.io',
+    faucet: 'https://sepoliafaucet.com',
+  },
 };
 
 function getProvider(): Eip1193 | null {
@@ -91,6 +120,7 @@ export default function PayoutSetupPage() {
   const [error, setError] = useState<string | null>(null);
   const [steps, setSteps] = useState<Step[]>([]);
   const [copied, setCopied] = useState<string | null>(null);
+  const [growth, setGrowth] = useState<GrowthState | null>(null);
 
   const note = useCallback((tone: Step['tone'], text: string) => {
     setSteps((previous) => [
@@ -114,6 +144,23 @@ export default function PayoutSetupPage() {
     }
   }, []);
 
+  const refreshGrowth = useCallback(async () => {
+    try {
+      const response = await fetch('/api/agents/growth', { cache: 'no-store' });
+      if (!response.ok) return;
+      const payload = (await response.json()) as { state?: GrowthState };
+      setGrowth(payload.state ?? null);
+    } catch {
+      // The monitor is read-only; a failed poll leaves the last snapshot.
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshGrowth();
+    const timer = window.setInterval(refreshGrowth, 30_000);
+    return () => window.clearInterval(timer);
+  }, [refreshGrowth]);
+
   useEffect(() => {
     let cancelled = false;
 
@@ -129,7 +176,10 @@ export default function PayoutSetupPage() {
       }
 
       try {
-        const cached = window.localStorage.getItem('mineai.contract.56') ?? window.localStorage.getItem('mineai.contract.97');
+        const cached =
+          window.localStorage.getItem('mineai.contract.56') ??
+          window.localStorage.getItem('mineai.contract.97') ??
+          window.localStorage.getItem('mineai.contract.11155111');
         if (cached && !cancelled) {
           const parsed = JSON.parse(cached) as Deployment;
           setDeployment(parsed);
@@ -276,7 +326,7 @@ export default function PayoutSetupPage() {
       return;
     }
     if (!chainId || !CHAINS[chainId]) {
-      setError('Switch to BNB Smart Chain Testnet or Mainnet first.');
+      setError('Switch to BNB Smart Chain Testnet, Mainnet or Ethereum Sepolia first.');
       return;
     }
 
@@ -403,7 +453,12 @@ export default function PayoutSetupPage() {
 
   const envSnippet = useMemo(() => {
     if (!deployment) return '';
-    const name = deployment.chainId === 56 ? 'NEXT_PUBLIC_MINEAI_BSC_CONTRACT' : 'NEXT_PUBLIC_MINEAI_BSC_TESTNET_CONTRACT';
+    const names: Record<number, string> = {
+      56: 'NEXT_PUBLIC_MINEAI_BSC_CONTRACT',
+      97: 'NEXT_PUBLIC_MINEAI_BSC_TESTNET_CONTRACT',
+      11155111: 'NEXT_PUBLIC_MINEAI_SEPOLIA_CONTRACT',
+    };
+    const name = names[deployment.chainId] ?? `NEXT_PUBLIC_MINEAI_CONTRACT_${deployment.chainId}`;
     return `${name}="${deployment.address}"`;
   }, [deployment]);
 
@@ -422,7 +477,7 @@ export default function PayoutSetupPage() {
 
         <div className="grid gap-2 text-[0.72rem]">
           <span className="mx-chip !border-mint/40 !text-mint">No key in .env</span>
-          <span className="mx-chip !border-amber/40 !text-amber">BNB Smart Chain · Testnet 97 / Mainnet 56</span>
+          <span className="mx-chip !border-amber/40 !text-amber">BSC Testnet 97 · BSC 56 · Sepolia 11155111</span>
           <span className="mx-chip">Fixed supply · 1,000,000,000 $MINEAI</span>
         </div>
       </section>
@@ -485,6 +540,14 @@ export default function PayoutSetupPage() {
               >
                 Mainnet
               </button>
+              <button
+                type="button"
+                onClick={() => switchChain(11155111)}
+                disabled={busy === 'chain-11155111'}
+                className="mx-btn-quiet !py-2.5 !text-[0.78rem]"
+              >
+                Sepolia
+              </button>
             </div>
 
             {CHAINS[97].faucet ? (
@@ -492,6 +555,16 @@ export default function PayoutSetupPage() {
                 Testnet needs free tBNB:{' '}
                 <a href={CHAINS[97].faucet} target="_blank" rel="noreferrer" className="text-cyan hover:underline">
                   BNB Chain faucet
+                </a>
+                {' · '}
+                Sepolia needs free ETH:{' '}
+                <a
+                  href={CHAINS[11155111].faucet}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-cyan hover:underline"
+                >
+                  Sepolia faucet
                 </a>
                 .
               </p>
@@ -680,6 +753,113 @@ npm --prefix hardhat run deploy:testnet`}
               above does not.
             </p>
           </article>
+        </div>
+      </section>
+
+      {/* ------------------------------------------- Growth Agents Monitor */}
+      <section className="mt-10 rounded-2xl border border-cyan/20 bg-[linear-gradient(140deg,rgba(34,224,255,0.06),rgba(8,13,24,0.97)_55%)] p-6 sm:p-7">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-[0.58rem] font-semibold tracking-[0.18em] text-ink-faint uppercase">
+              Autonomous growth
+            </p>
+            <h2 className="mt-1.5 text-lg font-bold text-ink">Growth Agents Monitor</h2>
+            <p className="mt-1.5 text-[0.74rem] leading-relaxed text-ink-mute">
+              Trend, distribution, viral-loop and retention agents. The daily cron writes six-language
+              market briefs and social scripts, refreshes the sitemap and pings IndexNow.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={refreshGrowth}
+            className="rounded-lg border border-white/12 bg-white/[0.03] px-3 py-1.5 text-[0.7rem] text-ink-mute transition hover:border-cyan/40 hover:text-cyan"
+          >
+            Refresh monitor
+          </button>
+        </div>
+
+        <dl className="mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-4 lg:grid-cols-8">
+          {[
+            { label: 'Runs', value: growth?.runs ?? 0 },
+            { label: 'Briefs', value: growth?.briefsGenerated ?? 0 },
+            { label: 'Scripts', value: growth?.scriptsGenerated ?? 0 },
+            { label: 'URLs', value: growth?.indexedUrls ?? 0 },
+            { label: 'Index pings', value: growth?.indexPings ?? 0 },
+            { label: 'Shares', value: growth?.shares ?? 0 },
+            { label: 'Signups', value: growth?.signups ?? 0 },
+            { label: 'Campaigns', value: growth?.campaigns.length ?? 0 },
+          ].map((stat) => (
+            <div key={stat.label} className="rounded-xl border border-white/8 bg-[#04060d]/70 px-3 py-2.5">
+              <dt className="text-[0.54rem] tracking-[0.12em] text-ink-faint uppercase">{stat.label}</dt>
+              <dd className="mx-numeric mt-1 text-lg font-bold text-cyan">{stat.value}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <p className="mx-numeric mt-4 text-[0.66rem] text-ink-faint">
+          Last run:{' '}
+          {growth?.lastRunAt
+            ? `${new Date(growth.lastRunAt).toLocaleString('en-GB')} · ${growth.lastRunTrigger ?? 'cron'}`
+            : 'not yet in this instance'}
+        </p>
+
+        <div className="mt-5 grid gap-5 lg:grid-cols-2">
+          <div className="rounded-xl border border-white/8 bg-[#050810] p-4">
+            <h3 className="text-[0.72rem] font-semibold tracking-[0.1em] text-amber uppercase">
+              Agent log
+            </h3>
+            <ol className="mt-3 space-y-2.5">
+              {(growth?.logs ?? []).length === 0 ? (
+                <li className="text-[0.74rem] text-ink-faint">
+                  No cycles on this instance yet. The next cron run or a manual trigger fills this feed.
+                </li>
+              ) : (
+                growth!.logs.slice(0, 8).map((entry) => (
+                  <li key={entry.id} className="flex gap-2.5">
+                    <span
+                      className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${
+                        entry.status === 'success'
+                          ? 'bg-mint'
+                          : entry.status === 'warning'
+                            ? 'bg-amber'
+                            : 'bg-cyan'
+                      }`}
+                      aria-hidden
+                    />
+                    <div>
+                      <p className="text-[0.6rem] tracking-[0.1em] text-ink-faint uppercase">{entry.agent}</p>
+                      <p className="mt-0.5 text-[0.73rem] leading-relaxed text-ink-soft">{entry.action}</p>
+                    </div>
+                  </li>
+                ))
+              )}
+            </ol>
+          </div>
+
+          <div className="rounded-xl border border-white/8 bg-[#050810] p-4">
+            <h3 className="text-[0.72rem] font-semibold tracking-[0.1em] text-cyan uppercase">
+              Prepared campaigns
+            </h3>
+            <ul className="mt-3 space-y-2">
+              {(growth?.campaigns ?? []).length === 0 ? (
+                <li className="text-[0.74rem] text-ink-faint">No campaigns prepared on this instance.</li>
+              ) : (
+                growth!.campaigns.slice(0, 5).map((campaign) => (
+                  <li key={campaign.id} className="rounded-lg border border-white/8 px-3 py-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[0.66rem] font-semibold text-ink">
+                        {campaign.network} · {campaign.lang.toUpperCase()}
+                      </span>
+                      <span className="mx-numeric text-[0.56rem] text-ink-faint">{campaign.slug}</span>
+                    </div>
+                    <p className="mt-1 line-clamp-2 text-[0.68rem] leading-relaxed text-ink-mute">
+                      {campaign.script}
+                    </p>
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
         </div>
       </section>
     </PageShell>

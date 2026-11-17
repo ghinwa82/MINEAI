@@ -18,7 +18,7 @@ export interface MiningTelemetry {
 export interface AgentLogEntry {
   id: string;
   timestamp: string;
-  agentName: 'TelemetryAuditor' | 'SentimentSupport' | 'FinancialPayout' | 'GrowthHacker';
+  agentName: 'TelemetryAuditor' | 'SentimentSupport' | 'FinancialPayout' | 'GrowthHacker' | 'GrowthSwarm';
   action: string;
   status: 'success' | 'warning' | 'info';
   details: Record<string, unknown>;

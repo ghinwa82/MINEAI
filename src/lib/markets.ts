@@ -57,6 +57,7 @@ const DEFINITIONS: Definition[] = [
   { symbol: 'BNB-USD', name: 'BNB', category: 'crypto', fallback: 648.2, currency: 'USD' },
   { symbol: 'TON11419-USD', name: 'Toncoin', category: 'crypto', fallback: 5.42, currency: 'USD' },
   { symbol: 'DOGE-USD', name: 'Dogecoin', category: 'crypto', fallback: 0.168, currency: 'USD' },
+  { symbol: 'LTC-USD', name: 'Litecoin', category: 'crypto', fallback: 88.4, currency: 'USD' },
 ];
 
 interface Cache {

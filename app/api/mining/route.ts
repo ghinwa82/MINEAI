@@ -15,6 +15,7 @@ import {
   requestCoinWithdrawal,
   snapshotFor,
   stake,
+  unlockShareBoost,
   unstake,
 } from '@/lib/mining';
 import { clientKey, checkRateLimit } from '@/lib/rate-limit';
@@ -167,6 +168,25 @@ export async function POST(request: Request) {
         },
       });
       return NextResponse.json({ ok: true, payout: result.payout, ...snapshotFor(input.uid, 'en') });
+    }
+
+    if (input.action === 'share-boost') {
+      const result = unlockShareBoost(input.uid);
+      const { recordShare } = await import('@/lib/growth-swarm');
+      recordShare();
+      pushAgentLog({
+        agentName: 'GrowthHacker',
+        action: `Share-to-Boost unlocked: +15% hashrate until ${new Date(result.until).toISOString()}.`,
+        status: 'success',
+        details: { uid: input.uid, until: result.until },
+      });
+      await persistPosition(input.uid);
+      return NextResponse.json({
+        ok: true,
+        boostUntil: result.until,
+        boostMultiplier: result.multiplier,
+        ...snapshotFor(input.uid, 'en'),
+      });
     }
 
     const result = applyReferral(input.uid, input.code);

@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 
 import PaymentCheckout from '../components/PaymentCheckout';
+import MiningPlans from '../components/MiningPlans';
 import { useI18n } from '@/lib/i18n-provider';
 import { getLegalCopy } from '@/lib/legal-i18n';
 import { useMesh } from '@/lib/use-mesh';
@@ -250,6 +251,10 @@ export default function StoreView() {
       </section>
 
       {/* ---------------------------------------------------------- Tiers */}
+      <section className="mb-20">
+        <MiningPlans />
+      </section>
+
       <section className="grid gap-5 lg:grid-cols-3">
         {catalogue.map((plan, index) => {
           const isActive = activeNodes[plan.id] ?? false;

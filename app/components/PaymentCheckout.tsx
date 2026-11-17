@@ -24,7 +24,7 @@ interface CheckoutPlan {
 }
 
 interface RailStatus {
-  rail: 'kashier' | 'paymob' | 'lemonsqueezy' | 'stripe';
+  rail: 'kashier' | 'paymob' | 'stripe';
   mode: 'live' | 'test' | 'sandbox';
   configured: boolean;
   detail: string;
@@ -76,7 +76,6 @@ interface Verdict {
 const RAIL_LABEL: Record<RailStatus['rail'], string> = {
   kashier: 'Kashier',
   paymob: 'Paymob',
-  lemonsqueezy: 'Lemon Squeezy',
   stripe: 'Stripe',
 };
 

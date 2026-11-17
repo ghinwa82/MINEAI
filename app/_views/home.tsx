@@ -5,11 +5,11 @@ import Link from 'next/link';
 
 import { useI18n } from '@/lib/i18n-provider';
 import { useMesh } from '@/lib/use-mesh';
-import { getCatalogue } from '@/lib/catalog';
 import { formatUsd } from '@/lib/treasury';
 import ExplainerVideoPlayer from '../components/ExplainerVideoPlayer';
 import LiveMarketTracker from '../components/LiveMarketTracker';
 import MineAICoinLogo from '../components/MineAICoinLogo';
+import MiningPlans from '../components/MiningPlans';
 import PayoutTicker from '../components/PayoutTicker';
 import ProofOfReservesBar from '../components/ProofOfReservesBar';
 
@@ -23,7 +23,6 @@ import ProofOfReservesBar from '../components/ProofOfReservesBar';
 export default function HomeView() {
   const { t, lang, eco, href: to } = useI18n();
   const { state } = useMesh(20_000);
-  const catalogue = getCatalogue(lang);
 
   const stats = state?.stats;
   const agents = state?.agents ?? [];
@@ -44,11 +43,17 @@ export default function HomeView() {
           <p className="mx-lede mt-7 max-w-xl">{t.home.lead}</p>
 
           <div className="mt-9 flex flex-wrap items-center gap-3">
-            <Link href={to('/store')} className="mx-btn">
-              {t.home.ctaPrimary}
+            <Link
+              href={to('/register')}
+              className="inline-flex items-center gap-2 rounded-xl bg-[linear-gradient(100deg,#d4af37,#fff3b0)] px-6 py-3 text-sm font-bold text-[#120d02] shadow-[0_16px_40px_-18px_rgba(212,175,55,0.9)] transition hover:brightness-110"
+            >
+              {eco.nav.startFree}
               <svg width="14" height="10" viewBox="0 0 14 10" aria-hidden>
                 <path d="M1 5h11M8.5 1.5L12 5l-3.5 3.5" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
+            </Link>
+            <Link href={to('/store')} className="mx-btn-quiet">
+              {eco.nav.plans}
             </Link>
             <Link href={to('/mining')} className="mx-btn-quiet">
               {eco.nav.mining}
@@ -246,44 +251,9 @@ export default function HomeView() {
         <ProofOfReservesBar />
       </section>
 
-      {/* ---------------------------------------------------- Catalogue */}
+      {/* --------------------------------------------------------- Plans */}
       <section className="border-t border-white/8 py-20">
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <p className="mx-eyebrow">{t.home.tiersTitle}</p>
-            <h2 className="mx-section-title mt-5">{t.home.tiersLead}</h2>
-          </div>
-          <Link href={to('/store')} className="mx-btn-quiet">
-            {t.home.tiersCta}
-            <span aria-hidden>→</span>
-          </Link>
-        </div>
-
-        <div className="mt-12 grid gap-5 lg:grid-cols-3">
-          {catalogue.map((plan) => (
-            <Link
-              key={plan.id}
-              href={to(`/store/${plan.canonicalName.toLowerCase().replace(/\s+/g, '-')}`)}
-              className="group relative overflow-hidden rounded-[1.35rem] border border-white/8 bg-[#080d18] p-7 transition duration-500 hover:border-cyan/35 hover:bg-[#0a1120]"
-            >
-              <div
-                className="absolute -top-16 -right-16 h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(34,224,255,0.16),transparent_70%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                aria-hidden
-              />
-              <div className="relative flex items-center justify-between gap-3">
-                <span className="mx-chip">{plan.tierLabel}</span>
-                <span className="mx-numeric text-xs font-semibold text-cyan">
-                  {formatUsd(plan.priceUsd, lang)}
-                </span>
-              </div>
-              <h3 className="relative mt-6 text-lg font-bold text-ink">{plan.canonicalName}</h3>
-              <p className="relative mt-3 text-[0.85rem] leading-relaxed text-ink-mute">
-                {plan.description}
-              </p>
-              <p className="relative mt-6 text-[0.78rem] font-semibold text-cyan">{plan.roi}</p>
-            </Link>
-          ))}
-        </div>
+        <MiningPlans />
       </section>
 
       {/* ----------------------------------------------------------- FAQ */}
@@ -309,8 +279,8 @@ export default function HomeView() {
           <div>
             <h2 className="mx-section-title max-w-2xl">{t.home.closingTitle}</h2>
           </div>
-          <Link href={to('/store')} className="mx-btn shrink-0">
-            {t.home.ctaPrimary}
+          <Link href={to('/register')} className="mx-btn shrink-0">
+            {eco.nav.startFree}
           </Link>
         </div>
       </section>

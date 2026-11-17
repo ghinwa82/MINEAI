@@ -20,6 +20,10 @@
     {
       "path": "/api/mining/cron",
       "schedule": "30 3 * * *"
+    },
+    {
+      "path": "/api/agents/growth-cron",
+      "schedule": "0 4 * * *"
     }
   ]
 }

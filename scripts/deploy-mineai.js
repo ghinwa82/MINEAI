@@ -87,7 +87,15 @@ async function main() {
 
   console.log(`\nWritten to ${file}`);
   console.log('\nAdd these to the app environment:');
-  console.log(`  NEXT_PUBLIC_MINEAI_CONTRACT_${network.toUpperCase()}=${address}`);
+  const ENV_KEYS = {
+    bscTestnet: 'NEXT_PUBLIC_MINEAI_BSC_TESTNET_CONTRACT',
+    bsc: 'NEXT_PUBLIC_MINEAI_BSC_CONTRACT',
+    sepolia: 'NEXT_PUBLIC_MINEAI_SEPOLIA_CONTRACT',
+    ethereum: 'NEXT_PUBLIC_MINEAI_ETH_CONTRACT',
+    arbitrum: 'NEXT_PUBLIC_MINEAI_ARB_CONTRACT',
+  };
+  const envKey = ENV_KEYS[network] ?? `NEXT_PUBLIC_MINEAI_CONTRACT_${network.toUpperCase()}`;
+  console.log(`  ${envKey}=${address}`);
   console.log(`  MINEAI_TOKEN_ADDRESS=${address}`);
 }
 

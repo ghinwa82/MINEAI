@@ -43,6 +43,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   push('/markets', 0.85, 'daily');
   push('/rewards', 0.8, 'daily');
   push('/news', 0.9, 'daily');
+  push('/insights', 0.9, 'daily');
   push('/notes', 0.7, 'daily');
   push('/terms', 0.3, 'monthly');
   push('/privacy', 0.3, 'monthly');
@@ -51,6 +52,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   for (const plan of catalogue) {
     push(`/store/${planSlug(plan)}`, 0.8, 'weekly');
+  }
+
+  // The growth swarm writes a dated brief per topic per day. Listing the last
+  // three days gives crawlers a rolling window of fresh, stable URLs without
+  // guessing at future dates.
+  const topics = ['bitcoin', 'gold', 'stocks', 'currency', 'mining'];
+  for (let offset = 0; offset < 3; offset += 1) {
+    const day = new Date(now.getTime() - offset * 86_400_000).toISOString().slice(0, 10);
+    for (const topic of topics) {
+      push(`/insights/${topic}-market-brief-${day}`, 0.7, 'daily');
+    }
   }
 
   return entries;

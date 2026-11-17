@@ -4,7 +4,6 @@ import { pushAgentLog } from '@/lib/agents';
 import {
   toUsd,
   verifyKashierSignature,
-  verifyLemonSignature,
   verifyPaymobHmac,
   verifyStripeSignature,
 } from '@/lib/payments';
@@ -23,17 +22,16 @@ export const runtime = 'nodejs';
  * an unverified webhook is worse than a missing one.
  */
 
-type Provider = 'kashier' | 'paymob' | 'lemonsqueezy' | 'stripe';
+type Provider = 'kashier' | 'paymob' | 'stripe';
 
 function providerFrom(request: Request): Provider | null {
   const url = new URL(request.url);
   const explicit = url.searchParams.get('provider');
-  if (explicit === 'kashier' || explicit === 'paymob' || explicit === 'lemonsqueezy' || explicit === 'stripe') {
+  if (explicit === 'kashier' || explicit === 'paymob' || explicit === 'stripe') {
     return explicit;
   }
   if (request.headers.get('x-kashier-signature')) return 'kashier';
   if (request.headers.get('stripe-signature')) return 'stripe';
-  if (request.headers.get('x-signature')) return 'lemonsqueezy';
   if (url.searchParams.get('hmac')) return 'paymob';
   return null;
 }
@@ -48,7 +46,7 @@ export async function POST(request: Request) {
 
   if (!provider) {
     return NextResponse.json(
-      { ok: false, error: 'Unknown provider. Append ?provider=kashier|paymob|lemonsqueezy|stripe.' },
+      { ok: false, error: 'Unknown provider. Append ?provider=kashier|paymob|stripe.' },
       { status: 400 },
     );
   }
@@ -148,44 +146,6 @@ export async function POST(request: Request) {
         reference: String(transaction.id ?? ''),
         created_at: new Date().toISOString(),
       },
-    });
-
-    return NextResponse.json({ ok: true, credited: amountUsd });
-  }
-
-  if (provider === 'lemonsqueezy') {
-    if (!verifyLemonSignature(raw, request.headers.get('x-signature'))) {
-      return NextResponse.json(
-        { ok: false, error: 'Lemon Squeezy signature missing or invalid' },
-        { status: process.env.LEMONSQUEEZY_WEBHOOK_SECRET ? 401 : 503 },
-      );
-    }
-
-    let payload: {
-      meta?: { event_name?: string };
-      data?: { id?: string; attributes?: { total?: number; currency?: string; status?: string } };
-    };
-    try {
-      payload = JSON.parse(raw);
-    } catch {
-      return NextResponse.json({ ok: false, error: 'Malformed JSON' }, { status: 400 });
-    }
-
-    if (payload.meta?.event_name !== 'order_created') {
-      return NextResponse.json({ ok: true, credited: 0, detail: 'Event acknowledged, no credit.' });
-    }
-
-    const amountUsd = cents(payload.data?.attributes?.total);
-    if (amountUsd <= 0) {
-      return NextResponse.json({ ok: false, error: 'Zero-value order' }, { status: 422 });
-    }
-
-    creditTreasury(amountUsd, 'Lemon Squeezy order settlement', String(payload.data?.id ?? 'lemon'));
-    pushAgentLog({
-      agentName: 'FinancialPayout',
-      action: `Lemon Squeezy settled ${amountUsd} USD as merchant of record.`,
-      status: 'success',
-      details: { provider: 'lemonsqueezy', orderId: payload.data?.id, amountUsd },
     });
 
     return NextResponse.json({ ok: true, credited: amountUsd });

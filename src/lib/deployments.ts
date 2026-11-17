@@ -26,6 +26,11 @@ const cache: { at: number; value: Deployment[] | null } = { at: 0, value: null }
 export const EVM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 
 export const BSC_CHAINS: Record<number, { name: string; explorer: string; rpc: string[] }> = {
+  1: {
+    name: 'Ethereum Mainnet',
+    explorer: 'https://etherscan.io',
+    rpc: ['https://ethereum-rpc.publicnode.com', 'https://cloudflare-eth.com'],
+  },
   56: {
     name: 'BNB Smart Chain',
     explorer: 'https://bscscan.com',
@@ -35,6 +40,11 @@ export const BSC_CHAINS: Record<number, { name: string; explorer: string; rpc: s
     name: 'BNB Smart Chain Testnet',
     explorer: 'https://testnet.bscscan.com',
     rpc: ['https://data-seed-prebsc-1-s1.bnbchain.org:8545', 'https://bsc-testnet-rpc.publicnode.com'],
+  },
+  11155111: {
+    name: 'Ethereum Sepolia',
+    explorer: 'https://sepolia.etherscan.io',
+    rpc: ['https://ethereum-sepolia-rpc.publicnode.com', 'https://rpc.sepolia.org'],
   },
 };
 

@@ -19,9 +19,17 @@ export type CryptoNetworkId =
   | 'usdt-trc20'
   | 'sol'
   | 'ton'
-  | 'btc';
+  | 'btc'
+  | 'ltc';
 
-export type ChainFamily = 'evm' | 'tron' | 'solana' | 'ton' | 'bitcoin' | 'dogecoin';
+export type ChainFamily =
+  | 'evm'
+  | 'tron'
+  | 'solana'
+  | 'ton'
+  | 'bitcoin'
+  | 'dogecoin'
+  | 'litecoin';
 
 export interface CryptoNetwork {
   id: CryptoNetworkId;
@@ -127,6 +135,18 @@ const NETWORKS: Array<Omit<CryptoNetwork, 'address' | 'configured' | 'demo' | 'p
     explorer: 'https://mempool.space/tx/',
     payUri: (address, amount) => `bitcoin:${address}?amount=${amount}`,
   },
+  {
+    id: 'ltc',
+    family: 'litecoin',
+    label: 'Litecoin',
+    chain: 'Litecoin',
+    asset: 'LTC',
+    decimals: 8,
+    minAmount: 2,
+    envKey: 'OWNER_LTC_WALLET',
+    explorer: 'https://blockchair.com/litecoin/transaction/',
+    payUri: (address, amount) => `litecoin:${address}?amount=${amount}`,
+  },
 ];
 
 const ADDRESS_PATTERNS: Record<ChainFamily, RegExp> = {
@@ -136,6 +156,7 @@ const ADDRESS_PATTERNS: Record<ChainFamily, RegExp> = {
   ton: /^(?:[EU]Q[A-Za-z0-9_-]{46}|-?[0-9]:[a-fA-F0-9]{64})$/,
   bitcoin: /^(?:bc1[a-z0-9]{25,62}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$/,
   dogecoin: /^(?:D[5-9A-HJ-NP-Za-km-z]{33}|[9A][1-9A-HJ-NP-Za-km-z]{33})$/,
+  litecoin: /^(?:ltc1[a-z0-9]{25,62}|[LM3][1-9A-HJ-NP-Za-km-z]{25,33})$/,
 };
 
 export function isValidAddress(family: ChainFamily, address: string): boolean {
@@ -208,6 +229,7 @@ function assetAmountFor(network: CryptoNetwork, amountUsd: number): number {
   if (network.asset === 'USDT') return Number(amountUsd.toFixed(2));
   if (network.asset === 'TON') return Number((amountUsd / 5.2).toFixed(4));
   if (network.asset === 'BTC') return Number((amountUsd / 96_500).toFixed(8));
+  if (network.asset === 'LTC') return Number((amountUsd / 88.4).toFixed(8));
   return Number(amountUsd.toFixed(6));
 }
 

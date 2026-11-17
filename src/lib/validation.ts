@@ -12,7 +12,7 @@ import { z } from 'zod';
 const amount = z.coerce.number().finite().positive().max(100_000);
 
 export const fiatCheckoutSchema = z.object({
-  rail: z.enum(['kashier', 'paymob', 'lemonsqueezy', 'stripe']),
+  rail: z.enum(['kashier', 'paymob', 'stripe']),
   amountUsd: amount,
   currency: z.enum(['USD', 'EGP']).default('USD'),
   tier: z.string().trim().min(1).max(80),
@@ -44,7 +44,7 @@ export const uidSchema = z
   .trim()
   .regex(/^[A-Za-z0-9_-]{8,48}$/, 'A session id must be 8–48 url-safe characters');
 
-const miningCoin = z.enum(['mineai', 'btc', 'eth', 'sol', 'bnb', 'ton', 'doge']);
+const miningCoin = z.enum(['mineai', 'btc', 'eth', 'sol', 'bnb', 'ton', 'doge', 'ltc']);
 
 /** Allocation shares are percentages; they are normalised server-side. */
 const allocationShare = z.coerce.number().finite().min(0).max(100);
@@ -65,6 +65,7 @@ export const miningActionSchema = z.discriminatedUnion('action', [
         bnb: allocationShare.optional(),
         ton: allocationShare.optional(),
         doge: allocationShare.optional(),
+        ltc: allocationShare.optional(),
       })
       .refine((value) => Object.values(value).some((share) => (share ?? 0) > 0), {
         message: 'Allocate at least one share to a coin',
@@ -80,6 +81,7 @@ export const miningActionSchema = z.discriminatedUnion('action', [
     code: z.string().trim().min(6).max(12).optional(),
   }),
   z.object({ action: z.literal('apply-referral'), uid: uidSchema, code: z.string().trim().min(4).max(24) }),
+  z.object({ action: z.literal('share-boost'), uid: uidSchema }),
 ]);
 
 export const twoFactorSchema = z.discriminatedUnion('action', [

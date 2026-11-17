@@ -56,6 +56,55 @@ interface TokenPayload {
 
 type Tone = 'ok' | 'error' | 'info';
 
+const PROMOTER_COPY: Record<
+  string,
+  { title: string; lead: string; current: string; tiers: [string, string, string, string] }
+> = {
+  en: {
+    title: 'Affiliate promoter tiers',
+    lead: 'Invite more people and your share of their rewards grows automatically.',
+    current: 'Your tier',
+    tiers: ['Bronze', 'Silver', 'Gold', 'Diamond'],
+  },
+  ar: {
+    title: 'مستويات المسوّقين',
+    lead: 'ادعُ المزيد من الأشخاص ويزيد نصيبك من مكافآتهم تلقائيًا.',
+    current: 'مستواك',
+    tiers: ['برونزي', 'فضي', 'ذهبي', 'ماسي'],
+  },
+  fr: {
+    title: 'Niveaux de parrainage',
+    lead: 'Invitez plus de personnes et votre part de leurs récompenses augmente automatiquement.',
+    current: 'Votre niveau',
+    tiers: ['Bronze', 'Argent', 'Or', 'Diamant'],
+  },
+  es: {
+    title: 'Niveles de afiliado',
+    lead: 'Invita a más personas y tu parte de sus recompensas crece automáticamente.',
+    current: 'Tu nivel',
+    tiers: ['Bronce', 'Plata', 'Oro', 'Diamante'],
+  },
+  zh: {
+    title: '推广人等级',
+    lead: '邀请更多人，你从他们奖励中获得的份额会自动提高。',
+    current: '你的等级',
+    tiers: ['青铜', '白银', '黄金', '钻石'],
+  },
+  hi: {
+    title: 'एफ़िलिएट प्रमोटर स्तर',
+    lead: 'अधिक लोगों को आमंत्रित करें और उनके इनाम में आपका हिस्सा अपने आप बढ़ता है।',
+    current: 'आपका स्तर',
+    tiers: ['ब्रॉन्ज़', 'सिल्वर', 'गोल्ड', 'डायमंड'],
+  },
+};
+
+const PROMOTER_TIERS = [
+  { min: 1, share: '5%' },
+  { min: 5, share: '8%' },
+  { min: 15, share: '12%' },
+  { min: 40, share: '15%' },
+];
+
 export default function RewardsView() {
   const { eco, t, lang, href: to } = useI18n();
   const uid = useUid();
@@ -72,6 +121,11 @@ export default function RewardsView() {
   const [codeInput, setCodeInput] = useState('');
 
   const copy = eco.rewards;
+  const promoter = PROMOTER_COPY[lang] ?? PROMOTER_COPY.en;
+  const promoterIndex = PROMOTER_TIERS.reduce(
+    (reached, tier, index) => ((snapshot?.referralCount ?? 0) >= tier.min ? index : reached),
+    -1,
+  );
 
   const notify = useCallback((tone: Tone, text: string) => {
     setToast({ tone, text });
@@ -510,6 +564,33 @@ export default function RewardsView() {
               </dd>
             </div>
           </dl>
+
+          <div className="mt-6 rounded-xl border border-white/8 bg-[#050810] p-4">
+            <p className="text-[0.66rem] tracking-[0.12em] text-amber uppercase">{promoter.title}</p>
+            <p className="mt-1 text-[0.72rem] leading-relaxed text-ink-mute">{promoter.lead}</p>
+            <div className="mt-3 grid grid-cols-4 gap-1.5">
+              {PROMOTER_TIERS.map((tier, index) => {
+                const reached = index <= promoterIndex;
+                return (
+                  <div
+                    key={tier.share}
+                    className={`rounded-lg border px-2 py-2 text-center ${
+                      reached ? 'border-amber/40 bg-amber/[0.07]' : 'border-white/8'
+                    }`}
+                  >
+                    <p className={`text-[0.62rem] font-semibold ${reached ? 'text-amber' : 'text-ink-faint'}`}>
+                      {promoter.tiers[index]}
+                    </p>
+                    <p className="mx-numeric mt-0.5 text-[0.7rem] text-ink-soft">{tier.share}</p>
+                    <p className="mx-numeric mt-0.5 text-[0.55rem] text-ink-faint">{tier.min}+</p>
+                  </div>
+                );
+              })}
+            </div>
+            <p className="mt-2 text-[0.62rem] text-ink-faint">
+              {promoter.current}: {promoterIndex >= 0 ? promoter.tiers[promoterIndex] : '—'}
+            </p>
+          </div>
 
           {!snapshot?.referredBy ? (
             <div className="mt-6 border-t border-white/8 pt-5">

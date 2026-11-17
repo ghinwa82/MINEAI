@@ -83,6 +83,10 @@ interface Snapshot {
     at: string;
   }>;
   leaderboard: Array<{ rank: number; operator: string; minedTokens: number; tier: string; you: boolean }>;
+  shareBoostActive?: boolean;
+  shareBoostUntil?: string | null;
+  shareBoostMultiplier?: number;
+  sharedLinks?: number;
   constants?: { minWithdraw: number; genesisGrant: number; tokenPriceUsd: number };
 }
 
@@ -96,6 +100,7 @@ const COIN_TONE: Record<string, string> = {
   bnb: 'from-[#ffe082] via-[#f3ba2f] to-[#8a6300] text-[#1f1500]',
   ton: 'from-[#bfe6ff] via-[#3aa7e0] to-[#0b5c86] text-[#03141f]',
   doge: 'from-[#f6e3a1] via-[#c9a94a] to-[#6d5a12] text-[#1a1602]',
+  ltc: 'from-[#e6f0ff] via-[#a6b8d4] to-[#4a5a74] text-[#0a1220]',
 };
 
 const WALLET_PLACEHOLDER: Record<string, string> = {
@@ -105,11 +110,60 @@ const WALLET_PLACEHOLDER: Record<string, string> = {
   solana: '5…',
   ton: 'UQ…',
   tron: 'T…',
+  litecoin: 'ltc1…',
 };
 
 function coinTone(id: string): string {
   return COIN_TONE[id] ?? 'from-white/30 via-white/15 to-white/5 text-ink';
 }
+
+const BOOST_COPY: Record<
+  string,
+  { title: string; body: string; cta: string; active: string; until: string }
+> = {
+  en: {
+    title: 'Share and get +15% speed',
+    body: 'Share your mining card once a day. Your cloud power runs 15% faster for 24 hours.',
+    cta: 'Share now',
+    active: 'Boost active: +15% hashrate',
+    until: 'Until',
+  },
+  ar: {
+    title: 'شارك واحصل على سرعة +15%',
+    body: 'شارك بطاقة التعدين مرة كل يوم. تزيد سرعة السحابة 15% لمدة 24 ساعة.',
+    cta: 'شارك الآن',
+    active: 'المضاعف نشط: +15% قوة',
+    until: 'حتى',
+  },
+  fr: {
+    title: 'Partagez et gagnez +15 % de vitesse',
+    body: 'Partagez votre carte de minage une fois par jour. Votre puissance cloud est 15 % plus rapide pendant 24 h.',
+    cta: 'Partager',
+    active: 'Bonus actif : +15 % de hashrate',
+    until: 'Jusqu’au',
+  },
+  es: {
+    title: 'Comparte y gana +15% de velocidad',
+    body: 'Comparte tu tarjeta de minería una vez al día. Tu potencia en la nube va 15% más rápido durante 24 horas.',
+    cta: 'Compartir ahora',
+    active: 'Bono activo: +15% de hashrate',
+    until: 'Hasta',
+  },
+  zh: {
+    title: '分享即可获得 +15% 速度',
+    body: '每天分享一次挖矿卡片，云算力速度提升 15%，持续 24 小时。',
+    cta: '立即分享',
+    active: '加成已生效：+15% 算力',
+    until: '有效期至',
+  },
+  hi: {
+    title: 'शेयर करें और +15% गति पाएँ',
+    body: 'दिन में एक बार अपना माइनिंग कार्ड शेयर करें। 24 घंटे तक क्लाउड पावर 15% तेज़ चलती है।',
+    cta: 'अभी शेयर करें',
+    active: 'बोनस सक्रिय: +15% हैशरेट',
+    until: 'तक',
+  },
+};
 
 export default function MiningView() {
   const { eco, t, lang, href: to } = useI18n();
@@ -160,7 +214,7 @@ export default function MiningView() {
   }, [snapshot, allocation]);
 
   const act = useCallback(
-    async (action: 'claim-streak' | 'stake' | 'unstake' | 'withdraw' | 'allocate', body: Record<string, unknown>) => {
+    async (action: 'claim-streak' | 'stake' | 'unstake' | 'withdraw' | 'allocate' | 'share-boost', body: Record<string, unknown>) => {
       if (!uid) return;
       setBusy(action);
       try {
@@ -257,6 +311,24 @@ export default function MiningView() {
     setWallet('');
   };
 
+  const boost = BOOST_COPY[lang] ?? BOOST_COPY.en;
+
+  const shareBoost = useCallback(async () => {
+    const url = `${window.location.origin}${to('/mining')}?ref=${encodeURIComponent(snapshot?.referralCode ?? '')}`;
+    const text = `${copy.hashrate}: ${snapshot ? number.format(snapshot.hashrateMhs) : '—'} MH/s · MineAI`;
+    try {
+      if (typeof navigator !== 'undefined' && navigator.share) {
+        await navigator.share({ title: 'MineAI', text, url });
+      } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(`${text}\n${url}`);
+      }
+    } catch {
+      // A dismissed share sheet still counts as a share attempt from our side;
+      // the server is the authority on the boost window.
+    }
+    await act('share-boost', {});
+  }, [act, copy.hashrate, number, snapshot?.hashrateMhs, snapshot?.referralCode, to]);
+
   return (
     <>
       {/* ---------------------------------------------------------- Header */}
@@ -296,6 +368,31 @@ export default function MiningView() {
             </div>
           </dl>
         </div>
+      </section>
+
+      {/* ------------------------------------------------ Share-to-Boost */}
+      <section className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-amber/25 bg-[linear-gradient(120deg,rgba(212,175,55,0.12),rgba(8,13,24,0.95))] px-5 py-4">
+        <div>
+          <p className="text-[0.86rem] font-bold text-amber">{boost.title}</p>
+          <p className="mt-1 max-w-2xl text-[0.74rem] leading-relaxed text-ink-mute">{boost.body}</p>
+          {snapshot?.shareBoostActive ? (
+            <p className="mx-numeric mt-1.5 text-[0.68rem] text-mint">
+              {boost.active}
+              {snapshot.shareBoostUntil ? ` · ${boost.until} ${new Date(snapshot.shareBoostUntil).toLocaleTimeString(
+                lang === 'zh' ? 'zh-CN' : 'en-US',
+                { hour: '2-digit', minute: '2-digit' },
+              )}` : ''}
+            </p>
+          ) : null}
+        </div>
+        <button
+          type="button"
+          onClick={shareBoost}
+          disabled={busy === 'share-boost' || !snapshot}
+          className="mx-btn !py-2.5 !text-[0.78rem]"
+        >
+          {busy === 'share-boost' ? `${boost.cta}…` : boost.cta}
+        </button>
       </section>
 
       {toast ? (

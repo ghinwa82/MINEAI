@@ -64,6 +64,11 @@ module.exports = {
       chainId: 1,
       accounts,
     },
+    sepolia: {
+      url: process.env.SEPOLIA_RPC ?? 'https://ethereum-sepolia-rpc.publicnode.com',
+      chainId: 11155111,
+      accounts,
+    },
     arbitrum: {
       url: process.env.ARB_RPC ?? 'https://arb1.arbitrum.io/rpc',
       chainId: 42161,
@@ -75,6 +80,7 @@ module.exports = {
       bsc: process.env.BSCSCAN_API_KEY ?? '',
       bscTestnet: process.env.BSCSCAN_API_KEY ?? '',
       mainnet: process.env.ETHERSCAN_API_KEY ?? '',
+      sepolia: process.env.ETHERSCAN_API_KEY ?? '',
       arbitrumOne: process.env.ARBISCAN_API_KEY ?? '',
     },
   },

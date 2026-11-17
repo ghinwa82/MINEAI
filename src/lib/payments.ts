@@ -5,15 +5,16 @@ import { createCheckoutSession, stripeMode, type CheckoutSession } from '@/lib/s
 /**
  * Fiat payment rails.
  *
- * Three processors are supported behind one interface: Paymob (cards, Apple Pay
- * and local wallets across MENA), Lemon Squeezy (merchant of record for cards
- * worldwide) and Stripe Checkout. Every call is made against the provider REST
- * API — no SDK — and every rail reports its true mode. A missing key never
- * throws; it downgrades the rail to a labelled sandbox session so the storefront
- * can still be exercised without pretending a card was charged.
+ * Three processors are supported behind one interface: Kashier (cards in USD
+ * and EGP, settling to the owner bank account), Paymob (cards, Apple Pay and
+ * local wallets across MENA) and Stripe Checkout. Every call is made against
+ * the provider REST API — no SDK — and every rail reports its true mode. A
+ * missing key never throws; it downgrades the rail to a labelled sandbox
+ * session so the storefront can still be exercised without pretending a card
+ * was charged.
  */
 
-export type FiatRail = 'kashier' | 'paymob' | 'lemonsqueezy' | 'stripe';
+export type FiatRail = 'kashier' | 'paymob' | 'stripe';
 export type RailMode = 'live' | 'test' | 'sandbox';
 export type FiatCurrency = 'USD' | 'EGP';
 
@@ -143,16 +144,9 @@ export function toUsd(amount: number, currency: string | null | undefined): numb
   return Number(amount.toFixed(2));
 }
 
-export function lemonMode(): RailMode {
-  const key = env('LEMONSQUEEZY_API_KEY');
-  if (!key) return 'sandbox';
-  return /_test|test_/i.test(key) ? 'test' : 'live';
-}
-
 export function railStatuses(): RailStatus[] {
   const kashier = kashierMode();
   const paymob = paymobMode();
-  const lemon = lemonMode();
   const stripe = stripeMode();
 
   return [
@@ -175,16 +169,6 @@ export function railStatuses(): RailStatus[] {
           ? 'Add PAYMOB_API_KEY, PAYMOB_INTEGRATION_ID and PAYMOB_IFRAME_ID to accept cards, Apple Pay and local wallets.'
           : `Paymob is armed in ${paymob} mode and settles to the owner bank account.`,
       supports: ['Visa', 'Mastercard', 'Debit', 'Apple Pay', 'Local wallets'],
-    },
-    {
-      rail: 'lemonsqueezy',
-      mode: lemon,
-      configured: lemon !== 'sandbox',
-      detail:
-        lemon === 'sandbox'
-          ? 'Add LEMONSQUEEZY_API_KEY, LEMONSQUEEZY_STORE_ID and LEMONSQUEEZY_VARIANT_ID to sell worldwide.'
-          : `Lemon Squeezy is armed in ${lemon} mode as merchant of record.`,
-      supports: ['Visa', 'Mastercard', 'Apple Pay', 'PayPal'],
     },
     {
       rail: 'stripe',
@@ -370,65 +354,6 @@ async function paymobCheckout(request: FiatCheckoutRequest): Promise<FiatCheckou
   };
 }
 
-async function lemonCheckout(request: FiatCheckoutRequest): Promise<FiatCheckoutResult> {
-  const apiKey = env('LEMONSQUEEZY_API_KEY');
-  const storeId = env('LEMONSQUEEZY_STORE_ID');
-  const variantId = env('LEMONSQUEEZY_VARIANT_ID');
-
-  if (!apiKey || !storeId || !variantId) {
-    return sandboxResult(request, 'lemonsqueezy', 'Lemon Squeezy keys are absent — sandbox session minted.');
-  }
-
-  const response = await fetch('https://api.lemonsqueezy.com/v1/checkouts', {
-    method: 'POST',
-    headers: {
-      Accept: 'application/vnd.api+json',
-      'Content-Type': 'application/vnd.api+json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      data: {
-        type: 'checkouts',
-        attributes: {
-          custom_price: Math.round(request.amountUsd * 100),
-          product_options: {
-            name: `MineAI ${request.tier}`,
-            description: `Autonomous node shard ${request.nodeId}`,
-            redirect_url: `${request.origin}/store?checkout=success`,
-          },
-          checkout_data: {
-            email: request.email,
-            custom: { node_id: request.nodeId, tier: request.tier, locale: request.locale },
-          },
-          expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
-        },
-        relationships: {
-          store: { data: { type: 'stores', id: storeId } },
-          variant: { data: { type: 'variants', id: variantId } },
-        },
-      },
-    }),
-    cache: 'no-store',
-  });
-
-  if (!response.ok) throw new Error(`Lemon Squeezy checkout failed (${response.status})`);
-  const payload = (await response.json()) as { data?: { id?: string; attributes?: { url?: string } } };
-  const url = payload.data?.attributes?.url;
-  if (!url) throw new Error('Lemon Squeezy returned no checkout url');
-
-  return {
-    ok: true,
-    rail: 'lemonsqueezy',
-    mode: lemonMode(),
-    sessionId: payload.data?.id ?? `ls_${Date.now()}`,
-    checkoutUrl: url,
-    amountUsd: request.amountUsd,
-    currency: 'USD',
-    provider: 'Lemon Squeezy',
-    detail: 'Lemon Squeezy checkout created as merchant of record.',
-  };
-}
-
 export async function createFiatCheckout(request: FiatCheckoutRequest): Promise<FiatCheckoutResult> {
   const origin = request.origin.replace(/\/$/, '');
   const normalised = { ...request, origin };
@@ -437,8 +362,6 @@ export async function createFiatCheckout(request: FiatCheckoutRequest): Promise<
     if (normalised.rail === 'kashier') return await kashierCheckout(normalised);
 
     if (normalised.rail === 'paymob') return await paymobCheckout(normalised);
-
-    if (normalised.rail === 'lemonsqueezy') return await lemonCheckout(normalised);
 
     const session: CheckoutSession = await createCheckoutSession({
       tier: normalised.tier,
@@ -526,17 +449,6 @@ export function verifyPaymobHmac(
 
   const expected = createHmac('sha512', secret).update(parts.join('')).digest('hex');
   return safeEqual(expected, received);
-}
-
-/** Lemon Squeezy signs the raw request body with HMAC-SHA256. */
-export function verifyLemonSignature(
-  rawBody: string,
-  signature: string | null,
-  secret = env('LEMONSQUEEZY_WEBHOOK_SECRET'),
-): boolean {
-  if (!signature || !secret) return false;
-  const expected = createHmac('sha256', secret).update(rawBody).digest('hex');
-  return safeEqual(expected, signature);
 }
 
 /** Stripe's `t=…,v1=…` scheme with replay tolerance. */

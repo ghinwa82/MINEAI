@@ -36,6 +36,13 @@ export default function LiveMarketTracker({ variant = 'board' }: { variant?: 'bo
   const [upstream, setUpstream] = useState<'ok' | 'degraded' | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [now, setNow] = useState<Date | null>(null);
+
+  useEffect(() => {
+    setNow(new Date());
+    const timer = window.setInterval(() => setNow(new Date()), 1000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const load = useCallback(async (force = false) => {
     if (force) setRefreshing(true);
@@ -88,6 +95,23 @@ export default function LiveMarketTracker({ variant = 'board' }: { variant?: 'bo
       })
     : '—';
 
+  const clock = now
+    ? now.toLocaleString(
+        lang === 'ar'
+          ? 'ar-EG'
+          : lang === 'zh'
+            ? 'zh-CN'
+            : lang === 'fr'
+              ? 'fr-FR'
+              : lang === 'es'
+                ? 'es-ES'
+                : lang === 'hi'
+                  ? 'hi-IN'
+                  : 'en-GB',
+        { weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit' },
+      )
+    : '—';
+
   if (variant === 'strip') {
     return (
       <section className="overflow-hidden rounded-2xl border border-white/8 bg-[#060a14]">
@@ -101,6 +125,15 @@ export default function LiveMarketTracker({ variant = 'board' }: { variant?: 'bo
           </div>
           <p className="mx-numeric text-[0.66rem] text-ink-faint">
             {eco.markets.updated} {time}
+          </p>
+        </div>
+        <div className="border-t border-white/8 px-5 py-2">
+          <p className="mx-numeric flex items-center gap-2 text-[0.64rem] text-ink-faint">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-mint opacity-70" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-mint" />
+            </span>
+            {clock}
           </p>
         </div>
 
@@ -137,11 +170,18 @@ export default function LiveMarketTracker({ variant = 'board' }: { variant?: 'bo
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="text-end">
-            <p className="mx-numeric text-[0.62rem] tracking-[0.14em] text-ink-faint uppercase">
+          <div className="rounded-xl border border-white/8 bg-[#04060d]/70 px-3 py-2 text-end">
+            <p className="mx-numeric text-[0.56rem] tracking-[0.14em] text-ink-faint uppercase">
               {eco.markets.updated}
             </p>
-            <p className="mx-numeric mt-1 text-[0.8rem] text-ink-soft">{time}</p>
+            <p className="mx-numeric mt-0.5 flex items-center justify-end gap-1.5 text-[0.74rem] text-ink-soft">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-mint opacity-70" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-mint" />
+              </span>
+              {clock}
+            </p>
+            <p className="mx-numeric mt-0.5 text-[0.6rem] text-ink-faint">{time}</p>
           </div>
           <button
             type="button"
@@ -268,5 +308,6 @@ const PLACEHOLDER: Quote[] = [
   { symbol: 'BTC-USD', name: 'Bitcoin', category: 'crypto', price: 96450, change: 1240, changePercent: 1.3, currency: 'USD', spark: [], source: 'fallback' },
   { symbol: 'ETH-USD', name: 'Ethereum', category: 'crypto', price: 3284, change: -18.2, changePercent: -0.55, currency: 'USD', spark: [], source: 'fallback' },
   { symbol: 'SOL-USD', name: 'Solana', category: 'crypto', price: 192.4, change: 3.1, changePercent: 1.64, currency: 'USD', spark: [], source: 'fallback' },
+  { symbol: 'LTC-USD', name: 'Litecoin', category: 'crypto', price: 88.4, change: 0.9, changePercent: 1.02, currency: 'USD', spark: [], source: 'fallback' },
   { symbol: 'MINEAI', name: 'Mine AI', category: 'internal', price: 4.85, change: 0.05, changePercent: 1.04, currency: 'USD', spark: [], source: 'internal' },
 ];

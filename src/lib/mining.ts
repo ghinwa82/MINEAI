@@ -35,7 +35,7 @@ export const VIP_TIERS: VipDefinition[] = [
   { tier: 'leviathan', minStake: 100_000, multiplier: 1.6 },
 ];
 
-export type MiningCoinId = 'mineai' | 'btc' | 'eth' | 'sol' | 'bnb' | 'ton' | 'doge';
+export type MiningCoinId = 'mineai' | 'btc' | 'eth' | 'sol' | 'bnb' | 'ton' | 'doge' | 'ltc';
 
 export interface MiningCoinDefinition {
   id: MiningCoinId;
@@ -150,6 +150,19 @@ export const MINING_COINS: MiningCoinDefinition[] = [
     decimals: 2,
     network: null,
   },
+  {
+    id: 'ltc',
+    symbol: 'LTC',
+    label: 'Litecoin',
+    chain: 'Litecoin',
+    family: 'litecoin',
+    priceUsd: 88.4,
+    bonus: 1,
+    share: 5,
+    minWithdraw: 0.5,
+    decimals: 6,
+    network: 'ltc',
+  },
 ];
 
 const COIN_BY_ID: Record<MiningCoinId, MiningCoinDefinition> = Object.fromEntries(
@@ -170,6 +183,9 @@ const BASE_HASHRATE = 320;
 const GENESIS_GRANT = 250;
 const MAX_STREAK_MULTIPLIER = 1.7;
 const ACCRUAL_DECIMALS = 12;
+/** Share-to-Boost: +15% hashrate for 24 hours after a share. */
+export const SHARE_BOOST_MULTIPLIER = 1.15;
+export const SHARE_BOOST_MS = 24 * 60 * 60 * 1000;
 
 export interface CoinBalance {
   amount: number;
@@ -201,6 +217,10 @@ export interface MiningPosition {
   recoveryCodes: string[];
   wallet: string | null;
   network: string | null;
+  /** Share-to-Boost: hashrate is multiplied until this timestamp. */
+  shareBoostUntil: string | null;
+  /** How many boost links this operator has shared. */
+  sharedLinks: number;
 }
 
 export interface PayoutRecord {
@@ -254,6 +274,11 @@ export interface MiningSnapshot {
   referralCount: number;
   referredBy: string | null;
   twoFactorEnabled: boolean;
+  /** Share-to-Boost state. */
+  shareBoostActive: boolean;
+  shareBoostUntil: string | null;
+  shareBoostMultiplier: number;
+  sharedLinks: number;
   tokenPriceUsd: number;
   /** Per-coin balances and allocations, in display order. */
   coins: CoinSnapshot[];
@@ -385,13 +410,43 @@ export function getPosition(uid: string): MiningPosition {
     recoveryCodes: [],
     wallet: null,
     network: null,
+    shareBoostUntil: null,
+    sharedLinks: 0,
   };
   current.positions.set(uid, position);
   return position;
 }
 
+export function shareBoostActive(position: MiningPosition): boolean {
+  return Boolean(position.shareBoostUntil && Date.parse(position.shareBoostUntil) > Date.now());
+}
+
 export function hashrateFor(position: MiningPosition): number {
-  return Math.min(2_400, BASE_HASHRATE + position.stakedTokens * 0.05);
+  const base = Math.min(2_400, BASE_HASHRATE + position.stakedTokens * 0.05);
+  return shareBoostActive(position) ? base * SHARE_BOOST_MULTIPLIER : base;
+}
+
+/**
+ * Share-to-Boost.
+ *
+ * Called when a visitor opens a shared profit card. The boost is time-boxed so
+ * a single share cannot inflate a position forever, and it stacks naturally
+ * with VIP and streak multipliers because it acts on hashrate, not yield.
+ */
+export function unlockShareBoost(uid: string): {
+  ok: boolean;
+  position: MiningPosition;
+  until: string;
+  multiplier: number;
+} {
+  const position = accrue(uid);
+  const current = Date.now();
+  const existing = position.shareBoostUntil ? Date.parse(position.shareBoostUntil) : 0;
+  const until = new Date(Math.max(current, existing) + SHARE_BOOST_MS).toISOString();
+  position.shareBoostUntil = until;
+  position.sharedLinks += 1;
+  store().positions.set(uid, position);
+  return { ok: true, position, until, multiplier: SHARE_BOOST_MULTIPLIER };
 }
 
 export function vipTierFor(stakedTokens: number): VipDefinition {
@@ -928,6 +983,10 @@ export function snapshotFor(uid: string, lang: SupportedLanguage): MiningSnapsho
     referralCount: position.referrals.length,
     referredBy: position.referredBy,
     twoFactorEnabled: position.twoFactorEnabled,
+    shareBoostActive: shareBoostActive(position),
+    shareBoostUntil: position.shareBoostUntil,
+    shareBoostMultiplier: shareBoostActive(position) ? SHARE_BOOST_MULTIPLIER : 1,
+    sharedLinks: position.sharedLinks,
     tokenPriceUsd: tokenPriceUsd(),
     coins,
     allocations: { ...position.allocations },

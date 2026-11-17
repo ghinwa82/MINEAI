@@ -60,6 +60,7 @@ export const LOCALISABLE_ROUTES = [
   '/rewards',
   '/notes',
   '/news',
+  '/insights',
   '/terms',
   '/privacy',
   '/refund-policy',

@@ -22,6 +22,10 @@ export interface EcosystemCopy {
     markets: string;
     rewards: string;
     news: string;
+    plans: string;
+    insights: string;
+    support: string;
+    startFree: string;
   };
   rails: {
     eyebrow: string;
@@ -45,7 +49,6 @@ export interface EcosystemCopy {
     payWith: string;
     railKashier: string;
     railPaymob: string;
-    railLemon: string;
     railStripe: string;
     cardNote: string;
     applePay: string;
@@ -199,7 +202,7 @@ export interface EcosystemCopy {
 }
 
 const EN: EcosystemCopy = {
-  nav: { mining: 'Cloud Mining', markets: 'Markets', rewards: 'Rewards', news: 'News' },
+  nav: { mining: 'Cloud Mining', markets: 'Live Markets', rewards: 'Rewards & VIP', news: 'Global News', plans: 'Mining Plans', insights: 'Market Insights', support: 'Support', startFree: 'Start Free Mining' },
   rails: {
     eyebrow: 'Payment rails',
     title: 'Pay by card, or settle on-chain with zero platform fee',
@@ -224,7 +227,6 @@ const EN: EcosystemCopy = {
     payWith: 'Pay with',
     railKashier: 'Kashier',
     railPaymob: 'Paymob',
-    railLemon: 'Lemon Squeezy',
     railStripe: 'Stripe',
     cardNote: 'Card data never touches this server. The processor hosts the payment page.',
     applePay: 'Apple Pay',
@@ -396,7 +398,7 @@ const EN: EcosystemCopy = {
 };
 
 const AR: EcosystemCopy = {
-  nav: { mining: 'التعدين السحابي', markets: 'الأسواق', rewards: 'المكافآت', news: 'الأخبار' },
+  nav: { mining: 'التعدين السحابي', markets: 'الأسواق المباشرة', rewards: 'المكافآت وVIP', news: 'أخبار العالم', plans: 'خطط التعدين', insights: 'رؤى السوق', support: 'الدعم', startFree: 'ابدأ التعدين المجاني' },
   rails: {
     eyebrow: 'مسارات الدفع',
     title: 'ادفع بالبطاقة، أو سوِّ على السلسلة دون أي رسوم منصة',
@@ -421,7 +423,6 @@ const AR: EcosystemCopy = {
     payWith: 'ادفع بواسطة',
     railKashier: 'Kashier',
     railPaymob: 'Paymob',
-    railLemon: 'Lemon Squeezy',
     railStripe: 'Stripe',
     cardNote: 'بيانات البطاقة لا تصل إلى هذا الخادم أبداً. المعالج يستضيف صفحة الدفع.',
     applePay: 'Apple Pay',
@@ -593,7 +594,7 @@ const AR: EcosystemCopy = {
 };
 
 const FR: EcosystemCopy = {
-  nav: { mining: 'Minage cloud', markets: 'Marchés', rewards: 'Récompenses', news: 'Actualités' },
+  nav: { mining: 'Minage cloud', markets: 'Marchés en direct', rewards: 'Récompenses & VIP', news: 'Actualités mondiales', plans: 'Forfaits de minage', insights: 'Analyses marché', support: 'Assistance', startFree: 'Commencer gratuitement' },
   rails: {
     eyebrow: 'Rails de paiement',
     title: "Payez par carte, ou réglez on-chain sans frais de plateforme",
@@ -619,7 +620,6 @@ const FR: EcosystemCopy = {
     payWith: 'Payer avec',
     railKashier: 'Kashier',
     railPaymob: 'Paymob',
-    railLemon: 'Lemon Squeezy',
     railStripe: 'Stripe',
     cardNote: "Les données de carte ne touchent jamais ce serveur. Le processeur héberge la page de paiement.",
     applePay: 'Apple Pay',
@@ -791,7 +791,7 @@ const FR: EcosystemCopy = {
 };
 
 const ES: EcosystemCopy = {
-  nav: { mining: 'Minería cloud', markets: 'Mercados', rewards: 'Recompensas', news: 'Noticias' },
+  nav: { mining: 'Minería cloud', markets: 'Mercados en vivo', rewards: 'Recompensas y VIP', news: 'Noticias globales', plans: 'Planes de minería', insights: 'Análisis de mercado', support: 'Soporte', startFree: 'Empezar gratis' },
   rails: {
     eyebrow: 'Canales de pago',
     title: 'Paga con tarjeta o liquida on-chain sin comisión de plataforma',
@@ -817,7 +817,6 @@ const ES: EcosystemCopy = {
     payWith: 'Pagar con',
     railKashier: 'Kashier',
     railPaymob: 'Paymob',
-    railLemon: 'Lemon Squeezy',
     railStripe: 'Stripe',
     cardNote: 'Los datos de la tarjeta nunca tocan este servidor. El procesador aloja la página de pago.',
     applePay: 'Apple Pay',
@@ -989,7 +988,7 @@ const ES: EcosystemCopy = {
 };
 
 const ZH: EcosystemCopy = {
-  nav: { mining: '云端挖矿', markets: '市场行情', rewards: '奖励中心', news: '新闻' },
+  nav: { mining: '云端挖矿', markets: '实时行情', rewards: '奖励与 VIP', news: '全球新闻', plans: '挖矿方案', insights: '市场洞察', support: '客服支持', startFree: '免费开始挖矿' },
   rails: {
     eyebrow: '支付通道',
     title: '银行卡支付，或链上结算零平台费',
@@ -1014,7 +1013,6 @@ const ZH: EcosystemCopy = {
     payWith: '支付方式',
     railKashier: 'Kashier',
     railPaymob: 'Paymob',
-    railLemon: 'Lemon Squeezy',
     railStripe: 'Stripe',
     cardNote: '卡片数据不会经过本服务器，支付页面由处理商托管。',
     applePay: 'Apple Pay',
@@ -1186,7 +1184,7 @@ const ZH: EcosystemCopy = {
 };
 
 const HI: EcosystemCopy = {
-  nav: { mining: 'क्लाउड माइनिंग', markets: 'बाज़ार', rewards: 'इनाम', news: 'समाचार' },
+  nav: { mining: 'क्लाउड माइनिंग', markets: 'लाइव बाज़ार', rewards: 'इनाम और VIP', news: 'वैश्विक समाचार', plans: 'माइनिंग प्लान', insights: 'बाज़ार अंतर्दृष्टि', support: 'सहायता', startFree: 'मुफ़्त माइनिंग शुरू करें' },
   rails: {
     eyebrow: 'भुगतान रेल',
     title: 'कार्ड से भुगतान करें, या शून्य प्लेटफ़ॉर्म शुल्क पर ऑन-चेन निपटान',
@@ -1211,7 +1209,6 @@ const HI: EcosystemCopy = {
     payWith: 'भुगतान करें',
     railKashier: 'Kashier',
     railPaymob: 'Paymob',
-    railLemon: 'Lemon Squeezy',
     railStripe: 'Stripe',
     cardNote: 'कार्ड डेटा इस सर्वर तक कभी नहीं पहुँचता। भुगतान पृष्ठ प्रोसेसर होस्ट करता है।',
     applePay: 'Apple Pay',
