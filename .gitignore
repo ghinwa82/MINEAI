@@ -52,3 +52,5 @@ capture/
 inbox/
 reference/
 investigation.cany/
+supabase/.temp/
+prompt1.txt
