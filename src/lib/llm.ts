@@ -39,7 +39,12 @@ const MAX_REPLY_CHARS = 1_400;
 function providerChain(): Provider[] {
   const chain: Provider[] = [];
   const groq = process.env.GROQ_API_KEY?.trim();
-  if (groq) chain.push({ id: 'groq', key: groq, model: 'llama-3.3-70b-versatile' });
+  if (groq) {
+    // Two Groq models: the flagship first, then a smaller one so a retired
+    // model id degrades to a working answer instead of the knowledge base.
+    chain.push({ id: 'groq', key: groq, model: 'openai/gpt-oss-120b' });
+    chain.push({ id: 'groq', key: groq, model: 'qwen/qwen3.8-27b' });
+  }
 
   const gemini = (process.env.GEMINI_API_KEY ?? process.env.GOOGLE_API_KEY)?.trim();
   if (gemini) chain.push({ id: 'gemini', key: gemini, model: 'gemini-2.0-flash' });
@@ -57,7 +62,7 @@ export function llmConfigured(): boolean {
 }
 
 export function llmProviderNames(): LlmProvider[] {
-  return providerChain().map((provider) => provider.id);
+  return [...new Set(providerChain().map((provider) => provider.id))];
 }
 
 function trimReply(value: string): string {
@@ -79,7 +84,9 @@ async function callGroqStyle(
     body: JSON.stringify({
       model: provider.model,
       temperature: 0.4,
-      max_tokens: 520,
+      // Reasoning models spend tokens before they answer, so the budget is
+      // generous; the reply itself is trimmed to MAX_REPLY_CHARS afterwards.
+      max_tokens: 900,
       messages: [{ role: 'system', content: system }, ...turns],
     }),
     signal: AbortSignal.timeout(TIMEOUT_MS),
@@ -111,7 +118,7 @@ async function callGemini(provider: Provider, system: string, turns: LlmTurn[]):
         role: turn.role === 'assistant' ? 'model' : 'user',
         parts: [{ text: turn.content }],
       })),
-      generationConfig: { temperature: 0.4, maxOutputTokens: 520 },
+      generationConfig: { temperature: 0.4, maxOutputTokens: 900 },
     }),
     signal: AbortSignal.timeout(TIMEOUT_MS),
     cache: 'no-store',

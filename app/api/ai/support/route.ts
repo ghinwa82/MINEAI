@@ -148,6 +148,9 @@ export async function POST(request: Request) {
         suggestions: [],
       });
     }
+    // A model outage must never take support down; log the reason once and use
+    // the knowledge base so the visitor still gets a correct answer.
+    console.warn('[ai-support] model fallback:', result.error ?? 'empty reply');
   }
 
   const answer = answerFor(parsed.data.message, lang);
