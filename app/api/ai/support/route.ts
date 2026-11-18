@@ -41,6 +41,7 @@ const schema = z.object({
 });
 
 interface SupportContext {
+  hasPosition: boolean;
   planName: string;
   hashrateMhs: number;
   pendingTokens: number;
@@ -51,9 +52,9 @@ interface SupportContext {
 
 function systemPrompt(lang: SupportedLanguage, context: SupportContext): string {
   const facts = [
-    `Plan: ${context.planName}.`,
-    `Cloud power: ${context.hashrateMhs.toLocaleString('en-US', { maximumFractionDigits: 0 })} MH/s.`,
-    `Pending $MINEAI balance: ${context.pendingTokens.toFixed(4)}.`,
+    context.hasPosition
+      ? `Plan: ${context.planName}. Cloud power: ${context.hashrateMhs.toLocaleString('en-US', { maximumFractionDigits: 0 })} MH/s. Pending $MINEAI balance: ${context.pendingTokens.toFixed(4)}.`
+      : 'No mining position was supplied with this question, so do not state or guess the visitor\'s plan, hashrate or balance.',
     `Authenticator (TOTP) is ${context.twoFactor ? 'enabled' : 'not enabled'} on the signed-in account.`,
     context.email ? `Signed-in account: ${context.email}.` : 'The visitor is not signed in.',
     context.txHash
@@ -108,6 +109,7 @@ export async function POST(request: Request) {
   const session = await resolveSession(request).catch(() => null);
 
   let context: SupportContext = {
+    hasPosition: false,
     planName: 'Genesis Free Cloud',
     hashrateMhs: 0,
     pendingTokens: 0,
@@ -121,6 +123,7 @@ export async function POST(request: Request) {
       const snapshot = snapshotFor(parsed.data.uid, lang);
       context = {
         ...context,
+        hasPosition: true,
         planName: snapshot.planName,
         hashrateMhs: snapshot.hashrateMhs,
         pendingTokens: snapshot.claimableTokens,
