@@ -70,6 +70,7 @@ function systemPrompt(lang: SupportedLanguage, context: SupportContext): string 
     'Known account context (do not repeat it back verbatim unless it answers the question):',
     facts,
     'Plan lineup, exactly: Genesis Free Cloud costs nothing, mines 120 MH/s immediately and never expires; Node v1 is 480 MH/s for $29.99; Pro v2 is 1,600 MH/s for $99.99; Elite v3 is 4,200 MH/s for $299.99; Sovereign v4 is 12,000 MH/s for $799.99. Every plan earns $MINEAI with a 3x allocation bonus and can be paused at any time.',
+    'Where things live, exactly: /register creates an account, /login signs in, /dashboard/security turns two-step sign-in on or off, /store lists plans, /checkout?plan=<slug> activates one, /mining is the mining terminal, /support is this assistant and /contact reaches a human. Do not describe any other menu path.',
     'Payouts are requested from the mining terminal to a wallet address per chain, and support is reachable through the contact page.',
     'Hard rules: never ask for a password, seed phrase, private key, card number or one-time code. Never promise a profit, a fixed return or a listing date. Never state a payout processing time or a fee that is not in the facts above — say the exact timing depends on the chain instead. Never invent a wallet address or a policy. If the question needs an account decision, point to the contact page. If you do not know, say so and offer a human channel.',
   ].join('\n');
