@@ -243,6 +243,30 @@ export async function verifyTokenHash(
   return { ok: true, data: session, status: raw.status };
 }
 
+/**
+ * Redeems the `code` that an OAuth handshake leaves on `/auth/callback`.
+ *
+ * The verifier is the one the start route minted into an HttpOnly cookie; the
+ * browser cannot read it, so a stolen callback URL is worthless on its own.
+ * Supabase answers with a full session, exactly like a password grant.
+ */
+export async function exchangeCodeForSession(
+  code: string,
+  codeVerifier?: string,
+): Promise<AuthResult<AuthSession>> {
+  const raw = await call('/auth/v1/token?grant_type=pkce', {
+    body: {
+      auth_code: code,
+      ...(codeVerifier ? { code_verifier: codeVerifier } : {}),
+    },
+  });
+  if (raw.status === 0) return { ok: false, error: 'Auth service is unreachable', status: 503 };
+  if (raw.status >= 400) return fail<AuthSession>(raw, 'That sign-in link has expired');
+  const session = sessionFrom(raw.body);
+  if (!session) return { ok: false, error: 'That sign-in link is not valid', status: 400 };
+  return { ok: true, data: session, status: raw.status };
+}
+
 export async function getUser(accessToken: string): Promise<AuthResult<AuthUser>> {
   const raw = await call('/auth/v1/user', { method: 'GET', accessToken });
   if (raw.status === 0) return { ok: false, error: 'Auth service is unreachable', status: 503 };
@@ -394,10 +418,18 @@ export async function providerStatuses(): Promise<ProviderStatus[]> {
   }));
 }
 
-export function authorizeUrl(provider: OAuthProvider, redirectTo: string): string | null {
+export function authorizeUrl(
+  provider: OAuthProvider,
+  redirectTo: string,
+  challenge?: { challenge: string; method?: 's256' | 'plain' },
+): string | null {
   const creds = config();
   if (!creds) return null;
   const params = new URLSearchParams({ provider, redirect_to: redirectTo });
+  if (challenge) {
+    params.set('code_challenge', challenge.challenge);
+    params.set('code_challenge_method', challenge.method ?? 's256');
+  }
   return `${creds.url}/auth/v1/authorize?${params.toString()}`;
 }
 

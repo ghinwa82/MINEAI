@@ -130,7 +130,7 @@ export interface Dictionary {
     categories: {
       arbitrage: string;
       supplier: string;
-      stripe: string;
+      payout: string;
       telemetry: string;
     };
     save: string;
@@ -228,7 +228,7 @@ const en: Dictionary = {
       {
         title: 'Settle',
         body:
-          'Earnings clear into a wallet or a bank account through a verified Stripe Connect rail, with each transfer carrying its own reference.',
+          'Earnings clear into a wallet or a bank account through a verified settlement rail, with each transfer carrying its own reference.',
       },
       {
         title: 'Prove',
@@ -261,7 +261,7 @@ const en: Dictionary = {
       {
         question: 'How do payouts reach my account?',
         answer:
-          'Earnings accumulate in your treasury. From there you can settle to a crypto wallet instantly, or move a fiat amount to a bank account over a verified Stripe Connect rail.',
+          'Earnings accumulate in your treasury. From there you can settle to a crypto wallet instantly, or move a fiat amount to a bank account over a verified settlement rail.',
       },
       {
         question: 'What does the monthly figure include?',
@@ -307,16 +307,16 @@ const en: Dictionary = {
     feedTitle: 'Agent activity',
     feedEmpty: 'No agent activity recorded yet.',
     connectTitle: 'Payout rail',
-    connectVerified: 'Stripe Connect verified',
-    connectPending: 'Stripe Connect awaiting verification',
-    connectSandbox: 'Sandbox rail — add a Stripe key for live settlement',
+    connectVerified: 'Bank settlement verified',
+    connectPending: 'Bank settlement awaiting verification',
+    connectSandbox: 'Sandbox rail — finalise the acquirer account for live settlement',
     cycleTitle: 'Autonomous cycle',
     cycleRunning: 'Cycle running',
     lastCycle: 'Last cycle',
     maxLabel: 'Treasury ceiling',
     activatedToast: '{name} claimed by the mesh — the agent crew is already working.',
     pausedToast: '{name} released back to the pool.',
-    purchaseToast: 'Stripe opened in a new tab — it will bring you back here.',
+    purchaseToast: 'Card payment opened in a new tab — it will bring you back here.',
     activationFailed: 'The mesh refused the request.',
     tierLabels: {
       popular: 'Most deployed',
@@ -336,7 +336,7 @@ const en: Dictionary = {
     categories: {
       arbitrage: 'Arbitrage',
       supplier: 'Supplier',
-      stripe: 'Payouts',
+      payout: 'Payouts',
       telemetry: 'Telemetry',
     },
     save: 'Write to ledger',
@@ -434,7 +434,7 @@ const ar: Dictionary = {
       {
         title: 'التسوية',
         body:
-          'تتراكم الأرباح في خزينتك، ثم تصل إلى محفظة أو حساب بنكي عبر وصلة Stripe Connect موثّقة، لكل تحويل مرجع خاص به.',
+          'تتراكم الأرباح في خزينتك، ثم تصل إلى محفظة أو حساب بنكي عبر وصلة تسوية موثّقة، لكل تحويل مرجع خاص به.',
       },
       {
         title: 'الإثبات',
@@ -467,7 +467,7 @@ const ar: Dictionary = {
       {
         question: 'كيف تصل الأرباح إلى حسابي؟',
         answer:
-          'تتراكم الأرباح في خزينتك، ومن هناك تسوّيها إلى محفظة رقمية فوراً، أو تحوّل مبلغاً fiat إلى حساب بنكي عبر وصلة Stripe Connect موثّقة.',
+          'تتراكم الأرباح في خزينتك، ومن هناك تسوّيها إلى محفظة رقمية فوراً، أو تحوّل مبلغاً fiat إلى حساب بنكي عبر وصلة تسوية موثّقة.',
       },
       {
         question: 'ماذا يشمل الرقم الشهري؟',
@@ -513,16 +513,16 @@ const ar: Dictionary = {
     feedTitle: 'نشاط الوكلاء',
     feedEmpty: 'لا يوجد نشاط مسجَّل بعد.',
     connectTitle: 'وصلة التحويل',
-    connectVerified: 'Stripe Connect موثّق',
-    connectPending: 'Stripe Connect بانتظار التوثيق',
-    connectSandbox: 'وصلة تجريبية — أضف مفتاح Stripe للتحويل الحقيقي',
+    connectVerified: 'التسوية البنكية موثّقة',
+    connectPending: 'التسوية البنكية بانتظار التوثيق',
+    connectSandbox: 'وصلة تجريبية — أكمل حساب التاجر للتحويل الحقيقي',
     cycleTitle: 'الدورة الذاتية',
     cycleRunning: 'الدورة قيد التنفيذ',
     lastCycle: 'آخر دورة',
     maxLabel: 'سقف الخزينة',
     activatedToast: 'استلمت الشبكةُ {name} — طاقم الوكلاء يعمل عليها الآن.',
     pausedToast: 'أُعيدت {name} إلى مجمع العقد.',
-    purchaseToast: 'فُتح Stripe في تبويب جديد — وسيعيدك إلى هنا.',
+    purchaseToast: 'فُتحت صفحة الدفع بالبطاقة في تبويب جديد — وسيعيدك إلى هنا.',
     activationFailed: 'رفضت الشبكة الطلب.',
     tierLabels: {
       popular: 'الأكثر استخداماً',
@@ -542,7 +542,7 @@ const ar: Dictionary = {
     categories: {
       arbitrage: 'مراجحة',
       supplier: 'مورد',
-      stripe: 'التحويلات',
+      payout: 'التحويلات',
       telemetry: 'قياسات',
     },
     save: 'اكتب في السجل',
@@ -640,7 +640,7 @@ const fr: Dictionary = {
       {
         title: 'Régler',
         body:
-          'Les gains s’accumulent dans votre trésorerie, puis partent vers un portefeuille ou un compte bancaire via un rail Stripe Connect vérifié, chaque transfert portant sa propre référence.',
+          'Les gains s’accumulent dans votre trésorerie, puis partent vers un portefeuille ou un compte bancaire via un rail de règlement vérifié, chaque transfert portant sa propre référence.',
       },
       {
         title: 'Justifier',
@@ -673,7 +673,7 @@ const fr: Dictionary = {
       {
         question: 'Comment les virements arrivent-ils sur mon compte ?',
         answer:
-          'Les gains s’accumulent dans votre trésorerie. De là, règlement instantané vers un portefeuille crypto, ou transfert d’un montant fiat vers un compte bancaire via un rail Stripe Connect vérifié.',
+          'Les gains s’accumulent dans votre trésorerie. De là, règlement instantané vers un portefeuille crypto, ou transfert d’un montant fiat vers un compte bancaire via un rail de règlement vérifié.',
       },
       {
         question: 'Que comprend le tarif mensuel ?',
@@ -719,16 +719,16 @@ const fr: Dictionary = {
     feedTitle: 'Activité des agents',
     feedEmpty: 'Aucune activité enregistrée pour l’instant.',
     connectTitle: 'Rail de liquidation',
-    connectVerified: 'Stripe Connect vérifié',
-    connectPending: 'Stripe Connect en attente de vérification',
-    connectSandbox: 'Rail de test — ajoutez une clé Stripe pour le règlement réel',
+    connectVerified: 'Règlement bancaire vérifié',
+    connectPending: 'Règlement bancaire en attente de vérification',
+    connectSandbox: 'Rail de test — finalisez le compte acquéreur pour le règlement réel',
     cycleTitle: 'Cycle autonome',
     cycleRunning: 'Cycle en cours',
     lastCycle: 'Dernier cycle',
     maxLabel: 'Plafond de trésorerie',
     activatedToast: '{name} a été revendiqué par le maillage — l’équipage d’agents travaille déjà dessus.',
     pausedToast: '{name} a été relâché dans le pool.',
-    purchaseToast: 'Stripe s’est ouvert dans un nouvel onglet — il vous ramènera ici.',
+    purchaseToast: 'Le paiement par carte s’est ouvert dans un nouvel onglet — il vous ramènera ici.',
     activationFailed: 'Le maillage a refusé la requête.',
     tierLabels: {
       popular: 'Le plus déployé',
@@ -748,7 +748,7 @@ const fr: Dictionary = {
     categories: {
       arbitrage: 'Arbitrage',
       supplier: 'Fournisseur',
-      stripe: 'Virements',
+      payout: 'Virements',
       telemetry: 'Télémétrie',
     },
     save: 'Écrire dans le registre',
@@ -846,7 +846,7 @@ const es: Dictionary = {
       {
         title: 'Liquidar',
         body:
-          'Las ganancias se acumulan en tu tesorería y salen hacia una cartera o una cuenta bancaria por un carril Stripe Connect verificado, con su propia referencia en cada transferencia.',
+          'Las ganancias se acumulan en tu tesorería y salen hacia una cartera o una cuenta bancaria por un carril de liquidación verificado, con su propia referencia en cada transferencia.',
       },
       {
         title: 'Rendir cuentas',
@@ -879,7 +879,7 @@ const es: Dictionary = {
       {
         question: '¿Cómo llegan los pagos a mi cuenta?',
         answer:
-          'Las ganancias se acumulan en tu tesorería. Desde ahí puedes liquidar al instante a una cartera cripto o mover un importe fiat a una cuenta bancaria por un carril Stripe Connect verificado.',
+          'Las ganancias se acumulan en tu tesorería. Desde ahí puedes liquidar al instante a una cartera cripto o mover un importe fiat a una cuenta bancaria por un carril de liquidación verificado.',
       },
       {
         question: '¿Qué incluye la cifra mensual?',
@@ -925,16 +925,16 @@ const es: Dictionary = {
     feedTitle: 'Actividad de los agentes',
     feedEmpty: 'Aún no hay actividad registrada.',
     connectTitle: 'Carril de liquidación',
-    connectVerified: 'Stripe Connect verificado',
-    connectPending: 'Stripe Connect pendiente de verificación',
-    connectSandbox: 'Carril de pruebas — añade una clave de Stripe para liquidar de verdad',
+    connectVerified: 'Liquidación bancaria verificada',
+    connectPending: 'Liquidación bancaria pendiente de verificación',
+    connectSandbox: 'Carril de pruebas — completa la cuenta de comercio para liquidar de verdad',
     cycleTitle: 'Ciclo autónomo',
     cycleRunning: 'Ciclo en curso',
     lastCycle: 'Último ciclo',
     maxLabel: 'Techo de tesorería',
     activatedToast: 'La malla reclamó {name} — la tripulación de agentes ya está trabajando.',
     pausedToast: '{name} volvió al pool.',
-    purchaseToast: 'Stripe se abrió en una pestaña nueva — te devolverá aquí.',
+    purchaseToast: 'El pago con tarjeta se abrió en una pestaña nueva — te devolverá aquí.',
     activationFailed: 'La malla rechazó la petición.',
     tierLabels: {
       popular: 'El más desplegado',
@@ -954,7 +954,7 @@ const es: Dictionary = {
     categories: {
       arbitrage: 'Arbitraje',
       supplier: 'Proveedor',
-      stripe: 'Liquidaciones',
+      payout: 'Liquidaciones',
       telemetry: 'Telemetría',
     },
     save: 'Escribir en el registro',
@@ -1052,7 +1052,7 @@ const zh: Dictionary = {
       {
         title: '结算',
         body:
-          '收益先沉淀到你的金库，再经由已验证的 Stripe Connect 通道进入钱包或银行账户，每笔转账都带独立参考号。',
+          '收益先沉淀到你的金库，再经由已验证的结算通道进入钱包或银行账户，每笔转账都带独立参考号。',
       },
       {
         title: '留痕',
@@ -1084,7 +1084,7 @@ const zh: Dictionary = {
       {
         question: '收益如何进入我的账户？',
         answer:
-          '收益先累积在你的金库。之后可以即时结算到加密钱包，或通过已验证的 Stripe Connect 通道把法币金额转入银行账户。',
+          '收益先累积在你的金库。之后可以即时结算到加密钱包，或通过已验证的结算通道把法币金额转入银行账户。',
       },
       {
         question: '月度费用包含什么？',
@@ -1130,16 +1130,16 @@ const zh: Dictionary = {
     feedTitle: '智能体动态',
     feedEmpty: '暂无动态记录。',
     connectTitle: '结算通道',
-    connectVerified: 'Stripe Connect 已验证',
-    connectPending: 'Stripe Connect 等待验证',
-    connectSandbox: '沙盒通道 —— 配置 Stripe 密钥即可真实结算',
+    connectVerified: '银行结算已验证',
+    connectPending: '银行结算等待验证',
+    connectSandbox: '沙盒通道 —— 完成商户账户即可真实结算',
     cycleTitle: '自主循环',
     cycleRunning: '循环执行中',
     lastCycle: '上次循环',
     maxLabel: '金库上限',
     activatedToast: '{name} 已被网格接管 —— 智能体团队已经开始工作。',
     pausedToast: '{name} 已释放回节点池。',
-    purchaseToast: 'Stripe 已在新标签页打开，稍后会把带回这里。',
+    purchaseToast: '银行卡支付已在新标签页打开，稍后会把带回这里。',
     activationFailed: '网格拒绝了这次请求。',
     tierLabels: {
       popular: '部署最多',
@@ -1159,7 +1159,7 @@ const zh: Dictionary = {
     categories: {
       arbitrage: '套利',
       supplier: '供应商',
-      stripe: '结算',
+      payout: '结算',
       telemetry: '遥测',
     },
     save: '写入账本',
@@ -1257,7 +1257,7 @@ const hi: Dictionary = {
       {
         title: 'निपटान',
         body:
-          'कमाई पहले आपकी ट्रेज़री में जुड़ती है, फिर सत्यापित Stripe Connect रेल से वॉलेट या बैंक खाते में जाती है — हर ट्रांसफ़र का अपना संदर्भ होता है।',
+          'कमाई पहले आपकी ट्रेज़री में जुड़ती है, फिर सत्यापित निपटान रेल से वॉलेट या बैंक खाते में जाती है — हर ट्रांसफ़र का अपना संदर्भ होता है।',
       },
       {
         title: 'सबूत',
@@ -1289,7 +1289,7 @@ const hi: Dictionary = {
       {
         question: 'भुगतान मेरे खाते में कैसे पहुँचते हैं?',
         answer:
-          'कमाई आपकी ट्रेज़री में जुड़ती है। वहाँ से आप तुरंत क्रिप्टो वॉलेट में निपटा सकते हैं, या सत्यापित Stripe Connect रेल से बैंक खाते में फ़िएट राशि भेज सकते हैं।',
+          'कमाई आपकी ट्रेज़री में जुड़ती है। वहाँ से आप तुरंत क्रिप्टो वॉलेट में निपटा सकते हैं, या सत्यापित निपटान रेल से बैंक खाते में फ़िएट राशि भेज सकते हैं।',
       },
       {
         question: 'मासिक राशि में क्या शामिल है?',
@@ -1335,16 +1335,16 @@ const hi: Dictionary = {
     feedTitle: 'एजेंट गतिविधि',
     feedEmpty: 'अभी कोई गतिविधि दर्ज नहीं हुई।',
     connectTitle: 'भुगतान रेल',
-    connectVerified: 'Stripe Connect सत्यापित',
-    connectPending: 'Stripe Connect सत्यापन की प्रतीक्षा में',
-    connectSandbox: 'सैंडबॉक्स रेल — लाइव निपटान के लिए Stripe कुंजी जोड़ें',
+    connectVerified: 'बैंक निपटान सत्यापित',
+    connectPending: 'बैंक निपटान सत्यापन की प्रतीक्षा में',
+    connectSandbox: 'सैंडबॉक्स रेल — लाइव निपटान के लिए मर्चेंट खाता पूरा करें',
     cycleTitle: 'स्वायत्त चक्र',
     cycleRunning: 'चक्र चल रहा है',
     lastCycle: 'अंतिम चक्र',
     maxLabel: 'ट्रेज़री सीमा',
     activatedToast: '{name} को मेश ने अपनाया है — एजेंट दल पहले से काम कर रहा है।',
     pausedToast: '{name} वापस पूल में जारी कर दिया गया।',
-    purchaseToast: 'Stripe नए टैब में खुला है — आपको वापस यहाँ लाएगा।',
+    purchaseToast: 'कार्ड भुगतान नए टैब में खुला है — आपको वापस यहाँ लाएगा।',
     activationFailed: 'मेश ने अनुरोध अस्वीकार कर दिया।',
     tierLabels: {
       popular: 'सर्वाधिक प्रयुक्त',
@@ -1364,7 +1364,7 @@ const hi: Dictionary = {
     categories: {
       arbitrage: 'मार्जिन',
       supplier: 'सप्लायर',
-      stripe: 'निपटान',
+      payout: 'निपटान',
       telemetry: 'टेलीमेट्री',
     },
     save: 'बही में लिखें',

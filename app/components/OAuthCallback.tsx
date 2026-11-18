@@ -76,7 +76,7 @@ export default function OAuthCallback() {
         setPhase('done');
         sound.chime();
         window.setTimeout(() => {
-          window.location.replace(href('/mining'));
+          window.location.replace(href('/dashboard'));
         }, 650);
       } catch {
         if (cancelled) return;

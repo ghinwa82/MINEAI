@@ -68,6 +68,11 @@ interface Copy {
   cryptoNote: string;
   card: string;
   cardNote: string;
+  applepay: string;
+  applepayNote: string;
+  wallet: string;
+  walletNote: string;
+  fiatPending: string;
   notConfigured: string;
   network: string;
   address: string;
@@ -101,10 +106,13 @@ const COPY: Record<string, Copy> = {
     planTitle: 'Choose your power', planLead: 'Every plan mines $MINEAI at a 3× allocation bonus and can be paused at any time.',
     currency: 'Display currency', total: 'Total today', perDay: 'Estimated daily emission',
     continue: 'Continue to payment',
-    payTitle: 'Choose a rail', payLead: 'Crypto settles instantly at the exact plan price. Cards open on the processor page once the owner installs the keys.',
+    payTitle: 'Choose a payment method', payLead: 'Direct crypto settles instantly at the exact plan price. Card and wallet rails open automatically once the merchant account is live.',
     freeNote: 'This plan is free. Activation is instant and needs no payment.',
-    crypto: 'Crypto · 0% fee', cryptoNote: 'Pay from any exchange or wallet. We verify the hash on-chain.',
-    card: 'Card · Kashier / Paymob', cardNote: 'Hosted processor page. Card data never touches this server.',
+    crypto: 'Direct Cryptocurrency', cryptoNote: 'USDT or BTC from any exchange or wallet. The hash is verified on-chain. 0% platform fee.',
+    card: 'Credit / Debit Card', cardNote: 'Visa, Mastercard and debit cards, authorised on a hosted secure page. Card details never reach this server.',
+    applepay: 'Apple Pay / Google Pay', applepayNote: 'One-tap checkout with the wallet already on your device. Nothing to type.',
+    wallet: 'Mobile Wallets', walletNote: 'Settle from a mobile wallet balance in your local currency.',
+    fiatPending: 'Card and wallet rails open when our merchant account is live. Direct crypto is available now at a 0% fee.',
     notConfigured: 'Not configured yet',
     network: 'Network', address: 'Deposit address', amount: 'Amount to send', scan: 'Scan to pay',
     copy: 'Copy address', copied: 'Copied', openWallet: 'Open in wallet',
@@ -122,10 +130,13 @@ const COPY: Record<string, Copy> = {
     planTitle: 'اختر قوتك', planLead: 'كل خطة تعدّن $MINEAI بمكافأة توزيع 3× ويمكن إيقافها في أي وقت.',
     currency: 'عملة العرض', total: 'الإجمالي اليوم', perDay: 'الإصدار اليومي المتوقع',
     continue: 'المتابعة إلى الدفع',
-    payTitle: 'اختر وسيلة الدفع', payLead: 'العملات الرقمية تُسوّى فورًا بسعر الخطة. البطاقات تفتح على صفحة المعالج بعد تركيب المفاتيح.',
+    payTitle: 'اختر وسيلة الدفع', payLead: 'العملات الرقمية المباشرة تُسوّى فورًا بسعر الخطة. تُفتح مسارات البطاقات والمحافظ تلقائيًا عند تفعيل حساب التاجر.',
     freeNote: 'هذه الخطة مجانية. التفعيل فوري ولا يحتاج دفعًا.',
-    crypto: 'عملات رقمية · بدون رسوم', cryptoNote: 'ادفع من أي منصة أو محفظة. نتحقق من الهاش على الشبكة.',
-    card: 'بطاقة · Kashier / Paymob', cardNote: 'صفحة معالج مستضافة. بيانات البطاقة لا تصل إلى هذا الخادم.',
+    crypto: 'عملات رقمية مباشرة', cryptoNote: 'USDT أو BTC من أي منصة أو محفظة. يُتحقق من الهاش على الشبكة. بدون رسوم منصة.',
+    card: 'بطاقة ائتمان / خصم', cardNote: 'Visa وMastercard وبطاقات الخصم، تُعتمد على صفحة دفع آمنة مستضافة. بيانات البطاقة لا تصل إلى هذا الخادم.',
+    applepay: 'Apple Pay / Google Pay', applepayNote: 'دفع بلمسة واحدة بالمحفظة الموجودة على جهازك، دون كتابة أي بيانات.',
+    wallet: 'المحافظ المحمولة', walletNote: 'سوِّ من رصيد محفظتك المحمولة بعملتك المحلية.',
+    fiatPending: 'تُفتح مسارات البطاقات والمحافظ عند تفعيل حساب التاجر. الدفع المباشر بالعملات الرقمية متاح الآن بدون رسوم.',
     notConfigured: 'غير مفعّل بعد',
     network: 'الشبكة', address: 'عنوان الإيداع', amount: 'المبلغ المطلوب إرساله', scan: 'امسح للدفع',
     copy: 'نسخ العنوان', copied: 'تم النسخ', openWallet: 'افتح في المحفظة',
@@ -143,10 +154,13 @@ const COPY: Record<string, Copy> = {
     planTitle: 'Choisissez votre puissance', planLead: 'Chaque offre mine du $MINEAI avec un bonus d’allocation de 3× et peut être mise en pause à tout moment.',
     currency: 'Devise d’affichage', total: 'Total aujourd’hui', perDay: 'Émission quotidienne estimée',
     continue: 'Passer au paiement',
-    payTitle: 'Choisissez un canal', payLead: 'La crypto se règle instantanément au prix exact. Les cartes s’ouvrent sur la page du processeur une fois les clés installées.',
+    payTitle: 'Choisissez un moyen de paiement', payLead: 'La crypto directe se règle instantanément au prix exact. Les cartes et portefeuilles s’ouvrent dès que le compte marchand est actif.',
     freeNote: 'Cette offre est gratuite. L’activation est immédiate et sans paiement.',
-    crypto: 'Crypto · 0 % de frais', cryptoNote: 'Payez depuis n’importe quel exchange ou portefeuille. Nous vérifions le hash on-chain.',
-    card: 'Carte · Kashier / Paymob', cardNote: 'Page du processeur hébergée. Les données de carte ne touchent jamais ce serveur.',
+    crypto: 'Crypto directe', cryptoNote: 'USDT ou BTC depuis n’importe quel exchange ou portefeuille. Le hash est vérifié on-chain. 0 % de frais.',
+    card: 'Carte bancaire', cardNote: 'Visa, Mastercard et cartes de débit, autorisées sur une page sécurisée hébergée. Les données de carte ne touchent jamais ce serveur.',
+    applepay: 'Apple Pay / Google Pay', applepayNote: 'Paiement en un geste avec le portefeuille déjà présent sur votre appareil.',
+    wallet: 'Portefeuilles mobiles', walletNote: 'Réglez depuis le solde d’un portefeuille mobile dans votre devise locale.',
+    fiatPending: 'Les cartes et portefeuilles s’ouvrent dès que le compte marchand est actif. La crypto directe est disponible immédiatement, sans frais.',
     notConfigured: 'Pas encore configuré',
     network: 'Réseau', address: 'Adresse de dépôt', amount: 'Montant à envoyer', scan: 'Scanner pour payer',
     copy: 'Copier l’adresse', copied: 'Copié', openWallet: 'Ouvrir dans le portefeuille',
@@ -164,10 +178,13 @@ const COPY: Record<string, Copy> = {
     planTitle: 'Elige tu potencia', planLead: 'Cada plan mina $MINEAI con un bono de asignación de 3× y puede pausarse cuando quieras.',
     currency: 'Moneda de visualización', total: 'Total hoy', perDay: 'Emisión diaria estimada',
     continue: 'Continuar al pago',
-    payTitle: 'Elige un canal', payLead: 'La cripto se liquida al instante al precio exacto. Las tarjetas abren la página del procesador cuando el dueño instale las claves.',
+    payTitle: 'Elige un método de pago', payLead: 'La cripto directa se liquida al instante al precio exacto. Las tarjetas y carteras se abren en cuanto la cuenta de comercio esté activa.',
     freeNote: 'Este plan es gratis. La activación es inmediata y no requiere pago.',
-    crypto: 'Cripto · 0 % de comisión', cryptoNote: 'Paga desde cualquier exchange o billetera. Verificamos el hash on-chain.',
-    card: 'Tarjeta · Kashier / Paymob', cardNote: 'Página del procesador alojada. Los datos de la tarjeta nunca tocan este servidor.',
+    crypto: 'Cripto directa', cryptoNote: 'USDT o BTC desde cualquier exchange o billetera. El hash se verifica on-chain. 0 % de comisión.',
+    card: 'Tarjeta de crédito / débito', cardNote: 'Visa, Mastercard y tarjetas de débito, autorizadas en una página segura alojada. Los datos de la tarjeta nunca tocan este servidor.',
+    applepay: 'Apple Pay / Google Pay', applepayNote: 'Pago en un toque con la cartera que ya tienes en el dispositivo.',
+    wallet: 'Carteras móviles', walletNote: 'Paga desde el saldo de una cartera móvil en tu moneda local.',
+    fiatPending: 'Las tarjetas y carteras se abren cuando la cuenta de comercio esté activa. La cripto directa ya está disponible sin comisión.',
     notConfigured: 'Aún no configurado',
     network: 'Red', address: 'Dirección de depósito', amount: 'Importe a enviar', scan: 'Escanea para pagar',
     copy: 'Copiar dirección', copied: 'Copiado', openWallet: 'Abrir en la billetera',
@@ -185,10 +202,13 @@ const COPY: Record<string, Copy> = {
     planTitle: '选择你的算力', planLead: '每个方案都以 3× 分配加成开采 $MINEAI，并可随时暂停。',
     currency: '显示货币', total: '今日合计', perDay: '预计每日产出',
     continue: '继续支付',
-    payTitle: '选择支付通道', payLead: '加密货币按方案原价即时结算。卡片支付将在站主配置密钥后开放。',
+    payTitle: '选择支付方式', payLead: '直接加密货币按方案原价即时结算。商户账户启用后，银行卡与钱包通道会自动开放。',
     freeNote: '此方案免费，立即开通，无需付款。',
-    crypto: '加密货币 · 零手续费', cryptoNote: '可从任意交易所或钱包支付。我们会在链上核验交易哈希。',
-    card: '银行卡 · Kashier / Paymob', cardNote: '托管支付页面。卡信息不会经过本服务器。',
+    crypto: '直接加密货币', cryptoNote: '可从任意交易所或钱包支付 USDT 或 BTC。哈希在链上核验。零平台手续费。',
+    card: '信用卡 / 借记卡', cardNote: 'Visa、Mastercard 与借记卡，在托管的安全支付页面完成授权。卡信息不会经过本服务器。',
+    applepay: 'Apple Pay / Google Pay', applepayNote: '用设备中已有的钱包一键付款，无需输入。',
+    wallet: '移动钱包', walletNote: '以本地货币从移动钱包余额结算。',
+    fiatPending: '商户账户启用后即开放银行卡与钱包通道。直接加密货币现已可用，零手续费。',
     notConfigured: '尚未配置',
     network: '网络', address: '收款地址', amount: '应付金额', scan: '扫码支付',
     copy: '复制地址', copied: '已复制', openWallet: '在钱包中打开',
@@ -206,10 +226,13 @@ const COPY: Record<string, Copy> = {
     planTitle: 'अपनी शक्ति चुनें', planLead: 'हर प्लान $MINEAI को 3× आवंटन बोनस के साथ माइन करता है और कभी भी रोका जा सकता है।',
     currency: 'प्रदर्शन मुद्रा', total: 'आज कुल', perDay: 'अनुमानित दैनिक उत्पादन',
     continue: 'भुगतान पर जाएँ',
-    payTitle: 'भुगतान माध्यम चुनें', payLead: 'क्रिप्टो सटीक प्लान मूल्य पर तुरंत निपटता है। कार्ड प्रोसेसर कुंजी जुड़ने पर खुलेंगे।',
+    payTitle: 'भुगतान विधि चुनें', payLead: 'सीधा क्रिप्टो सटीक प्लान मूल्य पर तुरंत निपटता है। मर्चेंट खाता सक्रिय होते ही कार्ड और वॉलेट माध्यम खुल जाते हैं।',
     freeNote: 'यह प्लान मुफ़्त है। सक्रियण तुरंत होता है और भुगतान नहीं चाहिए।',
-    crypto: 'क्रिप्टो · 0% शुल्क', cryptoNote: 'किसी भी एक्सचेंज या वॉलेट से भुगतान करें। हम हैश को ऑन-चेन सत्यापित करते हैं।',
-    card: 'कार्ड · Kashier / Paymob', cardNote: 'होस्टेड प्रोसेसर पेज। कार्ड डेटा इस सर्वर तक नहीं आता।',
+    crypto: 'सीधा क्रिप्टो', cryptoNote: 'किसी भी एक्सचेंज या वॉलेट से USDT या BTC। हैश ऑन-चेन सत्यापित होता है। 0% प्लेटफ़ॉर्म शुल्क।',
+    card: 'क्रेडिट / डेबिट कार्ड', cardNote: 'Visa, Mastercard और डेबिट कार्ड, होस्टेड सुरक्षित पेज पर अधिकृत। कार्ड विवरण इस सर्वर तक नहीं आता।',
+    applepay: 'Apple Pay / Google Pay', applepayNote: 'डिवाइस में मौजूद वॉलेट से एक टैप में भुगतान, कुछ लिखने की ज़रूरत नहीं।',
+    wallet: 'मोबाइल वॉलेट', walletNote: 'अपनी स्थानीय मुद्रा में मोबाइल वॉलेट बैलेंस से भुगतान करें।',
+    fiatPending: 'मर्चेंट खाता सक्रिय होते ही कार्ड और वॉलेट माध्यम खुलेंगे। सीधा क्रिप्टो अभी शून्य शुल्क पर उपलब्ध है।',
     notConfigured: 'अभी कॉन्फ़िगर नहीं है',
     network: 'नेटवर्क', address: 'जमा पता', amount: 'भेजने की राशि', scan: 'भुगतान के लिए स्कैन करें',
     copy: 'पता कॉपी करें', copied: 'कॉपी हो गया', openWallet: 'वॉलेट में खोलें',
@@ -245,7 +268,7 @@ export default function CheckoutFlow({ initialPlan }: { initialPlan?: string }) 
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [currency, setCurrency] = useState<(typeof CURRENCIES)[number]>('USD');
-  const [rail, setRail] = useState<'crypto' | 'kashier' | 'paymob'>('crypto');
+  const [rail, setRail] = useState<'crypto' | 'card' | 'applepay' | 'wallet'>('crypto');
   const [rails, setRails] = useState<RailStatus[]>([]);
   const [networks, setNetworks] = useState<CryptoNetwork[]>([]);
   const [network, setNetwork] = useState('');
@@ -278,8 +301,8 @@ export default function CheckoutFlow({ initialPlan }: { initialPlan?: string }) 
   }, []);
 
   const selectedNetwork = networks.find((entry) => entry.id === network) ?? null;
-  const kashier = rails.find((entry) => entry.rail === 'kashier');
-  const paymob = rails.find((entry) => entry.rail === 'paymob');
+  /** Any fiat rail the server reports as armed — labelled institutionally. */
+  const fiatArmed = rails.some((entry) => entry.configured);
   const isFree = plan.priceUsd <= 0;
 
   useEffect(() => {
@@ -333,7 +356,9 @@ export default function CheckoutFlow({ initialPlan }: { initialPlan?: string }) 
           body: JSON.stringify({
             plan: plan.slug,
             uid,
-            rail: kind === 'free' ? 'crypto' : rail,
+            // Fiat rails never reach activation: only a confirmed on-chain hash
+            // or a free plan arms the reactor from this screen.
+            rail: kind === 'free' ? 'crypto' : 'crypto',
             network: kind === 'free' ? undefined : network,
             txHash: kind === 'free' ? undefined : txHash.trim(),
           }),
@@ -370,7 +395,7 @@ export default function CheckoutFlow({ initialPlan }: { initialPlan?: string }) 
         setBusy(null);
       }
     },
-    [uid, plan.slug, rail, network, txHash, copy],
+    [uid, plan.slug, network, txHash, copy],
   );
 
   const copyAddress = async () => {
@@ -534,55 +559,46 @@ export default function CheckoutFlow({ initialPlan }: { initialPlan?: string }) 
                 </div>
               ) : (
                 <>
-                  <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setRail('crypto');
-                        sound.click();
-                      }}
-                      aria-pressed={rail === 'crypto'}
-                      className={`rounded-xl border p-4 text-start transition ${
-                        rail === 'crypto'
-                          ? 'border-cyan/60 bg-cyan/[0.07]'
-                          : 'border-white/10 bg-white/[0.02] hover:border-white/25'
-                      }`}
-                    >
-                      <span className="block text-[0.8rem] font-semibold text-ink">{copy.crypto}</span>
-                      <span className="mt-1 block text-[0.68rem] leading-snug text-ink-faint">{copy.cryptoNote}</span>
-                    </button>
-
-                    {(['kashier', 'paymob'] as const).map((id) => {
-                      const status = id === 'kashier' ? kashier : paymob;
-                      const armed = Boolean(status?.configured);
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                    {(
+                      [
+                        { id: 'crypto' as const, label: copy.crypto, note: copy.cryptoNote },
+                        { id: 'card' as const, label: copy.card, note: copy.cardNote },
+                        { id: 'applepay' as const, label: copy.applepay, note: copy.applepayNote },
+                        { id: 'wallet' as const, label: copy.wallet, note: copy.walletNote },
+                      ]
+                    ).map((method) => {
+                      const selected = rail === method.id;
+                      const instant = method.id === 'crypto';
                       return (
                         <button
-                          key={id}
+                          key={method.id}
                           type="button"
                           onClick={() => {
-                            setRail(id);
+                            setRail(method.id);
+                            setError(null);
                             sound.click();
-                            if (!armed) {
-                              setError(`${id === 'kashier' ? 'Kashier' : 'Paymob'}: ${copy.notConfigured}`);
-                              sound.error();
-                            }
                           }}
-                          aria-pressed={rail === id}
+                          aria-pressed={selected}
                           className={`rounded-xl border p-4 text-start transition ${
-                            rail === id ? 'border-white/30 bg-white/[0.05]' : 'border-white/10 bg-white/[0.02]'
+                            selected
+                              ? instant
+                                ? 'border-cyan/60 bg-cyan/[0.07]'
+                                : 'border-amber/45 bg-amber/[0.05]'
+                              : 'border-white/10 bg-white/[0.02] hover:border-white/25'
                           }`}
                         >
                           <span className="flex items-center justify-between gap-2 text-[0.8rem] font-semibold text-ink">
-                            {id === 'kashier' ? 'Kashier' : 'Paymob'}
+                            {method.label}
                             <span
-                              className={`rounded-full px-2 py-0.5 text-[0.58rem] uppercase ${
-                                armed ? 'bg-mint/15 text-mint' : 'bg-white/8 text-ink-faint'
+                              className={`rounded-full px-2 py-0.5 text-[0.56rem] uppercase tracking-[0.08em] ${
+                                instant || fiatArmed ? 'bg-mint/15 text-mint' : 'bg-white/8 text-ink-faint'
                               }`}
                             >
-                              {armed ? status?.mode : copy.notConfigured}
+                              {instant ? '0%' : fiatArmed ? 'Live' : copy.notConfigured}
                             </span>
                           </span>
-                          <span className="mt-1 block text-[0.68rem] leading-snug text-ink-faint">{copy.cardNote}</span>
+                          <span className="mt-1 block text-[0.68rem] leading-snug text-ink-faint">{method.note}</span>
                         </button>
                       );
                     })}
@@ -693,10 +709,18 @@ export default function CheckoutFlow({ initialPlan }: { initialPlan?: string }) 
                       </div>
                     </div>
                   ) : (
-                    <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.02] p-4">
-                      <p className="text-[0.8rem] text-ink-mute">
-                        {rail === 'kashier' ? 'Kashier' : 'Paymob'}: {copy.notConfigured}. {copy.cardNote}
-                      </p>
+                    <div className="mt-6 rounded-xl border border-amber/25 bg-amber/[0.05] p-4">
+                      <p className="text-[0.8rem] leading-relaxed text-ink-mute">{copy.fiatPending}</p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setRail('crypto');
+                          sound.click();
+                        }}
+                        className="mx-btn-quiet mt-3 !px-3 !py-1.5 !text-[0.72rem]"
+                      >
+                        {copy.crypto} →
+                      </button>
                     </div>
                   )}
                 </>

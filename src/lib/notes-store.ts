@@ -1,6 +1,6 @@
 import { logEventToDatabase, readTable } from '@/lib/supabase';
 
-export type NoteCategory = 'arbitrage' | 'supplier' | 'stripe' | 'telemetry';
+export type NoteCategory = 'arbitrage' | 'supplier' | 'payout' | 'telemetry';
 
 export interface FieldNote {
   id: string;
@@ -10,7 +10,7 @@ export interface FieldNote {
   createdAt: string;
 }
 
-const NOTE_CATEGORIES: NoteCategory[] = ['arbitrage', 'supplier', 'stripe', 'telemetry'];
+const NOTE_CATEGORIES: NoteCategory[] = ['arbitrage', 'supplier', 'payout', 'telemetry'];
 
 const SEED_NOTES: FieldNote[] = [
   {
@@ -23,10 +23,10 @@ const SEED_NOTES: FieldNote[] = [
   },
   {
     id: 'note-seed-2',
-    title: 'Stripe Connect off-ramp rules',
-    category: 'stripe',
+    title: 'Bank off-ramp rules',
+    category: 'payout',
     content:
-      'Settlement runs daily at 00:00 UTC against the connected account. Payouts above $250 need a fresh destination check; anything smaller clears on the next cycle.',
+      'Settlement runs daily at 00:00 UTC to the verified treasury account. Payouts above $250 need a fresh destination check; anything smaller clears on the next cycle.',
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 19).toISOString(),
   },
   {

@@ -79,7 +79,7 @@ export default function NotesView() {
     }
   };
 
-  const categories: NoteCategory[] = ['arbitrage', 'supplier', 'stripe', 'telemetry'];
+  const categories: NoteCategory[] = ['arbitrage', 'supplier', 'payout', 'telemetry'];
 
   return (
     <>

@@ -61,14 +61,14 @@ export async function POST(request: Request) {
 
   if (!result.ok) {
     return NextResponse.json(
-      { ok: false, error: result.error ?? 'Kashier refused the session', rail: result.rail },
+      { ok: false, error: result.error ?? 'The card acquirer refused the session', rail: result.rail },
       { status: 502 },
     );
   }
 
   pushAgentLog({
     agentName: 'FinancialPayout',
-    action: `Kashier checkout opened for ${parsed.data.tier} in ${result.currency} on the ${result.mode} rail.`,
+    action: `Card checkout opened for ${parsed.data.tier} in ${result.currency} on the ${result.mode} rail.`,
     status: 'info',
     details: {
       rail: result.rail,

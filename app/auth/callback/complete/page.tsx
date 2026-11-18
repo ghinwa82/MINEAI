@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
-import OAuthCallback from '../../components/OAuthCallback';
-import PageShell from '../../components/PageShell';
+import OAuthCallback from '../../../components/OAuthCallback';
+import PageShell from '../../../components/PageShell';
 import { buildMetadata } from '@/lib/metadata';
 
 const base = buildMetadata({
@@ -12,7 +12,7 @@ const base = buildMetadata({
 
 export const metadata: Metadata = { ...base, robots: { index: false, follow: false } };
 
-export default function AuthCallbackPage() {
+export default function AuthCallbackCompletePage() {
   return (
     <PageShell width="reading">
       <OAuthCallback />

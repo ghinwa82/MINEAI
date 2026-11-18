@@ -45,9 +45,9 @@ async function buildState() {
   const nodes = listNodeStates(NODE_IDS);
   const rail =
     connect.state === 'verified'
-      ? 'Stripe Connect'
+      ? 'Verified bank settlement'
       : connect.state === 'pending'
-        ? 'Stripe Connect (pending)'
+        ? 'Bank settlement (pending verification)'
         : 'Sandbox rail';
 
   return {

@@ -6,7 +6,7 @@ import { sanitizeMultiline, sanitizeInput } from '@/lib/security';
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-const CATEGORIES: NoteCategory[] = ['arbitrage', 'supplier', 'stripe', 'telemetry'];
+const CATEGORIES: NoteCategory[] = ['arbitrage', 'supplier', 'payout', 'telemetry'];
 
 export async function GET() {
   try {

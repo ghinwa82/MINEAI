@@ -14,7 +14,7 @@ import {
 /**
  * The compliance surface.
  *
- * Kashier and Paymob reviewers open these four pages before approving a
+ * Card-acquiring reviewers open these four pages before approving a
  * merchant. They therefore render the full text server-side, keep a visible
  * last-updated date and expose the other documents in a persistent rail, so a
  * reviewer never has to hunt for the refund policy from the terms page.

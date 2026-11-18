@@ -47,9 +47,9 @@ export interface EcosystemCopy {
     cryptoTitle: string;
     cryptoLead: string;
     payWith: string;
-    railKashier: string;
-    railPaymob: string;
-    railStripe: string;
+    railCard: string;
+    railWallet: string;
+    railInternational: string;
     cardNote: string;
     applePay: string;
     localWallets: string;
@@ -117,6 +117,7 @@ export interface EcosystemCopy {
     stakeAmount: string;
     withdrawTitle: string;
     withdrawBody: string;
+    pipeline: { pending: string; processing: string; sent: string; reference: string };
     wallet: string;
     withdraw: string;
     withdrawing: string;
@@ -210,10 +211,10 @@ const EN: EcosystemCopy = {
   rails: {
     eyebrow: 'Payment rails',
     title: 'Pay by card, or settle on-chain with zero platform fee',
-    lead: 'Visa, Mastercard and debit cards settle through Kashier and Paymob in US dollars or Egyptian pounds. Direct USDT and BTC settlement skips the processor entirely.',
+    lead: 'Visa, Mastercard and debit cards settle through our card and wallet acquirers in US dollars or Egyptian pounds. Direct USDT and BTC settlement skips the processor entirely.',
     cardTitle: 'Global & local cards',
     cardBody:
-      'Kashier and Paymob authorise Visa, Mastercard and Meeza debit cards, then settle to the merchant bank account by webhook. The card form is hosted by the processor — no card number touches this server.',
+      'Our card and wallet acquirers authorise Visa, Mastercard and Meeza debit cards, then settle to the merchant bank account by webhook. The card form is hosted by the processor — no card number touches this server.',
     currencies: 'Priced in USD $ · Charged in EGP ج.م at the displayed rate',
     cryptoTitle: 'Borderless crypto',
     cryptoBody:
@@ -229,9 +230,9 @@ const EN: EcosystemCopy = {
     cryptoTitle: 'On-chain rail',
     cryptoLead: 'Seven networks, one deposit address per network, verified by transaction hash.',
     payWith: 'Pay with',
-    railKashier: 'Kashier',
-    railPaymob: 'Paymob',
-    railStripe: 'Stripe',
+    railCard: 'Credit / Debit Card',
+    railWallet: 'Mobile Wallets',
+    railInternational: 'International Card',
     cardNote: 'Card data never touches this server. The processor hosts the payment page.',
     applePay: 'Apple Pay',
     localWallets: 'Local wallets',
@@ -299,6 +300,7 @@ const EN: EcosystemCopy = {
     stakeAmount: 'Amount to stake',
     withdrawTitle: 'Withdraw rewards',
     withdrawBody: 'Rewards leave the pool to your own wallet. The minimum is 25 $MINEAI.',
+    pipeline: { pending: 'Pending', processing: 'Processing', sent: 'Sent', reference: 'Settlement reference' },
     wallet: 'Wallet address',
     withdraw: 'Withdraw',
     withdrawing: 'Broadcasting',
@@ -410,10 +412,10 @@ const AR: EcosystemCopy = {
   rails: {
     eyebrow: 'مسارات الدفع',
     title: 'ادفع بالبطاقة، أو سوِّ على السلسلة دون أي رسوم منصة',
-    lead: 'تُسوّى بطاقات Visa وMastercard والبطاقات المدينة عبر Kashier وPaymob بالدولار الأمريكي أو الجنيه المصري. أما تسوية USDT وBTC المباشرة فتتجاوز بوابة الدفع بالكامل.',
+    lead: 'تُسوّى بطاقات Visa وMastercard والبطاقات المدينة عبر بوابات الاستحواذ على البطاقات والمحافظ بالدولار الأمريكي أو الجنيه المصري. أما تسوية USDT وBTC المباشرة فتتجاوز بوابة الدفع بالكامل.',
     cardTitle: 'بطاقات عالمية ومحلية',
     cardBody:
-      'تُجيز Kashier وPaymob بطاقات Visa وMastercard وMeeza المدينة ثم تسوّيان إلى حساب التاجر البنكي عبر webhook. تستضيف البوابة نموذج البطاقة — لا يمر رقم بطاقة عبر هذا الخادم.',
+      'تُجيز بوابات الاستحواذ بطاقات Visa وMastercard وMeeza المدينة ثم تسوّيان إلى حساب التاجر البنكي عبر webhook. تستضيف البوابة نموذج البطاقة — لا يمر رقم بطاقة عبر هذا الخادم.',
     currencies: 'السعر بالدولار $ · التحصيل بالجنيه ج.م بالسعر المعروض',
     cryptoTitle: 'عملات رقمية بلا حدود',
     cryptoBody:
@@ -429,9 +431,9 @@ const AR: EcosystemCopy = {
     cryptoTitle: 'مسار السلسلة',
     cryptoLead: 'سبع شبكات، عنوان إيداع واحد لكل شبكة، يُتحقق منه عبر بصمة المعاملة.',
     payWith: 'ادفع بواسطة',
-    railKashier: 'Kashier',
-    railPaymob: 'Paymob',
-    railStripe: 'Stripe',
+    railCard: 'Credit / Debit Card',
+    railWallet: 'Mobile Wallets',
+    railInternational: 'International Card',
     cardNote: 'بيانات البطاقة لا تصل إلى هذا الخادم أبداً. المعالج يستضيف صفحة الدفع.',
     applePay: 'Apple Pay',
     localWallets: 'المحافظ المحلية',
@@ -499,6 +501,7 @@ const AR: EcosystemCopy = {
     stakeAmount: 'المبلغ المطلوب ستاكه',
     withdrawTitle: 'سحب المكافآت',
     withdrawBody: 'تخرج المكافآت من المجمع إلى محفظتك. الحد الأدنى 25 $MINEAI.',
+    pipeline: { pending: 'قيد الانتظار', processing: 'قيد المعالجة', sent: 'تم الإرسال', reference: 'مرجع التسوية' },
     wallet: 'عنوان المحفظة',
     withdraw: 'سحب',
     withdrawing: 'جارٍ البث',
@@ -610,10 +613,10 @@ const FR: EcosystemCopy = {
   rails: {
     eyebrow: 'Rails de paiement',
     title: "Payez par carte, ou réglez on-chain sans frais de plateforme",
-    lead: "Les cartes Visa, Mastercard et de débit sont réglées via Kashier et Paymob en dollars américains ou en livres égyptiennes. Le règlement direct USDT et BTC contourne entièrement le processeur.",
+    lead: "Les cartes Visa, Mastercard et de débit sont réglées via nos acquéreurs de cartes et de portefeuilles en dollars américains ou en livres égyptiennes. Le règlement direct USDT et BTC contourne entièrement le processeur.",
     cardTitle: 'Cartes mondiales et locales',
     cardBody:
-      "Kashier et Paymob autorisent les cartes Visa, Mastercard et Meeza, puis règlent le compte bancaire du marchand par webhook. Le formulaire de carte est hébergé par le processeur — aucun numéro de carte ne transite par ce serveur.",
+      "Nos acquéreurs autorisent les cartes Visa, Mastercard et Meeza, puis règlent le compte bancaire du marchand par webhook. Le formulaire de carte est hébergé par le processeur — aucun numéro de carte ne transite par ce serveur.",
     currencies: 'Prix en USD $ · Débit en EGP ج.م au taux affiché',
     cryptoTitle: 'Crypto sans frontières',
     cryptoBody:
@@ -630,9 +633,9 @@ const FR: EcosystemCopy = {
     cryptoTitle: 'Rail on-chain',
     cryptoLead: "Sept réseaux, une adresse de dépôt par réseau, vérifiée par hash de transaction.",
     payWith: 'Payer avec',
-    railKashier: 'Kashier',
-    railPaymob: 'Paymob',
-    railStripe: 'Stripe',
+    railCard: 'Credit / Debit Card',
+    railWallet: 'Mobile Wallets',
+    railInternational: 'International Card',
     cardNote: "Les données de carte ne touchent jamais ce serveur. Le processeur héberge la page de paiement.",
     applePay: 'Apple Pay',
     localWallets: 'Portefeuilles locaux',
@@ -700,6 +703,7 @@ const FR: EcosystemCopy = {
     stakeAmount: 'Montant à staker',
     withdrawTitle: 'Retirer les récompenses',
     withdrawBody: 'Les récompenses quittent le pool vers votre wallet. Minimum 25 $MINEAI.',
+    pipeline: { pending: 'En attente', processing: 'En cours', sent: 'Envoyé', reference: 'Référence de règlement' },
     wallet: 'Adresse du wallet',
     withdraw: 'Retirer',
     withdrawing: 'Diffusion',
@@ -811,10 +815,10 @@ const ES: EcosystemCopy = {
   rails: {
     eyebrow: 'Canales de pago',
     title: 'Paga con tarjeta o liquida on-chain sin comisión de plataforma',
-    lead: 'Las tarjetas Visa, Mastercard y de débito se liquidan con Kashier y Paymob en dólares estadounidenses o libras egipcias. La liquidación directa en USDT y BTC evita por completo al procesador.',
+    lead: 'Las tarjetas Visa, Mastercard y de débito se liquidan con nuestras pasarelas de tarjetas y carteras en dólares estadounidenses o libras egipcias. La liquidación directa en USDT y BTC evita por completo al procesador.',
     cardTitle: 'Tarjetas globales y locales',
     cardBody:
-      'Kashier y Paymob autorizan tarjetas Visa, Mastercard y Meeza, y liquidan a la cuenta bancaria del comercio por webhook. El formulario de tarjeta lo aloja el procesador: ningún número de tarjeta pasa por este servidor.',
+      'Nuestras pasarelas autorizan tarjetas Visa, Mastercard y Meeza, y liquidan a la cuenta bancaria del comercio por webhook. El formulario de tarjeta lo aloja el procesador: ningún número de tarjeta pasa por este servidor.',
     currencies: 'Precio en USD $ · Cargo en EGP ج.م al tipo mostrado',
     cryptoTitle: 'Cripto sin fronteras',
     cryptoBody:
@@ -831,9 +835,9 @@ const ES: EcosystemCopy = {
     cryptoTitle: 'Raíl on-chain',
     cryptoLead: 'Siete redes, una dirección de depósito por red, verificada por hash de transacción.',
     payWith: 'Pagar con',
-    railKashier: 'Kashier',
-    railPaymob: 'Paymob',
-    railStripe: 'Stripe',
+    railCard: 'Credit / Debit Card',
+    railWallet: 'Mobile Wallets',
+    railInternational: 'International Card',
     cardNote: 'Los datos de la tarjeta nunca tocan este servidor. El procesador aloja la página de pago.',
     applePay: 'Apple Pay',
     localWallets: 'Carteras locales',
@@ -901,6 +905,7 @@ const ES: EcosystemCopy = {
     stakeAmount: 'Importe a stakear',
     withdrawTitle: 'Retirar recompensas',
     withdrawBody: 'Las recompensas salen del pool a tu cartera. Mínimo 25 $MINEAI.',
+    pipeline: { pending: 'Pendiente', processing: 'Procesando', sent: 'Enviado', reference: 'Referencia de liquidación' },
     wallet: 'Dirección de cartera',
     withdraw: 'Retirar',
     withdrawing: 'Difundiendo',
@@ -1012,10 +1017,10 @@ const ZH: EcosystemCopy = {
   rails: {
     eyebrow: '支付通道',
     title: '银行卡支付，或链上结算零平台费',
-    lead: 'Visa、Mastercard 与借记卡经 Kashier 和 Paymob 以美元或埃及镑结算；USDT 与 BTC 直接结算，完全绕过支付机构。',
+    lead: 'Visa、Mastercard 与借记卡经银行卡与钱包收单机构以美元或埃及镑结算；USDT 与 BTC 直接结算，完全绕过支付机构。',
     cardTitle: '全球与本地银行卡',
     cardBody:
-      'Kashier 与 Paymob 受理 Visa、Mastercard 与 Meeza 借记卡，并通过 webhook 结算至商户银行账户。卡片表单由支付机构托管——本服务器不接触任何卡号。',
+      '收单机构受理 Visa、Mastercard 与 Meeza 借记卡，并通过 webhook 结算至商户银行账户。卡片表单由支付机构托管——本服务器不接触任何卡号。',
     currencies: '以美元 $ 标价 · 按显示汇率以埃及镑 ج.م 扣款',
     cryptoTitle: '无国界加密支付',
     cryptoBody:
@@ -1031,9 +1036,9 @@ const ZH: EcosystemCopy = {
     cryptoTitle: '链上通道',
     cryptoLead: '七条网络，每条网络一个充值地址，通过交易哈希验证。',
     payWith: '支付方式',
-    railKashier: 'Kashier',
-    railPaymob: 'Paymob',
-    railStripe: 'Stripe',
+    railCard: 'Credit / Debit Card',
+    railWallet: 'Mobile Wallets',
+    railInternational: 'International Card',
     cardNote: '卡片数据不会经过本服务器，支付页面由处理商托管。',
     applePay: 'Apple Pay',
     localWallets: '本地钱包',
@@ -1101,6 +1106,7 @@ const ZH: EcosystemCopy = {
     stakeAmount: '质押数量',
     withdrawTitle: '提取奖励',
     withdrawBody: '奖励从奖池转入你的钱包，最低 25 $MINEAI。',
+    pipeline: { pending: '待处理', processing: '处理中', sent: '已发送', reference: '结算参考号' },
     wallet: '钱包地址',
     withdraw: '提取',
     withdrawing: '正在广播',
@@ -1212,10 +1218,10 @@ const HI: EcosystemCopy = {
   rails: {
     eyebrow: 'भुगतान रेल',
     title: 'कार्ड से भुगतान करें, या शून्य प्लेटफ़ॉर्म शुल्क पर ऑन-चेन निपटान',
-    lead: 'Visa, Mastercard और डेबिट कार्ड Kashier और Paymob के माध्यम से अमेरिकी डॉलर या मिस्री पाउंड में निपटते हैं। सीधा USDT और BTC निपटान प्रोसेसर को पूरी तरह छोड़ देता है।',
+    lead: 'Visa, Mastercard और डेबिट कार्ड कार्ड और वॉलेट अधिग्राहकों के माध्यम से अमेरिकी डॉलर या मिस्री पाउंड में निपटते हैं। सीधा USDT और BTC निपटान प्रोसेसर को पूरी तरह छोड़ देता है।',
     cardTitle: 'वैश्विक और स्थानीय कार्ड',
     cardBody:
-      'Kashier और Paymob Visa, Mastercard और Meeza डेबिट कार्ड अधिकृत करते हैं, फिर webhook से व्यापारी के बैंक खाते में निपटान करते हैं। कार्ड फ़ॉर्म प्रोसेसर होस्ट करता है — कोई कार्ड नंबर इस सर्वर से नहीं गुज़रता।',
+      'कार्ड और वॉलेट अधिग्राहक Visa, Mastercard और Meeza डेबिट कार्ड अधिकृत करते हैं, फिर webhook से व्यापारी के बैंक खाते में निपटान करते हैं। कार्ड फ़ॉर्म प्रोसेसर होस्ट करता है — कोई कार्ड नंबर इस सर्वर से नहीं गुज़रता।',
     currencies: 'कीमत USD $ में · दिखाई गई दर पर EGP ج.م में शुल्क',
     cryptoTitle: 'सीमा-रहित क्रिप्टो',
     cryptoBody:
@@ -1231,9 +1237,9 @@ const HI: EcosystemCopy = {
     cryptoTitle: 'ऑन-चेन रेल',
     cryptoLead: 'सात नेटवर्क, हर नेटवर्क के लिए एक जमा पता, ट्रांज़ैक्शन हैश से सत्यापित।',
     payWith: 'भुगतान करें',
-    railKashier: 'Kashier',
-    railPaymob: 'Paymob',
-    railStripe: 'Stripe',
+    railCard: 'Credit / Debit Card',
+    railWallet: 'Mobile Wallets',
+    railInternational: 'International Card',
     cardNote: 'कार्ड डेटा इस सर्वर तक कभी नहीं पहुँचता। भुगतान पृष्ठ प्रोसेसर होस्ट करता है।',
     applePay: 'Apple Pay',
     localWallets: 'स्थानीय वॉलेट',
@@ -1301,6 +1307,7 @@ const HI: EcosystemCopy = {
     stakeAmount: 'स्टेक राशि',
     withdrawTitle: 'इनाम निकालें',
     withdrawBody: 'इनाम पूल से आपके वॉलेट में जाते हैं। न्यूनतम 25 $MINEAI।',
+    pipeline: { pending: 'प्रतीक्षारत', processing: 'प्रोसेसिंग', sent: 'भेजा गया', reference: 'निपटान संदर्भ' },
     wallet: 'वॉलेट पता',
     withdraw: 'निकालें',
     withdrawing: 'ब्रॉडकास्ट हो रहा है',

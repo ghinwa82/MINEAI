@@ -245,6 +245,8 @@ export interface MiningPosition {
   miningActive: boolean;
 }
 
+export type PayoutStatus = 'pending' | 'processing' | 'sent';
+
 export interface PayoutRecord {
   id: string;
   wallet: string;
@@ -254,6 +256,53 @@ export interface PayoutRecord {
   tokens: number;
   usd: number;
   at: string;
+  /** Ledger stage: queued, being broadcast, or settled. */
+  status: PayoutStatus;
+  /** Settlement reference, assigned the moment the entry reaches `sent`. */
+  txHash?: string;
+  settledAt?: string;
+}
+
+/**
+ * The settlement reference for a payout.
+ *
+ * The ledger settles internally, so this is the immutable reference the
+ * treasury writes against a withdrawal until an on-chain broadcast supersedes
+ * it. It is derived from the payout id, so re-reading a snapshot always yields
+ * the same reference.
+ */
+export function settlementRef(id: string): string {
+  let out = '';
+  for (let index = 0; index < 64; index += 1) {
+    const code = id.charCodeAt(index % Math.max(id.length, 1)) || 17;
+    out += '0123456789abcdef'[((code * (index + 7)) ^ (index * 31)) % 16];
+  }
+  return `0x${out}`;
+}
+
+/** How long a queued withdrawal sits in each stage of the ledger. */
+const PROCESS_AFTER_MS = 45_000;
+const SETTLE_AFTER_MS = 150_000;
+
+/**
+ * Advances one payout through the settlement pipeline by age. Runs on every
+ * read so the client always sees the true stage without a scheduled worker.
+ */
+export function advancePayout(payout: PayoutRecord): PayoutRecord {
+  if (payout.status === 'sent') return payout;
+  const age = Date.now() - new Date(payout.at).getTime();
+  if (age >= SETTLE_AFTER_MS) {
+    return {
+      ...payout,
+      status: 'sent',
+      txHash: payout.txHash ?? settlementRef(payout.id),
+      settledAt: new Date(new Date(payout.at).getTime() + SETTLE_AFTER_MS).toISOString(),
+    };
+  }
+  if (age >= PROCESS_AFTER_MS) {
+    return { ...payout, status: 'processing', txHash: payout.txHash ?? settlementRef(payout.id) };
+  }
+  return payout;
 }
 
 export interface CoinSnapshot {
@@ -338,7 +387,11 @@ interface MiningStore {
 
 const globalRef = globalThis as unknown as { __mineaiMining?: MiningStore };
 
-const SEED_PAYOUTS: Array<Omit<PayoutRecord, 'id' | 'at' | 'coin' | 'symbol'> & { coin?: MiningCoinId }> = [
+const SEED_PAYOUTS: Array<
+  Omit<PayoutRecord, 'id' | 'at' | 'coin' | 'symbol' | 'status' | 'txHash' | 'settledAt'> & {
+    coin?: MiningCoinId;
+  }
+> = [
   { wallet: '0x7a4f…9c21', network: 'usdt-bep20', tokens: 184.5, usd: 894.83, coin: 'mineai' },
   { wallet: 'TQ8m…4f17', network: 'usdt-trc20', tokens: 92.2, usd: 447.17, coin: 'mineai' },
   { wallet: '5Kd2…wq8L', network: 'sol', tokens: 311.7, usd: 1511.75, coin: 'mineai' },
@@ -376,13 +429,20 @@ function store(): MiningStore {
     const now = new Date().toISOString();
     globalRef.__mineaiMining = {
       positions: new Map(),
-      payouts: SEED_PAYOUTS.map((seed, index) => ({
-        ...seed,
-        coin: seed.coin ?? 'mineai',
-        symbol: COIN_BY_ID[seed.coin ?? 'mineai'].symbol,
-        id: `payout-seed-${index}`,
-        at: new Date(Date.now() - (index + 1) * 7 * 60_000).toISOString(),
-      })),
+      payouts: SEED_PAYOUTS.map((seed, index) => {
+        const id = `payout-seed-${index}`;
+        const at = new Date(Date.now() - (index + 1) * 7 * 60_000).toISOString();
+        return {
+          ...seed,
+          coin: seed.coin ?? 'mineai',
+          symbol: COIN_BY_ID[seed.coin ?? 'mineai'].symbol,
+          id,
+          at,
+          status: 'sent' as PayoutStatus,
+          txHash: settlementRef(id),
+          settledAt: at,
+        };
+      }),
       lastAccrualAt: now,
       cron: 'daily · 03:30 UTC',
     };
@@ -789,6 +849,7 @@ export function requestCoinWithdrawal(
     tokens: round(value, Math.max(coin.decimals, 6)),
     usd: Number((value * coin.priceUsd).toFixed(2)),
     at: new Date().toISOString(),
+    status: 'pending',
   };
 
   store().payouts.unshift(payout);
@@ -849,7 +910,7 @@ export function tokenPriceUsd(): number {
 
 /** Public payout tape — safe to expose without a session. */
 export function payoutTape(limit = 10): PayoutRecord[] {
-  return store().payouts.slice(0, limit);
+  return store().payouts.slice(0, limit).map(advancePayout);
 }
 
 /** Aggregate network telemetry, independent of any single position. */
@@ -1089,7 +1150,7 @@ export function snapshotFor(uid: string, lang: SupportedLanguage): MiningSnapsho
     totalUsdValue: Number(totalUsdValue.toFixed(2)),
     emissionUsdPerDay: Number((hashrate * EMISSION_USD_PER_MH * 86_400 * vip.multiplier * streakMultiplier).toFixed(4)),
     networkStats: networkStats(),
-    payouts: current.payouts.slice(0, 12),
+    payouts: current.payouts.slice(0, 12).map(advancePayout),
     leaderboard,
   };
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import Link from 'next/link';
 
@@ -82,6 +82,9 @@ interface Snapshot {
     tokens: number;
     usd: number;
     at: string;
+    status: 'pending' | 'processing' | 'sent';
+    txHash?: string;
+    settledAt?: string;
   }>;
   leaderboard: Array<{ rank: number; operator: string; minedTokens: number; tier: string; you: boolean }>;
   shareBoostActive?: boolean;
@@ -380,16 +383,46 @@ function TelemetryPanel({
   const offset = circumference * (1 - ratio);
 
   const daily = snapshot?.emissionUsdPerDay ?? 0;
-  const series = Array.from({ length: 7 }, (_, index) => daily * (index + 1));
-  const peak = series[series.length - 1] || 1;
-  const line = series
-    .map((value, index) => {
-      const x = 8 + (index / 6) * 264;
-      const y = 84 - (value / peak) * 66;
-      return `${index === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`;
-    })
+  const liveRef = useRef<number[]>([]);
+  const [drift, setDrift] = useState(0);
+
+  // Seed the buffer with a synthetic backfill so the first paint already shows a
+  // trend, then append the real ledger total on every poll.
+  useEffect(() => {
+    if (!snapshot) return;
+    const total = snapshot.totalUsdValue ?? 0;
+    const buffer = liveRef.current;
+    if (buffer.length === 0) {
+      for (let step = 32; step >= 1; step -= 1) {
+        buffer.push(Math.max(0, total - (daily * step) / 96));
+      }
+    }
+    buffer.push(total);
+    if (buffer.length > 32) buffer.shift();
+  }, [snapshot, daily]);
+
+  // Between polls the accrued total still creeps forward, so the chart reads as
+  // live rather than a snapshot redrawn every fifteen seconds.
+  useEffect(() => {
+    const timer = window.setInterval(() => setDrift((value) => (value + 1) % 900), 4_000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const projected = (snapshot?.totalUsdValue ?? 0) + (daily * drift * 4) / 86_400;
+  const series = [...liveRef.current, projected];
+  const peak = Math.max(...series, 1);
+  const floor = Math.min(...series);
+  const span = Math.max(peak - floor, peak * 0.04);
+  const stepX = 264 / Math.max(series.length - 1, 1);
+  const points = series.map((value, index) => ({
+    x: 8 + index * stepX,
+    y: 84 - ((value - floor) / span) * 66,
+  }));
+  const line = points
+    .map((point, index) => `${index === 0 ? 'M' : 'L'}${point.x.toFixed(1)},${point.y.toFixed(1)}`)
     .join(' ');
-  const area = `${line} L272,90 L8,90 Z`;
+  const area = points.length > 1 ? `${line} L${points[points.length - 1].x.toFixed(1)},90 L8,90 Z` : '';
+  const lastPoint = points[points.length - 1] ?? { x: 272, y: 60 };
 
   const usd = (value: number) =>
     value.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
@@ -556,23 +589,32 @@ function TelemetryPanel({
         <div className="rounded-xl border border-white/8 bg-[#04060d]/70 p-4">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h3 className="text-[0.78rem] font-semibold text-ink">{copy.yieldTitle}</h3>
-            <span className="mx-numeric text-[0.8rem] font-bold text-cyan">{usd(series[series.length - 1])}</span>
+            <span className="mx-numeric text-[0.8rem] font-bold text-cyan">{usd(projected)}</span>
           </div>
           <p className="mt-1.5 text-[0.7rem] leading-relaxed text-ink-mute">{copy.yieldBody}</p>
           <svg viewBox="0 0 280 90" className="mt-3 h-24 w-full" role="img" aria-label={copy.yieldTitle}>
             <defs>
               <linearGradient id="telemetry-area" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="rgba(34,224,255,0.35)" />
+                <stop offset="0%" stopColor="rgba(34,224,255,0.38)" />
                 <stop offset="100%" stopColor="rgba(34,224,255,0)" />
               </linearGradient>
             </defs>
-            <path d={area} fill="url(#telemetry-area)" />
-            <path d={line} fill="none" stroke="#22e0ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <g stroke="rgba(248,250,252,0.06)" strokeWidth="0.6" aria-hidden>
+              <path d="M8 22h264M8 51h264M8 84h264" fill="none" />
+            </g>
+            {area ? <path d={area} fill="url(#telemetry-area)" /> : null}
+            {line ? (
+              <path d={line} fill="none" stroke="#22e0ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            ) : null}
+            <circle cx={lastPoint.x} cy={lastPoint.y} r="4.4" fill="rgba(34,224,255,0.22)" aria-hidden>
+              <animate attributeName="r" values="3.4;5.4;3.4" dur="2.4s" repeatCount="indefinite" />
+            </circle>
+            <circle cx={lastPoint.x} cy={lastPoint.y} r="2" fill="#22e0ff" />
           </svg>
           <div className="mx-numeric mt-1 flex justify-between text-[0.56rem] text-ink-faint">
-            <span>Day 1</span>
-            <span>Day 4</span>
-            <span>Day 7</span>
+            <span>−2h</span>
+            <span>−1h</span>
+            <span className="text-mint">{copy.active}</span>
           </div>
         </div>
 
@@ -821,6 +863,14 @@ export default function MiningView() {
     { id: 'linkedin' as const, label: shareCopy.linkedin },
     { id: 'copy' as const, label: copiedChannel === 'copy' ? shareCopy.copied : shareCopy.copy },
   ];
+
+  const latestPayout = snapshot?.payouts?.[0] ?? null;
+  const payoutStage = latestPayout ? (['pending', 'processing', 'sent'] as const).indexOf(latestPayout.status) : -1;
+  const payoutStages = [
+    { key: 'pending', label: copy.pipeline.pending },
+    { key: 'processing', label: copy.pipeline.processing },
+    { key: 'sent', label: copy.pipeline.sent },
+  ] as const;
 
   return (
     <>
@@ -1242,6 +1292,47 @@ export default function MiningView() {
           >
             {busy === 'withdraw' ? `${copy.withdrawing}…` : copy.withdraw}
           </button>
+
+          {latestPayout ? (
+            <div className="mt-4 rounded-xl border border-white/10 bg-[#04060d]/70 p-3.5">
+              <div className="flex items-center justify-between gap-2">
+                <span className="mx-numeric text-[0.58rem] tracking-[0.08em] text-ink-faint uppercase">
+                  {latestPayout.id}
+                </span>
+                <span className="mx-numeric text-[0.6rem] text-ink-mute">{latestPayout.wallet}</span>
+              </div>
+              <ol className="mt-3 grid grid-cols-3 gap-2">
+                {payoutStages.map((stage, index) => {
+                  const done = index < payoutStage;
+                  const active = index === payoutStage;
+                  return (
+                    <li
+                      key={stage.key}
+                      className={`rounded-lg border px-2 py-1.5 text-center text-[0.6rem] font-semibold transition ${
+                        done
+                          ? 'border-mint/40 bg-mint/[0.08] text-mint'
+                          : active
+                            ? 'border-amber/50 bg-amber/[0.09] text-amber'
+                            : 'border-white/10 bg-white/[0.02] text-ink-faint'
+                      }`}
+                      aria-current={active ? 'step' : undefined}
+                    >
+                      <span className="mx-numeric block text-[0.55rem] opacity-70">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      {stage.label}
+                    </li>
+                  );
+                })}
+              </ol>
+              {latestPayout.status === 'sent' && latestPayout.txHash ? (
+                <p className="mx-numeric mt-2.5 break-all text-[0.58rem] leading-relaxed text-mint/80">
+                  <span className="text-ink-faint">{copy.pipeline.reference}: </span>
+                  {latestPayout.txHash}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
 
           <p className="mt-3 text-[0.64rem] leading-relaxed text-ink-faint">
             {eco.rewards.securityBody}

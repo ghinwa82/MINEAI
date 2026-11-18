@@ -136,17 +136,18 @@ export default function HomeView() {
         </aside>
       </section>
 
+      {/* ------------------------------------------------------- Plans */}
+      <section className="border-t border-white/8 pb-16 pt-16">
+        <MiningPlans />
+      </section>
+
       {/* ------------------------------------------------------ Markets */}
       <section className="pb-20">
         <LiveMarketTracker variant="strip" />
       </section>
 
-      {/* ------------------------------------- Coin preview + plans */}
+      {/* --------------------------------------------- Coin preview */}
       <CoinShowcase />
-
-      <section className="border-t border-white/8 py-20">
-        <MiningPlans />
-      </section>
 
       {/* ------------------------------------------------------- Systems */}
       <section className="border-t border-white/8 py-20">

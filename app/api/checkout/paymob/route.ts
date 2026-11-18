@@ -61,14 +61,14 @@ export async function POST(request: Request) {
 
   if (!result.ok) {
     return NextResponse.json(
-      { ok: false, error: result.error ?? 'Paymob refused the session', rail: result.rail },
+      { ok: false, error: result.error ?? 'The wallet acquirer refused the session', rail: result.rail },
       { status: 502 },
     );
   }
 
   pushAgentLog({
     agentName: 'FinancialPayout',
-    action: `Paymob checkout opened for ${parsed.data.tier} in ${result.currency} on the ${result.mode} rail.`,
+    action: `Wallet checkout opened for ${parsed.data.tier} in ${result.currency} on the ${result.mode} rail.`,
     status: 'info',
     details: {
       rail: result.rail,

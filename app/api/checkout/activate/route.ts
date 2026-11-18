@@ -95,8 +95,8 @@ export async function POST(request: Request) {
         ok: false,
         error:
           rail === 'kashier'
-            ? 'Card checkout is not configured yet (KASHIER keys absent). Pay in crypto or choose the free plan.'
-            : 'Card checkout is not configured yet (PAYMOB keys absent). Pay in crypto or choose the free plan.',
+            ? 'Card acquiring is not enabled on this deployment yet. Pay in crypto or choose the free plan.'
+            : 'Wallet acquiring is not enabled on this deployment yet. Pay in crypto or choose the free plan.',
         rail,
       },
       { status: 503 },

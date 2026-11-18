@@ -4,16 +4,19 @@ import React, { useId, useMemo, useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 
 /**
- * The $MINEAI coin.
+ * The $MINEAI bullion coin.
  *
- * Drawn as a physical object rather than an icon: a reeded rim cut from a
- * conic gradient, a face turned from #D4AF37 into #FFF3B0, three guilloché
- * bands engraved with a rose curve, a crowned lion's head struck in relief and
- * an embossed M below it. Pointer position drives a spring tilt; the specular
- * sweeps only run while the coin is hovered, so an idle page stays still.
+ * Struck rather than drawn. The disc is modelled as a physical object: an
+ * outer reeded edge, a bevelled collar, a turned face with anisotropic brushing,
+ * four concentric guilloché bands, a large sculpted monogram fused with a
+ * crowned lion's head, and a ticker plate at the base. Lighting is baked into
+ * the gradients — a hot specular at 34 % / 24 %, a cool bounce on the opposite
+ * rim and an amber occlusion where the relief meets the field — so the metal
+ * reads as gold even in a still frame.
  *
- * Every gradient id is namespaced with `useId` because the coin appears more
- * than once on a page and duplicated SVG ids resolve to the first definition.
+ * Pointer position drives a spring tilt between ±14°. Every gradient id is
+ * namespaced with `useId` because the coin is mounted more than once per page
+ * and duplicate SVG ids resolve to the first definition.
  */
 
 const CX = 120;
@@ -21,7 +24,7 @@ const CY = 120;
 
 /** A rose curve sampled into one closed path — the guilloché engine. */
 function rosePath(petals: number, amplitude: number, base: number, phase = 0): string {
-  const steps = 480;
+  const steps = 560;
   const points: string[] = [];
   for (let index = 0; index <= steps; index += 1) {
     const angle = (index / steps) * Math.PI * 2;
@@ -34,13 +37,13 @@ function rosePath(petals: number, amplitude: number, base: number, phase = 0): s
 }
 
 /** A scalloped mane: alternating outer and inner radii joined by quadratics. */
-function manePath(lobes: number, outer: number, inner: number): string {
+function manePath(cx: number, cy: number, lobes: number, outer: number, inner: number): string {
   const steps = lobes * 2;
   const points: { x: number; y: number }[] = [];
   for (let index = 0; index < steps; index += 1) {
     const angle = (index / steps) * Math.PI * 2 - Math.PI / 2;
     const radius = index % 2 === 0 ? outer : inner;
-    points.push({ x: 120 + Math.cos(angle) * radius, y: 92 + Math.sin(angle) * radius });
+    points.push({ x: cx + Math.cos(angle) * radius, y: cy + Math.sin(angle) * radius });
   }
   const first = points[0];
   const segments = points.map((point, index) => {
@@ -53,13 +56,19 @@ function manePath(lobes: number, outer: number, inner: number): string {
   return `M${first.x.toFixed(2)} ${first.y.toFixed(2)} ${segments.join(' ')} Z`;
 }
 
+/** Four engraved bands: two fine, one broad, one hairlined. */
 const GUILLOCHE = [
-  rosePath(9, 7, 86),
-  rosePath(9, 7, 86, Math.PI / 9),
-  rosePath(17, 4, 74),
+  rosePath(11, 5.4, 100),
+  rosePath(11, 5.4, 100, Math.PI / 11),
+  rosePath(23, 3.1, 92),
+  rosePath(37, 1.8, 86),
 ];
 
-const MANE = manePath(13, 41, 32);
+const LION_CY = 98;
+const MANE = manePath(120, LION_CY, 15, 45, 35);
+
+/** The struck monogram, reused for the shadow, the face and the highlight. */
+const MONOGRAM = 'M72 180 V101 L120 150 L168 101 V180';
 
 export default function MineAICoinLogo({
   size = 220,
@@ -77,15 +86,15 @@ export default function MineAICoinLogo({
   const rawId = useId();
   const id = useMemo(() => `coin-${rawId.replace(/[^a-zA-Z0-9_-]/g, '')}`, [rawId]);
 
-  const rotateX = useSpring(useTransform(pointerY, [-0.5, 0.5], [15, -15]), {
-    stiffness: 140,
-    damping: 18,
-    mass: 0.6,
+  const rotateX = useSpring(useTransform(pointerY, [-0.5, 0.5], [14, -14]), {
+    stiffness: 150,
+    damping: 19,
+    mass: 0.55,
   });
-  const rotateY = useSpring(useTransform(pointerX, [-0.5, 0.5], [-19, 19]), {
-    stiffness: 140,
-    damping: 18,
-    mass: 0.6,
+  const rotateY = useSpring(useTransform(pointerX, [-0.5, 0.5], [-18, 18]), {
+    stiffness: 150,
+    damping: 19,
+    mass: 0.55,
   });
 
   const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -104,17 +113,17 @@ export default function MineAICoinLogo({
     <div
       ref={ref}
       className={`group/coin relative grid place-items-center ${className}`}
-      style={{ perspective: 900, width: size, height: size }}
+      style={{ perspective: 950, width: size, height: size }}
       onPointerMove={onPointerMove}
       onPointerLeave={reset}
     >
-      {/* Ambient gold bloom */}
+      {/* Ambient gold bloom cast onto the page */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-[-20%] rounded-full opacity-55 blur-2xl transition-opacity duration-500 group-hover/coin:opacity-95"
+        className="pointer-events-none absolute inset-[-22%] rounded-full opacity-60 blur-2xl transition-opacity duration-500 group-hover/coin:opacity-100"
         style={{
           background:
-            'radial-gradient(circle at 50% 45%, rgba(255,214,102,0.44), rgba(255,166,0,0.15) 46%, transparent 72%)',
+            'radial-gradient(circle at 48% 42%, rgba(255,214,102,0.46), rgba(196,132,0,0.18) 46%, transparent 70%)',
         }}
       />
 
@@ -122,26 +131,27 @@ export default function MineAICoinLogo({
         className="relative"
         style={{ rotateX, rotateY, transformStyle: 'preserve-3d', width: size, height: size }}
       >
-        {/* Cast shadow under the disc */}
+        {/* Contact shadow: the disc floats a few millimetres above the page */}
         <div
           aria-hidden
           className="absolute inset-0 rounded-full"
           style={{
-            transform: 'translateZ(-22px) translateY(10px) scale(0.98)',
-            background: 'radial-gradient(circle at 50% 50%, #5c3a02 0%, #2c1a00 58%, #120a00 100%)',
-            boxShadow: '0 30px 64px -20px rgba(0,0,0,0.92)',
+            transform: 'translateZ(-26px) translateY(12px) scale(0.97)',
+            background: 'radial-gradient(circle at 50% 50%, #4d3001 0%, #2a1800 56%, #0f0800 100%)',
+            boxShadow: '0 34px 70px -18px rgba(0,0,0,0.94)',
           }}
         />
 
-        {/* Reeded edge: a conic milled band sitting behind the face */}
+        {/* Reeded collar: 180 milled flutes, machined rather than painted */}
         <div
           aria-hidden
-          className="absolute inset-[1.5%] rounded-full"
+          className="absolute inset-[1%] rounded-full"
           style={{
-            transform: 'translateZ(-10px)',
+            transform: 'translateZ(-12px)',
             background:
-              'repeating-conic-gradient(from 0deg, #6b4204 0deg 1.1deg, #f0c95a 1.1deg 1.9deg, #8a5a06 1.9deg 3deg)',
-            boxShadow: 'inset 0 0 0 1px rgba(255,240,190,0.35), inset 0 0 18px rgba(60,36,0,0.75)',
+              'repeating-conic-gradient(from 0deg, #5d3a03 0deg 0.86deg, #f4d06a 0.86deg 1.42deg, #7d4e04 1.42deg 2deg)',
+            boxShadow:
+              'inset 0 0 0 1.2px rgba(255,244,196,0.42), inset 0 0 22px rgba(52,30,0,0.86), 0 0 0 0.6px rgba(0,0,0,0.6)',
           }}
         />
 
@@ -149,238 +159,362 @@ export default function MineAICoinLogo({
           viewBox="0 0 240 240"
           className="relative block h-full w-full"
           role="img"
-          aria-label={`$${ticker} coin — crowned lion, engraved guilloché, reeded edge`}
+          aria-label={`$${ticker} bullion coin — crowned lion fused with the M monogram, guilloché engraving, reeded edge`}
         >
           <defs>
-            <radialGradient id={`${id}-face`} cx="36%" cy="26%" r="82%">
-              <stop offset="0%" stopColor="#fffdf0" />
-              <stop offset="16%" stopColor="#fff3b0" />
-              <stop offset="38%" stopColor="#f6d061" />
-              <stop offset="58%" stopColor="#e2ad2c" />
-              <stop offset="78%" stopColor="#b57c10" />
-              <stop offset="92%" stopColor="#7d4f05" />
-              <stop offset="100%" stopColor="#4a2d02" />
+            {/* Face: warm bounce at the rim, hot specular upper-left, amber core */}
+            <radialGradient id={`${id}-face`} cx="34%" cy="23%" r="86%">
+              <stop offset="0%" stopColor="#FFFDF2" />
+              <stop offset="12%" stopColor="#FFF4B8" />
+              <stop offset="30%" stopColor="#F8DC8B" />
+              <stop offset="48%" stopColor="#EDC45C" />
+              <stop offset="64%" stopColor="#D4AF37" />
+              <stop offset="80%" stopColor="#B0821A" />
+              <stop offset="92%" stopColor="#8A6010" />
+              <stop offset="100%" stopColor="#5E3F05" />
             </radialGradient>
-            <linearGradient id={`${id}-rim`} x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#fff3b0" />
-              <stop offset="26%" stopColor="#e6b53c" />
-              <stop offset="52%" stopColor="#8a5a06" />
-              <stop offset="74%" stopColor="#f8d573" />
-              <stop offset="100%" stopColor="#a96f08" />
+            {/* Collar: light from the top-left, shadow bottom-right */}
+            <linearGradient id={`${id}-rim`} x1="0.1" y1="0" x2="0.9" y2="1">
+              <stop offset="0%" stopColor="#FFF8D8" />
+              <stop offset="18%" stopColor="#F0CC66" />
+              <stop offset="42%" stopColor="#C89A28" />
+              <stop offset="62%" stopColor="#7B5204" />
+              <stop offset="82%" stopColor="#E4B848" />
+              <stop offset="100%" stopColor="#9C6E0A" />
             </linearGradient>
-            <linearGradient id={`${id}-emboss`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#fffbe8" />
-              <stop offset="42%" stopColor="#f9dd85" />
-              <stop offset="56%" stopColor="#a86f0a" />
-              <stop offset="100%" stopColor="#593803" />
+            {/* Relief: ivory crest, gold shoulder, deep occlusion */}
+            <linearGradient id={`${id}-relief`} x1="0.15" y1="0" x2="0.85" y2="1">
+              <stop offset="0%" stopColor="#FFFDF0" />
+              <stop offset="26%" stopColor="#FFF0AE" />
+              <stop offset="52%" stopColor="#E9BF4E" />
+              <stop offset="68%" stopColor="#A4740C" />
+              <stop offset="86%" stopColor="#8A5D06" />
+              <stop offset="100%" stopColor="#C79A2C" />
             </linearGradient>
-            <linearGradient id={`${id}-mane`} x1="0" y1="0" x2="0.8" y2="1">
-              <stop offset="0%" stopColor="#fff0b8" />
-              <stop offset="38%" stopColor="#e7b83f" />
-              <stop offset="72%" stopColor="#b77d0e" />
-              <stop offset="100%" stopColor="#7a4c05" />
+            <linearGradient id={`${id}-mane`} x1="0.1" y1="0" x2="0.9" y2="1">
+              <stop offset="0%" stopColor="#FFF6CC" />
+              <stop offset="34%" stopColor="#F2CE6A" />
+              <stop offset="64%" stopColor="#C9971F" />
+              <stop offset="100%" stopColor="#7E5305" />
             </linearGradient>
-            <linearGradient id={`${id}-crown`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#fffbe0" />
-              <stop offset="48%" stopColor="#f3ca5c" />
-              <stop offset="100%" stopColor="#9a6606" />
+            <linearGradient id={`${id}-crown`} x1="0" y1="0" x2="0.25" y2="1">
+              <stop offset="0%" stopColor="#FFFDF2" />
+              <stop offset="38%" stopColor="#F9E39B" />
+              <stop offset="72%" stopColor="#D9AE3C" />
+              <stop offset="100%" stopColor="#8E6208" />
             </linearGradient>
-            <linearGradient id={`${id}-sweep`} x1="0" y1="0" x2="1" y2="0.45">
+            {/* Anisotropic brushing: many hairline passes, near-invisible alone */}
+            <linearGradient id={`${id}-brush`} x1="0" y1="0" x2="0.6" y2="1">
+              <stop offset="0%" stopColor="rgba(255,250,224,0.16)" />
+              <stop offset="50%" stopColor="rgba(120,80,4,0.1)" />
+              <stop offset="100%" stopColor="rgba(255,250,224,0.12)" />
+            </linearGradient>
+            <linearGradient id={`${id}-sweep`} x1="0" y1="0" x2="1" y2="0.4">
               <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-              <stop offset="44%" stopColor="rgba(255,255,255,0.82)" />
-              <stop offset="56%" stopColor="rgba(255,255,255,0.9)" />
+              <stop offset="42%" stopColor="rgba(255,255,255,0.78)" />
+              <stop offset="54%" stopColor="rgba(255,255,255,0.9)" />
               <stop offset="100%" stopColor="rgba(255,255,255,0)" />
             </linearGradient>
+            <radialGradient id={`${id}-bounce`} cx="78%" cy="82%" r="46%">
+              <stop offset="0%" stopColor="rgba(255,198,92,0.34)" />
+              <stop offset="100%" stopColor="rgba(255,198,92,0)" />
+            </radialGradient>
+            <filter id={`${id}-strike`} x="-25%" y="-25%" width="150%" height="150%">
+              <feDropShadow dx="0.6" dy="1.4" stdDeviation="0.9" floodColor="#4A2D02" floodOpacity="0.72" />
+            </filter>
+            <filter id={`${id}-deep`} x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="0" dy="2" stdDeviation="1.6" floodColor="#3A2301" floodOpacity="0.66" />
+            </filter>
             <filter id={`${id}-glow`} x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur stdDeviation="2.6" result="blur" />
+              <feGaussianBlur stdDeviation="2.2" result="blur" />
               <feMerge>
                 <feMergeNode in="blur" />
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
-            <filter id={`${id}-relief`} x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="1.1" stdDeviation="0.7" floodColor="#4a2d02" floodOpacity="0.65" />
-            </filter>
             <path
               id={`${id}-ring`}
-              d={`M ${CX}, ${CY} m -90, 0 a 90,90 0 1,1 180,0 a 90,90 0 1,1 -180,0`}
+              d={`M ${CX}, ${CY} m -97, 0 a 97,97 0 1,1 194,0 a 97,97 0 1,1 -194,0`}
               fill="none"
             />
             <clipPath id={`${id}-clip`}>
-              <circle cx={CX} cy={CY} r="110" />
+              <circle cx={CX} cy={CY} r="112" />
+            </clipPath>
+            <clipPath id={`${id}-face-clip`}>
+              <circle cx={CX} cy={CY} r="104" />
             </clipPath>
           </defs>
 
-          {/* Reeded rim drawn as engraved ticks over the face edge */}
+          {/* ------------------------------------------------ Reeded edge */}
           <g aria-hidden>
-            {Array.from({ length: 144 }).map((_, index) => {
-              const angle = (index / 144) * Math.PI * 2;
-              const inner = index % 3 === 0 ? 106 : 108.4;
+            {Array.from({ length: 180 }).map((_, index) => {
+              const angle = (index / 180) * Math.PI * 2;
+              const depth = index % 2 === 0 ? 108.2 : 110.4;
               return (
                 <line
                   key={index}
-                  x1={CX + Math.cos(angle) * inner}
-                  y1={CY + Math.sin(angle) * inner}
-                  x2={CX + Math.cos(angle) * 113}
-                  y2={CY + Math.sin(angle) * 113}
-                  stroke={index % 3 === 0 ? 'rgba(74,45,2,0.55)' : 'rgba(255,243,176,0.42)'}
-                  strokeWidth={index % 3 === 0 ? 1.4 : 0.8}
-                  strokeLinecap="round"
+                  x1={CX + Math.cos(angle) * depth}
+                  y1={CY + Math.sin(angle) * depth}
+                  x2={CX + Math.cos(angle) * 114.4}
+                  y2={CY + Math.sin(angle) * 114.4}
+                  stroke={index % 2 === 0 ? 'rgba(74,45,2,0.62)' : 'rgba(255,246,206,0.5)'}
+                  strokeWidth={index % 2 === 0 ? 1.15 : 0.7}
+                  strokeLinecap="butt"
                 />
               );
             })}
           </g>
 
-          {/* Face */}
-          <circle cx={CX} cy={CY} r="110" fill={`url(#${id}-face)`} stroke={`url(#${id}-rim)`} strokeWidth="5" />
-          <circle cx={CX} cy={CY} r="105" fill="none" stroke="rgba(255,248,214,0.55)" strokeWidth="1.1" />
-          <circle cx={CX} cy={CY} r="99" fill="none" stroke="rgba(74,45,2,0.45)" strokeWidth="1.6" />
+          {/* ------------------------------------------------ Collar */}
+          <circle cx={CX} cy={CY} r="113" fill={`url(#${id}-rim)`} />
+          <circle cx={CX} cy={CY} r="109.5" fill="none" stroke="rgba(58,35,1,0.55)" strokeWidth="1.4" />
+          <circle cx={CX} cy={CY} r="106.8" fill="none" stroke="rgba(255,250,224,0.62)" strokeWidth="0.9" />
 
-          {/* Guilloché engraving */}
-          <g clipPath={`url(#${id}-clip)`} aria-hidden>
+          {/* ------------------------------------------------ Face */}
+          <circle cx={CX} cy={CY} r="105.4" fill={`url(#${id}-face)`} />
+          <circle cx={CX} cy={CY} r="105.4" fill={`url(#${id}-bounce)`} />
+
+          <g clipPath={`url(#${id}-face-clip)`} aria-hidden>
+            {/* Anatropic brushing */}
+            {Array.from({ length: 46 }).map((_, index) => {
+              const y = 18 + index * 4.6;
+              return (
+                <rect
+                  key={index}
+                  x="8"
+                  y={y}
+                  width="224"
+                  height="1.1"
+                  fill={`url(#${id}-brush)`}
+                  opacity={index % 3 === 0 ? 0.5 : 0.26}
+                />
+              );
+            })}
+
+            {/* Guilloché bands */}
             {GUILLOCHE.map((path, index) => (
               <path
                 key={index}
                 d={path}
                 fill="none"
-                stroke={index === 2 ? 'rgba(255,243,176,0.3)' : 'rgba(74,45,2,0.24)'}
-                strokeWidth={index === 2 ? 0.55 : 0.75}
+                stroke={index > 1 ? 'rgba(74,45,2,0.3)' : 'rgba(255,250,224,0.34)'}
+                strokeWidth={index > 1 ? 0.55 : 0.8}
               />
             ))}
-            {Array.from({ length: 5 }).map((_, index) => (
+            {Array.from({ length: 7 }).map((_, index) => (
               <circle
                 key={index}
                 cx={CX}
                 cy={CY}
-                r={92 + index * 2.2}
+                r={78 + index * 3.6}
                 fill="none"
-                stroke="rgba(74,45,2,0.16)"
-                strokeWidth="0.5"
-                strokeDasharray={index % 2 === 0 ? '1 4' : '2 6'}
+                stroke="rgba(58,35,1,0.2)"
+                strokeWidth="0.55"
+                strokeDasharray={index % 2 === 0 ? '1 3.6' : '2.4 5.4'}
               />
             ))}
+
+            {/* Raised field boundary around the strike */}
+            <circle cx={CX} cy={CY} r="76" fill="none" stroke="rgba(255,250,224,0.26)" strokeWidth="1.1" />
+            <circle cx={CX} cy={CY} r="74.4" fill="none" stroke="rgba(58,35,1,0.4)" strokeWidth="0.9" />
           </g>
 
-          {/* Micro-text ring */}
+          {/* Micro-lettered band, counter-clockwise at the top */}
           <text
-            fill="rgba(74,45,2,0.72)"
-            fontSize="7.6"
+            fill="rgba(74,45,2,0.76)"
+            fontSize="7.1"
             fontWeight="700"
-            letterSpacing="4.1"
-            fontFamily="ui-monospace, monospace"
+            letterSpacing="3.6"
+            fontFamily="ui-monospace, SFMono-Regular, monospace"
           >
-            <textPath href={`#${id}-ring`} startOffset="2%">
-              MINE AI · DECENTRALISED COMPUTE · $MINEAI · SEVEN RAILS · SIX LANGUAGES ·
+            <textPath href={`#${id}-ring`} startOffset="1.5%">
+              MINEAI · BULLION RESERVE · $MINEAI · SIX LANGUAGES · SEVEN RAILS · PROOF OF COMPUTE ·
             </textPath>
           </text>
 
-          {/* ------------------------------------------ Crowned lion's head */}
-          <g filter={`url(#${id}-relief)`}>
+          {/* -------------------------------------- Fused M + crowned lion */}
+          {/* The M is struck first and the head rises out of its valley, so the
+              two read as one object rather than a stack of two glyphs. */}
+          <g filter={`url(#${id}-deep)`}>
+            <path
+              d={MONOGRAM}
+              fill="none"
+              stroke="rgba(58,35,1,0.66)"
+              strokeWidth="27"
+              strokeLinecap="square"
+              strokeLinejoin="miter"
+              transform="translate(0,3.2)"
+            />
+            <path
+              d={MONOGRAM}
+              fill="none"
+              stroke={`url(#${id}-relief)`}
+              strokeWidth="24"
+              strokeLinecap="square"
+              strokeLinejoin="miter"
+            />
+            {/* Chamfer light along the top edge of the gold */}
+            <path
+              d={MONOGRAM}
+              fill="none"
+              stroke="rgba(255,253,242,0.6)"
+              strokeWidth="1.5"
+              strokeLinecap="square"
+              transform="translate(-1.5,-1.8)"
+            />
+            {/* Inner shadow on the right-hand shoulder */}
+            <path
+              d="M120 150 L168 101 V180"
+              fill="none"
+              stroke="rgba(74,45,2,0.42)"
+              strokeWidth="2.6"
+              strokeLinecap="square"
+              transform="translate(6,2)"
+            />
+          </g>
+
+          <g filter={`url(#${id}-strike)`}>
             {/* Mane */}
-            <path d={MANE} fill={`url(#${id}-mane)`} stroke="rgba(74,45,2,0.7)" strokeWidth="1.1" />
+            <path d={MANE} fill={`url(#${id}-mane)`} stroke="rgba(58,35,1,0.82)" strokeWidth="1.2" />
+            {/* Secondary mane ring adds depth behind the face */}
+            <path
+              d={manePath(120, LION_CY, 15, 36.5, 30)}
+              fill="none"
+              stroke="rgba(255,250,224,0.34)"
+              strokeWidth="0.9"
+            />
             {/* Ears */}
-            <path d="M105 76 q-4 -9 2 -13 q5 4 5 12 Z" fill="#e7b83f" stroke="rgba(74,45,2,0.6)" strokeWidth="0.9" />
-            <path d="M135 76 q4 -9 -2 -13 q-5 4 -5 12 Z" fill="#e7b83f" stroke="rgba(74,45,2,0.6)" strokeWidth="0.9" />
+            <path d="M102 79 q-4.6 -10 2.2 -14.4 q5.6 4.4 5.6 13.2 Z" fill="#E9BF4E" stroke="rgba(58,35,1,0.66)" strokeWidth="0.9" />
+            <path d="M138 79 q4.6 -10 -2.2 -14.4 q-5.6 4.4 -5.6 13.2 Z" fill="#E9BF4E" stroke="rgba(58,35,1,0.66)" strokeWidth="0.9" />
             {/* Face */}
-            <ellipse cx="120" cy="93" rx="17.5" ry="19.5" fill={`url(#${id}-face)`} stroke="rgba(74,45,2,0.55)" strokeWidth="0.9" />
-            {/* Brow */}
-            <path d="M110 86 q4 -3 8 0 M122 86 q4 -3 8 0" fill="none" stroke="rgba(74,45,2,0.75)" strokeWidth="1.3" strokeLinecap="round" />
-            {/* Eyes */}
-            <path d="M111.5 90 q3.2 -2.8 6.4 0 q-3.2 2.6 -6.4 0 Z" fill="#3a2301" />
-            <path d="M122.1 90 q3.2 -2.8 6.4 0 q-3.2 2.6 -6.4 0 Z" fill="#3a2301" />
-            <circle cx="113.6" cy="89.4" r="0.75" fill="#fff8d6" />
-            <circle cx="124.2" cy="89.4" r="0.75" fill="#fff8d6" />
+            <ellipse cx="120" cy={LION_CY} rx="18.4" ry="20.6" fill={`url(#${id}-relief)`} stroke="rgba(58,35,1,0.6)" strokeWidth="0.95" />
+            {/* Brow ridge */}
+            <path d="M109 90 q4.4 -3.2 8.8 0 M122.4 90 q4.4 -3.2 8.8 0" fill="none" stroke="rgba(74,45,2,0.8)" strokeWidth="1.4" strokeLinecap="round" />
+            {/* Eyes: struck almond, ivory catchlight */}
+            <path d="M110.6 94.4 q3.5 -3 7 0 q-3.5 2.8 -7 0 Z" fill="#33200A" />
+            <path d="M122.8 94.4 q3.5 -3 7 0 q-3.5 2.8 -7 0 Z" fill="#33200A" />
+            <circle cx="113" cy="93.7" r="0.82" fill="#FFFDF2" />
+            <circle cx="125.2" cy="93.7" r="0.82" fill="#FFFDF2" />
             {/* Muzzle */}
-            <circle cx="115.6" cy="100.6" r="4.3" fill="rgba(255,246,206,0.55)" />
-            <circle cx="124.4" cy="100.6" r="4.3" fill="rgba(255,246,206,0.55)" />
-            <path d="M120 96.4 l-3.1 3.4 h6.2 Z" fill="#5c3a02" />
-            <path d="M120 100.4 v3.2 M120 103.6 q-3.4 2.4 -6.2 0.2 M120 103.6 q3.4 2.4 6.2 0.2" fill="none" stroke="rgba(74,45,2,0.8)" strokeWidth="1.1" strokeLinecap="round" />
+            <circle cx="115.4" cy="105.6" r="4.7" fill="rgba(255,246,206,0.5)" />
+            <circle cx="124.6" cy="105.6" r="4.7" fill="rgba(255,246,206,0.5)" />
+            <path d="M120 100.8 l-3.3 3.7 h6.6 Z" fill="#4E3000" />
+            <path
+              d="M120 105 v3.6 M120 108.6 q-3.6 2.6 -6.6 0.2 M120 108.6 q3.6 2.6 6.6 0.2"
+              fill="none"
+              stroke="rgba(74,45,2,0.84)"
+              strokeWidth="1.15"
+              strokeLinecap="round"
+            />
             {/* Whiskers */}
-            <path d="M108 98 l-6 -1.6 M108 101 l-6 0.6 M132 98 l6 -1.6 M132 101 l6 0.6" fill="none" stroke="rgba(74,45,2,0.45)" strokeWidth="0.7" strokeLinecap="round" />
-
-            {/* Crown */}
             <path
-              d="M103 74 L105.2 58.4 L112.6 65.6 L120 52.4 L127.4 65.6 L134.8 58.4 L137 74 Z"
+              d="M106.6 102.4 l-6.4 -1.8 M106.6 105.6 l-6.4 0.8 M133.4 102.4 l6.4 -1.8 M133.4 105.6 l6.4 0.8"
+              fill="none"
+              stroke="rgba(74,45,2,0.5)"
+              strokeWidth="0.75"
+              strokeLinecap="round"
+            />
+
+            {/* Crown: five points, beaded, sitting in the mane */}
+            <path
+              d="M100.6 76.4 L103 58 L111.6 66.4 L120 51.6 L128.4 66.4 L137 58 L139.4 76.4 Z"
               fill={`url(#${id}-crown)`}
-              stroke="rgba(74,45,2,0.7)"
-              strokeWidth="1.1"
+              stroke="rgba(58,35,1,0.78)"
+              strokeWidth="1.15"
               strokeLinejoin="round"
             />
-            <path d="M103 74 h34" stroke="rgba(74,45,2,0.55)" strokeWidth="1.6" strokeLinecap="round" />
-            <circle cx="105.2" cy="57.6" r="1.7" fill="#fff8d6" stroke="rgba(74,45,2,0.55)" strokeWidth="0.6" />
-            <circle cx="120" cy="51.4" r="1.9" fill="#fff8d6" stroke="rgba(74,45,2,0.55)" strokeWidth="0.6" />
-            <circle cx="134.8" cy="57.6" r="1.7" fill="#fff8d6" stroke="rgba(74,45,2,0.55)" strokeWidth="0.6" />
-            <circle cx="120" cy="69.4" r="1.5" fill="#b8860b" stroke="rgba(74,45,2,0.55)" strokeWidth="0.5" />
+            <path d="M100.6 76.4 h38.8" stroke="rgba(74,45,2,0.6)" strokeWidth="1.7" strokeLinecap="round" />
+            <path d="M104.4 62.4 q15.6 4.4 31.2 0" fill="none" stroke="rgba(255,253,242,0.42)" strokeWidth="0.9" />
+            {[
+              [103, 57.2, 1.75],
+              [120, 50.4, 2],
+              [137, 57.2, 1.75],
+            ].map(([cx, cy, r]) => (
+              <circle
+                key={`${cx}-${cy}`}
+                cx={cx}
+                cy={cy}
+                r={r}
+                fill="#FFFDF2"
+                stroke="rgba(58,35,1,0.6)"
+                strokeWidth="0.6"
+              />
+            ))}
+            <circle cx="120" cy="71.6" r="1.6" fill="#B8860B" stroke="rgba(58,35,1,0.6)" strokeWidth="0.5" />
           </g>
 
-          {/* --------------------------------------------- Embossed letter M */}
+          {/* ------------------------------------------------ Ticker plate */}
           <g filter={`url(#${id}-glow)`}>
-            <path
-              d="M84 166 V120 L120 152 L156 120 V166"
-              fill="none"
-              stroke="rgba(60,36,0,0.5)"
-              strokeWidth="15.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              transform="translate(0,2.2)"
+            <rect
+              x="82"
+              y="186"
+              width="76"
+              height="19"
+              rx="9.5"
+              fill="rgba(58,35,1,0.46)"
+              stroke="rgba(255,246,206,0.4)"
+              strokeWidth="0.8"
             />
-            <path
-              d="M84 166 V120 L120 152 L156 120 V166"
-              fill="none"
-              stroke={`url(#${id}-emboss)`}
-              strokeWidth="13"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M84 166 V120 L120 152 L156 120 V166"
-              fill="none"
-              stroke="rgba(255,251,232,0.55)"
-              strokeWidth="1.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              transform="translate(-1.4,-1.6)"
-            />
+            <rect x="85.6" y="188.6" width="68.8" height="13.8" rx="6.9" fill="none" stroke="rgba(255,250,224,0.2)" strokeWidth="0.5" />
+            <text
+              x="120"
+              y="199.8"
+              textAnchor="middle"
+              fill="#FFF2C0"
+              fontSize="9.8"
+              fontWeight="800"
+              letterSpacing="2.4"
+              fontFamily="ui-monospace, SFMono-Regular, monospace"
+            >
+              ${ticker}
+            </text>
           </g>
 
-          {/* Ticker plate */}
-          <rect x="86" y="176" width="68" height="17" rx="8.5" fill="rgba(60,36,0,0.42)" stroke="rgba(255,243,176,0.32)" strokeWidth="0.7" />
-          <text
-            x="120"
-            y="188.6"
-            textAnchor="middle"
-            fill="#ffe9a8"
-            fontSize="9.4"
-            fontWeight="800"
-            letterSpacing="2.3"
-            fontFamily="ui-monospace, monospace"
-          >
-            ${ticker}
-          </text>
+          {/* ------------------------------------------------ Light passes */}
+          {/* Static specular arc, always present */}
+          <path
+            d="M34 78 a 96 96 0 0 1 52 -46"
+            fill="none"
+            stroke="rgba(255,255,255,0.5)"
+            strokeWidth="3.2"
+            strokeLinecap="round"
+            opacity="0.5"
+          />
+          <path
+            d="M196 168 a 96 96 0 0 1 -34 30"
+            fill="none"
+            stroke="rgba(255,198,92,0.4)"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+          />
 
-          {/* Specular sweeps — only while hovered */}
-          <g className="pointer-events-none opacity-0 transition-opacity duration-300 group-hover/coin:opacity-100" clipPath={`url(#${id}-clip)`}>
-            <ellipse cx={CX} cy={CY} rx="112" ry="112" fill={`url(#${id}-sweep)`} className="mx-coin-sheen" />
+          {/* Moving sheen, only while hovered */}
+          <g
+            className="pointer-events-none opacity-0 transition-opacity duration-300 group-hover/coin:opacity-100"
+            clipPath={`url(#${id}-clip)`}
+          >
+            <ellipse cx={CX} cy={CY} rx="116" ry="116" fill={`url(#${id}-sweep)`} className="mx-coin-sheen" />
             <ellipse
               cx={CX}
               cy={CY}
-              rx="112"
-              ry="112"
+              rx="116"
+              ry="116"
               fill={`url(#${id}-sweep)`}
               className="mx-coin-sheen"
-              style={{ animationDelay: '1.3s', opacity: 0.55 }}
+              style={{ animationDelay: '1.35s', opacity: 0.5 }}
             />
           </g>
-          <ellipse cx={CX} cy={CY} rx="110" ry="110" fill="none" stroke="rgba(255,255,255,0.32)" strokeWidth="0.8" />
+
+          <ellipse cx={CX} cy={CY} rx="111.5" ry="111.5" fill="none" stroke="rgba(255,255,255,0.34)" strokeWidth="0.8" />
         </svg>
 
-        {/* Floating highlight that tracks the pointer */}
+        {/* Pointer-tracked highlight on the glass of the case */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 rounded-full opacity-0 mix-blend-screen transition-opacity duration-300 group-hover/coin:opacity-100"
           style={{
-            background: 'radial-gradient(circle at 32% 24%, rgba(255,255,255,0.5), transparent 38%)',
-            transform: 'translateZ(14px)',
+            background: 'radial-gradient(circle at 30% 22%, rgba(255,255,255,0.46), transparent 36%)',
+            transform: 'translateZ(16px)',
           }}
         />
       </motion.div>

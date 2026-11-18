@@ -46,7 +46,7 @@ export async function POST(request: Request) {
 
   if (!provider) {
     return NextResponse.json(
-      { ok: false, error: 'Unknown provider. Append ?provider=kashier|paymob|stripe.' },
+      { ok: false, error: 'Unknown provider. Append ?provider=card|wallet|international.' },
       { status: 400 },
     );
   }
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
 
     if (!verifyKashierSignature(data, signature)) {
       return NextResponse.json(
-        { ok: false, error: 'Kashier signature missing or invalid' },
+        { ok: false, error: 'Card signature missing or invalid' },
         { status: process.env.KASHIER_WEBHOOK_SECRET || process.env.KASHIER_SECRET_KEY ? 401 : 503 },
       );
     }
@@ -84,10 +84,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: 'Zero-value transaction' }, { status: 422 });
     }
 
-    creditTreasury(amountUsd, 'Kashier card settlement', String(data.transactionId ?? data.orderId ?? 'kashier'));
+    creditTreasury(amountUsd, 'Card settlement', String(data.transactionId ?? data.orderId ?? 'card'));
     pushAgentLog({
       agentName: 'FinancialPayout',
-      action: `Kashier settled ${amountUsd} USD on the owner bank rail.`,
+      action: `Card settlement of ${amountUsd} USD credited to the treasury.`,
       status: 'success',
       details: { provider: 'kashier', transactionId: data.transactionId, amountUsd },
     });
@@ -116,7 +116,7 @@ export async function POST(request: Request) {
     const transaction = payload.obj ?? (payload as unknown as Record<string, unknown>);
     if (!verifyPaymobHmac(transaction, url.searchParams.get('hmac'))) {
       return NextResponse.json(
-        { ok: false, error: 'Paymob HMAC missing or invalid' },
+        { ok: false, error: 'Wallet signature missing or invalid' },
         { status: process.env.PAYMOB_HMAC_SECRET ? 401 : 503 },
       );
     }
@@ -130,10 +130,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: 'Zero-value transaction' }, { status: 422 });
     }
 
-    creditTreasury(amountUsd, 'Paymob card settlement', String(transaction.id ?? 'paymob'));
+    creditTreasury(amountUsd, 'Wallet settlement', String(transaction.id ?? 'wallet'));
     pushAgentLog({
       agentName: 'FinancialPayout',
-      action: `Paymob settled ${amountUsd} USD on the owner bank rail.`,
+      action: `Wallet settlement of ${amountUsd} USD credited to the treasury.`,
       status: 'success',
       details: { provider: 'paymob', transactionId: transaction.id, amountUsd },
     });
@@ -153,7 +153,7 @@ export async function POST(request: Request) {
 
   if (!verifyStripeSignature(raw, request.headers.get('stripe-signature'))) {
     return NextResponse.json(
-      { ok: false, error: 'Stripe signature missing or invalid' },
+      { ok: false, error: 'International card signature missing or invalid' },
       { status: process.env.STRIPE_WEBHOOK_SECRET ? 401 : 503 },
     );
   }
@@ -177,10 +177,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: 'Zero-value session' }, { status: 422 });
   }
 
-  creditTreasury(amountUsd, 'Stripe Checkout settlement', String(payload.data?.object?.id ?? 'stripe'));
+  creditTreasury(amountUsd, 'Card settlement', String(payload.data?.object?.id ?? 'card'));
   pushAgentLog({
     agentName: 'FinancialPayout',
-    action: `Stripe settled ${amountUsd} USD through the connected payout account.`,
+    action: `Card settlement of ${amountUsd} USD credited to the treasury.`,
     status: 'success',
     details: { provider: 'stripe', sessionId: payload.data?.object?.id, amountUsd },
   });

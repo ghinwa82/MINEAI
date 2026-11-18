@@ -24,12 +24,12 @@ export async function POST(request: Request) {
     }
 
     const replies: Record<string, string> = {
-      en: `Your DePIN shard is fully synchronised with the telemetry mesh — zero packet loss since it was claimed. The withdrawal floor is 10.00 USD and the settlement rail settles the same day once Stripe Connect is verified.`,
-      ar: `عقدة DePIN الخاصة بك متزامنة بالكامل مع شبكة القياسات اللامركزية — بلا أي فقد للحزم منذ لحظة تشغيلها. الحد الأدنى للسحب هو 10.00 دولار، وتُنفَّذ التسوية في اليوم نفسه بعد توثيق Stripe Connect.`,
-      fr: `Votre shard DePIN est parfaitement synchronisé avec le maillage de télémétrie — aucune perte de paquet depuis sa prise en charge. Le seuil de retrait est de 10,00 USD et le rail de règlement exécute le transfert le jour même une fois Stripe Connect vérifié.`,
-      es: `Su shard DePIN está totalmente sincronizado con la malla de telemetría — sin pérdida de paquetes desde que fue tomado. El umbral de retiro es 10,00 USD y el rail de liquidación ejecuta la transferencia el mismo día una vez verificado Stripe Connect.`,
-      zh: `您的 DePIN 分片已与遥测网格完全同步 —— 自接管以来零丢包。最低提现金额为 10.00 美元，Stripe Connect 验证通过后当日即可完成结算。`,
-      hi: `आपका DePIN शेयर पूरी तरह टेलीमेट्री मेश के साथ सिंक्रनाइज़ है — सँभालने के बाद से कोई पैकेट लॉस नहीं। न्यूनतम निकासी सीमा 10.00 USD है और Stripe Connect सत्यापित होते ही उसी दिन निपटान हो जाता है।`,
+      en: `Your DePIN shard is fully synchronised with the telemetry mesh — zero packet loss since it was claimed. The withdrawal floor is 10.00 USD and the settlement rail settles the same day once the bank settlement account is verified.`,
+      ar: `عقدة DePIN الخاصة بك متزامنة بالكامل مع شبكة القياسات اللامركزية — بلا أي فقد للحزم منذ لحظة تشغيلها. الحد الأدنى للسحب هو 10.00 دولار، وتُنفَّذ التسوية في اليوم نفسه بعد توثيق الحساب البنكي.`,
+      fr: `Votre shard DePIN est parfaitement synchronisé avec le maillage de télémétrie — aucune perte de paquet depuis sa prise en charge. Le seuil de retrait est de 10,00 USD et le rail de règlement exécute le transfert le jour même une fois le compte bancaire vérifié.`,
+      es: `Su shard DePIN está totalmente sincronizado con la malla de telemetría — sin pérdida de paquetes desde que fue tomado. El umbral de retiro es 10,00 USD y el rail de liquidación ejecuta la transferencia el mismo día una vez verificada la cuenta bancaria.`,
+      zh: `您的 DePIN 分片已与遥测网格完全同步 —— 自接管以来零丢包。最低提现金额为 10.00 美元，银行结算账户验证通过后当日即可完成结算。`,
+      hi: `आपका DePIN शेयर पूरी तरह टेलीमेट्री मेश के साथ सिंक्रनाइज़ है — सँभालने के बाद से कोई पैकेट लॉस नहीं। न्यूनतम निकासी सीमा 10.00 USD है और बैंक निपटान खाता सत्यापित होते ही उसी दिन निपटान हो जाता है।`,
     };
 
     const replyMessage = replies[language] ?? replies.en;

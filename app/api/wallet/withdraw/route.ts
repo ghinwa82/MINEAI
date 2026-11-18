@@ -137,7 +137,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ok: true,
       transactionId,
-      status: connect.state === 'verified' ? 'Settled through Stripe Connect' : 'Settled on the sandbox rail',
+      status: connect.state === 'verified' ? 'Settled to the treasury account' : 'Settled on the sandbox rail',
       rail: connect.state,
       fiatAmount,
       currency,

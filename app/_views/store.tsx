@@ -23,7 +23,7 @@ interface Toast {
  * The node catalogue.
  *
  * Every control is wired to a live endpoint: activation is dispatched to the
- * autonomous mesh, the purchase button opens a Stripe Checkout session, and
+ * autonomous mesh, the purchase button opens a card payment session, and
  * settlement posts to the wallet route. The card state is driven by the
  * response, never by an optimistic guess.
  */
@@ -230,7 +230,7 @@ export default function StoreView() {
               </h3>
               <p className="mt-2.5 text-[0.8rem] leading-relaxed text-ink-mute">{eco.rails.cardBody}</p>
               <p className="mt-3 text-[0.66rem] tracking-[0.1em] text-ink-faint uppercase">
-                {eco.checkout.railKashier} · {eco.checkout.railPaymob}
+                {eco.checkout.railCard} · {eco.checkout.railWallet}
               </p>
             </div>
 

@@ -77,7 +77,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
       plans:
         'There are five plans: Genesis is free forever, Node v1 is $29.99, Pro v2 is $99.99 and most popular, Elite v3 is $299.99, and Sovereign v4 is $799.99. Each paid plan adds more cloud power and a higher $MINEAI bonus. The home page calculator shows a daily estimate before you pay.',
       payment:
-        'You can pay by Visa or Mastercard through Kashier or Paymob in USD or EGP, or send crypto directly to the wallet shown at checkout with a 0% platform fee. Card data stays with the payment provider. Your plan unlocks after the payment is confirmed.',
+        'You can pay by Visa or Mastercard by card or mobile wallet in USD or EGP, or send crypto directly to the wallet shown at checkout with a 0% platform fee. Card data stays with the payment provider. Your plan unlocks after the payment is confirmed.',
       withdraw:
         'Open the mining dashboard, choose the coin and network, paste your own wallet address, then confirm. Every payout moves from Pending to Processing to Sent, and the final step shows the on-chain transaction hash you can check in a block explorer.',
       security:
@@ -129,7 +129,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
       plans:
         'هناك خمس خطط: Genesis مجانية دائمًا، وNode v1 بسعر 29.99 دولارًا، وPro v2 بسعر 99.99 دولارًا وهي الأكثر اختيارًا، وElite v3 بسعر 299.99 دولارًا، وSovereign v4 بسعر 799.99 دولارًا. كل خطة مدفوعة تضيف قوة سحابية أكبر ومكافأة $MINEAI أعلى. حاسبة الصفحة الرئيسية تعرض تقديرًا يوميًا قبل الدفع.',
       payment:
-        'يمكنك الدفع ببطاقة Visa أو Mastercard عبر Kashier أو Paymob بالدولار أو الجنيه المصري، أو إرسال العملات الرقمية مباشرة إلى المحفظة المعروضة عند الدفع بدون رسوم منصة. بيانات البطاقة تبقى لدى مزوّد الدفع. تُفتح خطتك بعد تأكيد الدفع.',
+        'يمكنك الدفع ببطاقة Visa أو Mastercard بالدولار أو الجنيه المصري، أو إرسال العملات الرقمية مباشرة إلى المحفظة المعروضة عند الدفع بدون رسوم منصة. بيانات البطاقة تبقى لدى مزوّد الدفع. تُفتح خطتك بعد تأكيد الدفع.',
       withdraw:
         'افتح لوحة التعدين، اختر العملة والشبكة، والصق عنوان محفظتك الشخصية، ثم أكّد. كل عملية سحب تنتقل من قيد الانتظار إلى قيد المعالجة إلى تم الإرسال، وتظهر في الخطوة الأخيرة بصمة المعاملة على الشبكة لتتحقق منها في مستكشف الكتل.',
       security:
@@ -181,7 +181,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
       plans:
         'Il y a cinq offres : Genesis est gratuite à vie, Node v1 coûte 29,99 $, Pro v2 coûte 99,99 $ et est la plus choisie, Elite v3 coûte 299,99 $ et Sovereign v4 coûte 799,99 $. Chaque offre payante ajoute de la puissance cloud et un bonus $MINEAI plus élevé. Le calculateur de l’accueil montre une estimation avant paiement.',
       payment:
-        'Vous pouvez payer par Visa ou Mastercard via Kashier ou Paymob en USD ou EGP, ou envoyer de la crypto directement au portefeuille affiché au paiement avec 0 % de frais de plateforme. Les données de carte restent chez le prestataire. Votre offre s’active après confirmation.',
+        'Vous pouvez payer par Visa ou Mastercard par carte ou portefeuille mobile en USD ou EGP, ou envoyer de la crypto directement au portefeuille affiché au paiement avec 0 % de frais de plateforme. Les données de carte restent chez le prestataire. Votre offre s’active après confirmation.',
       withdraw:
         'Ouvrez le tableau de minage, choisissez la pièce et le réseau, collez votre propre adresse, puis confirmez. Chaque retrait passe de En attente à En traitement à Envoyé, et la dernière étape affiche le hash de transaction à vérifier dans un explorateur.',
       security:
@@ -233,7 +233,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
       plans:
         'Hay cinco planes: Genesis es gratis para siempre, Node v1 cuesta $29.99, Pro v2 cuesta $99.99 y es el más elegido, Elite v3 cuesta $299.99 y Sovereign v4 cuesta $799.99. Cada plan de pago añade más potencia y un bono $MINEAI mayor. La calculadora de la página principal muestra una estimación antes de pagar.',
       payment:
-        'Puedes pagar con Visa o Mastercard mediante Kashier o Paymob en USD o EGP, o enviar cripto directamente a la cartera que se muestra al pagar con 0% de comisión. Los datos de la tarjeta se quedan con el proveedor. Tu plan se activa al confirmar el pago.',
+        'Puedes pagar con Visa o Mastercard con tarjeta o cartera móvil en USD o EGP, o enviar cripto directamente a la cartera que se muestra al pagar con 0% de comisión. Los datos de la tarjeta se quedan con el proveedor. Tu plan se activa al confirmar el pago.',
       withdraw:
         'Abre el panel de minería, elige la moneda y la red, pega tu propia dirección de cartera y confirma. Cada retiro pasa de Pendiente a Procesando a Enviado, y el último paso muestra el hash de la transacción para revisarlo en un explorador.',
       security:
@@ -285,7 +285,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
       plans:
         '共有五个套餐：Genesis 永久免费，Node v1 为 29.99 美元，Pro v2 为 99.99 美元且最受欢迎，Elite v3 为 299.99 美元，Sovereign v4 为 799.99 美元。每个付费套餐都会增加云算力和更高的 $MINEAI 奖励。首页计算器会在付款前给出每日估算。',
       payment:
-        '你可以通过 Kashier 或 Paymob 用 Visa 或 Mastercard 以美元或埃镑支付，也可以直接向结账页显示的钱包发送加密货币，平台费用为 0%。卡信息由支付服务商保存。付款确认后套餐即开通。',
+        '你可以用 Visa 或 Mastercard 以美元或埃镑支付，也可以直接向结账页显示的钱包发送加密货币，平台费用为 0%。卡信息由支付服务商保存。付款确认后套餐即开通。',
       withdraw:
         '打开挖矿面板，选择币种和网络，粘贴你自己的钱包地址并确认。每笔提现都会从待处理变为处理中，再变为已发送，最后一步会显示链上交易哈希，可在区块浏览器中查看。',
       security:
@@ -337,7 +337,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
       plans:
         'पाँच प्लान हैं: Genesis हमेशा मुफ़्त, Node v1 $29.99, Pro v2 $99.99 और सबसे लोकप्रिय, Elite v3 $299.99, और Sovereign v4 $799.99। हर सशुल्क प्लान अधिक क्लाउड पावर और अधिक $MINEAI बोनस देता है। होम पेज का कैलकुलेटर भुगतान से पहले दैनिक अनुमान दिखाता है।',
       payment:
-        'आप Kashier या Paymob से Visa या Mastercard द्वारा USD या EGP में भुगतान कर सकते हैं, या चेकआउट पर दिखाए गए वॉलेट में सीधे क्रिप्टो भेज सकते हैं, जिस पर 0% प्लेटफ़ॉर्म शुल्क है। कार्ड डेटा भुगतान प्रदाता के पास रहता है। भुगतान की पुष्टि के बाद प्लान खुल जाता है।',
+        'आप Visa या Mastercard द्वारा USD या EGP में भुगतान कर सकते हैं, या चेकआउट पर दिखाए गए वॉलेट में सीधे क्रिप्टो भेज सकते हैं, जिस पर 0% प्लेटफ़ॉर्म शुल्क है। कार्ड डेटा भुगतान प्रदाता के पास रहता है। भुगतान की पुष्टि के बाद प्लान खुल जाता है।',
       withdraw:
         'माइनिंग डैशबोर्ड खोलें, सिक्का और नेटवर्क चुनें, अपना वॉलेट पता चिपकाएँ और पुष्टि करें। हर निकासी प्रतीक्षारत से प्रोसेसिंग से भेजे गए तक जाती है, और अंतिम चरण में चेन पर txHash दिखता है जिसे ब्लॉक एक्सप्लोरर में देख सकते हैं।',
       security:
@@ -377,7 +377,7 @@ const KEYWORDS: Array<{ intent: SupportIntent; words: string[] }> = [
   },
   {
     intent: 'payment',
-    words: ['pay', 'payment', 'card', 'visa', 'mastercard', 'kashier', 'paymob', 'crypto', 'payer', 'carte', 'pagar', 'tarjeta', '支付', '卡', 'भुगतान', 'कार्ड', 'دفع', 'بطاقة', 'الدفع'],
+    words: ['pay', 'payment', 'card', 'visa', 'mastercard', 'crypto', 'payer', 'carte', 'pagar', 'tarjeta', '支付', '卡', 'भुगतान', 'कार्ड', 'دفع', 'بطاقة', 'الدفع'],
   },
   {
     intent: 'plans',

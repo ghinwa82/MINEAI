@@ -73,10 +73,17 @@ interface Verdict {
   creditedUsd: number;
 }
 
+/**
+ * White-label rail names.
+ *
+ * The backend keeps its processor-specific identifiers because that is how the
+ * keys are read; the interface never repeats them. A visitor sees the payment
+ * method, never the company that clears it.
+ */
 const RAIL_LABEL: Record<RailStatus['rail'], string> = {
-  kashier: 'Kashier',
-  paymob: 'Paymob',
-  stripe: 'Stripe',
+  kashier: 'Credit / Debit Card',
+  paymob: 'Apple Pay / Mobile Wallets',
+  stripe: 'International Card',
 };
 
 const EGP_PER_USD = 48.65;
@@ -491,7 +498,6 @@ export default function PaymentCheckout({
                               </span>
                             ))}
                           </div>
-                          <p className="mt-2 text-[0.68rem] leading-relaxed text-ink-faint">{item.detail}</p>
                         </button>
                       ))
                     )}

@@ -110,11 +110,11 @@ const EN: LocalisedPlan[] = [
     priceUsd: 799,
     periodLabel: 'Lifetime access',
     description:
-      'The pinnacle of the mesh: full inventory synchronisation, algorithmic multi-supplier balancing and a direct Stripe payout route running beside the crypto off-ramp.',
+      'The pinnacle of the mesh: full inventory synchronisation, algorithmic multi-supplier balancing and a direct bank payout route running beside the crypto off-ramp.',
     roi: 'Maximum compute yield plus token rewards',
     features: [
       'Full share of DePIN network compute',
-      'Instant Stripe and crypto liquidity off-ramp',
+      'Instant bank and crypto liquidity off-ramp',
       'Self-healing multi-supplier matrix',
       'VIP growth agent layer with double XP',
     ],
@@ -170,11 +170,11 @@ const AR: LocalisedPlan[] = [
     priceUsd: 799,
     periodLabel: 'وصول دائم مدى الحياة',
     description:
-      'العقدة السيادية الأقوى في شبكة DePIN. مزامنة شاملة للمخزون وموازنة الموردين مع مسارات سحب نقدية مباشرة عبر Stripe والعملات الرقمية.',
+      'العقدة السيادية الأقوى في شبكة DePIN. مزامنة شاملة للمخزون وموازنة الموردين مع مسارات سحب نقدية مباشرة عبر التسوية البنكية والعملات الرقمية.',
     roi: 'أعلى معدل تعدين وعوائد توكنز مضاعفة',
     features: [
       'حصة مباشرة من قوة حوسبة شبكة DePIN العالمية',
-      'سحب نقدي لحظي عبر Stripe ومحافظ الكريبتو',
+      'سحب نقدي لحظي عبر البنك ومحافظ الكريبتو',
       'معالجة ذاتية للأعطال وتناغم متقدم للموردين',
       'وكيل النمو التسويقي المضاعف مع نقاط XP إضافية',
     ],
@@ -230,11 +230,11 @@ const FR: LocalisedPlan[] = [
     priceUsd: 799,
     periodLabel: 'Accès à vie',
     description:
-      'Le cluster DePIN suprême : synchronisation d’inventaire, équilibrage multi-fournisseurs et paiements directs Stripe et crypto.',
+      'Le cluster DePIN suprême : synchronisation d’inventaire, équilibrage multi-fournisseurs et paiements directs bancaires et crypto.',
     roi: 'Rendement maximal plus récompenses de tokens',
     features: [
       'Partage complet du calcul du réseau DePIN',
-      'Passerelle de retrait instantanée Stripe et crypto',
+      'Passerelle de retrait instantanée banque et crypto',
       'Auto-guérison de la matrice fournisseurs',
       'Couche d’agent growth VIP avec XP doublé',
     ],
@@ -290,11 +290,11 @@ const ES: LocalisedPlan[] = [
     priceUsd: 799,
     periodLabel: 'Acceso Vitalicio',
     description:
-      'El clúster DePIN definitivo: sincronización de inventario, balanceo multi-proveedor y liquidación directa a cuentas Stripe y criptomonedas.',
+      'El clúster DePIN definitivo: sincronización de inventario, balanceo multi-proveedor y liquidación directa a cuentas bancarias y criptomonedas.',
     roi: 'Máximo hashrate y recompensas de tokens',
     features: [
       'Cuota directa de la potencia de cómputo DePIN',
-      'Salida directa a Stripe y liquidez crypto',
+      'Salida directa a la banca y liquidez crypto',
       'Matriz de proveedores con auto-reparación',
       'Agente VIP growth hacking con multiplicador',
     ],
@@ -350,11 +350,11 @@ const ZH: LocalisedPlan[] = [
     priceUsd: 799,
     periodLabel: '终身授权',
     description:
-      '终极 DePIN 主算力集群。配备全面的供应链同步引擎与 Stripe 法币／加密货币实时下发通道。',
+      '终极 DePIN 主算力集群。配备全面的供应链同步引擎与 银行 法币／加密货币实时下发通道。',
     roi: '极速算力收益 + 代币奖励加成',
     features: [
       '享有全球 DePIN 算力网络分成份额',
-      '支持 Stripe 与加密货币即时提现通道',
+      '支持 银行账户 与加密货币即时提现通道',
       '多供应商故障自愈级调度矩阵',
       '内置 VIP 裂变增长智能体与 XP 双倍加速',
     ],
@@ -410,11 +410,11 @@ const HI: LocalisedPlan[] = [
     priceUsd: 799,
     periodLabel: 'लाइफटाइम एक्सेस',
     description:
-      'सर्वोच्च DePIN क्लस्टर। पूर्ण इन्वेंट्री सिंक्रोनाइज़ेशन, एल्गोरिथमिक मल्टी-सप्लायर संतुलन और सीधे Stripe तथा क्रिप्टो भुगतान मार्ग।',
+      'सर्वोच्च DePIN क्लस्टर। पूर्ण इन्वेंट्री सिंक्रोनाइज़ेशन, एल्गोरिथमिक मल्टी-सप्लायर संतुलन और सीधे बैंक तथा क्रिप्टो भुगतान मार्ग।',
     roi: 'अधिकतम हैशरेट उपज और टोकन पुरस्कार',
     features: [
       'पूर्ण DePIN नेटवर्क कंप्यूटिंग पावर शेयर',
-      'तत्काल Stripe और क्रिप्टो निकासी',
+      'तत्काल बैंक और क्रिप्टो निकासी',
       'मल्टी-सप्लायर मैट्रिक्स स्व-उपचार इंजन',
       'VIP ग्रोथ एजेंट और 2x XP गुणक',
     ],

@@ -85,7 +85,7 @@ export function softwareApplicationSchema(): Record<string, unknown> {
     featureList: [
       'Trend scouting agent swarm',
       'Autonomous multi-store fulfilment',
-      'Stripe Connect and crypto settlement',
+      'Bank and crypto settlement',
       'Six-language operator interface',
     ],
   };
@@ -178,7 +178,7 @@ export function financialProductSchema(priceUsd = 4.85): Record<string, unknown>
       seller: { '@id': `${siteUrl()}/#organization` },
     },
     feesAndCommissionsSpecification:
-      '0% platform fee on direct multi-chain USDT and BTC settlement. Card rails settle through Kashier or Paymob at the displayed rate.',
+      '0% platform fee on direct multi-chain USDT and BTC settlement. Card rails settle through our acquirers at the displayed rate.',
     interestRate: 0,
   };
 }

@@ -156,8 +156,8 @@ export function railStatuses(): RailStatus[] {
       configured: kashier !== 'sandbox',
       detail:
         kashier === 'sandbox'
-          ? 'Add KASHIER_MERCHANT_ID and KASHIER_SECRET_KEY to accept Visa, Mastercard and Meeza in USD and EGP.'
-          : `Kashier is armed in ${kashier} mode and settles to the owner bank account in USD or EGP.`,
+          ? 'Card acquiring is not enabled on this deployment yet. Direct crypto is available now.'
+          : 'Card acquiring is active and settles to the platform treasury in USD or EGP.',
       supports: ['Visa', 'Mastercard', 'Meeza', 'Debit', 'EGP', 'USD'],
     },
     {
@@ -166,8 +166,8 @@ export function railStatuses(): RailStatus[] {
       configured: paymob !== 'sandbox',
       detail:
         paymob === 'sandbox'
-          ? 'Add PAYMOB_API_KEY, PAYMOB_INTEGRATION_ID and PAYMOB_IFRAME_ID to accept cards, Apple Pay and local wallets.'
-          : `Paymob is armed in ${paymob} mode and settles to the owner bank account.`,
+          ? 'Wallet and device-pay acquiring is not enabled on this deployment yet. Direct crypto is available now.'
+          : 'Wallet and device-pay acquiring is active and settles to the platform treasury.',
       supports: ['Visa', 'Mastercard', 'Debit', 'Apple Pay', 'Local wallets'],
     },
     {
@@ -176,8 +176,8 @@ export function railStatuses(): RailStatus[] {
       configured: stripe !== 'sandbox',
       detail:
         stripe === 'sandbox'
-          ? 'Add STRIPE_SECRET_KEY and STRIPE_CONNECT_ACCOUNT_ID to settle via Stripe Connect.'
-          : `Stripe is armed in ${stripe} mode with a connected payout account.`,
+          ? 'International card acquiring is not enabled on this deployment yet. Direct crypto is available now.'
+          : 'International card acquiring is active with a connected payout account.',
       supports: ['Visa', 'Mastercard', 'Apple Pay', 'Bank transfer'],
     },
   ];
@@ -221,7 +221,7 @@ async function kashierCheckout(request: FiatCheckoutRequest): Promise<FiatChecko
   const secret = env('KASHIER_SECRET_KEY');
 
   if (!merchantId || !secret) {
-    return sandboxResult(request, 'kashier', 'Kashier keys are absent — sandbox session minted.');
+    return sandboxResult(request, 'kashier', 'Card acquiring is not enabled on this deployment yet.');
   }
 
   const currency = request.currency ?? 'USD';
@@ -254,8 +254,8 @@ async function kashierCheckout(request: FiatCheckoutRequest): Promise<FiatChecko
     checkoutUrl: `https://payments.kashier.io/?${query}`,
     amountUsd: request.amountUsd,
     currency,
-    provider: 'Kashier',
-    detail: `Kashier hosted checkout created in ${mode} mode for ${amount.toFixed(2)} ${currency}. Settlement routes to the owner bank account.`,
+    provider: 'Credit / Debit Card',
+    detail: `Secure card page created in ${mode} mode for ${amount.toFixed(2)} ${currency}. Settlement routes to the platform treasury.`,
   };
 }
 
@@ -265,7 +265,7 @@ async function paymobCheckout(request: FiatCheckoutRequest): Promise<FiatCheckou
   const iframeId = env('PAYMOB_IFRAME_ID');
 
   if (!apiKey || !integrationId || !iframeId) {
-    return sandboxResult(request, 'paymob', 'Paymob keys are absent — sandbox session minted.');
+    return sandboxResult(request, 'paymob', 'Wallet acquiring is not enabled on this deployment yet.');
   }
 
   const base = 'https://accept.paymob.com/api';
@@ -276,9 +276,9 @@ async function paymobCheckout(request: FiatCheckoutRequest): Promise<FiatCheckou
     body: JSON.stringify({ api_key: apiKey }),
     cache: 'no-store',
   });
-  if (!authResponse.ok) throw new Error(`Paymob auth failed (${authResponse.status})`);
+  if (!authResponse.ok) throw new Error(`Wallet acquiring auth failed (${authResponse.status})`);
   const auth = (await authResponse.json()) as { token?: string };
-  if (!auth.token) throw new Error('Paymob auth returned no token');
+  if (!auth.token) throw new Error('Wallet acquiring returned no token');
 
   const amountCents = Math.round(amountInCurrency(request.amountUsd, request.currency ?? 'USD') * 100);
   const chargeCurrency = request.currency ?? 'USD';
@@ -304,9 +304,9 @@ async function paymobCheckout(request: FiatCheckoutRequest): Promise<FiatCheckou
     }),
     cache: 'no-store',
   });
-  if (!orderResponse.ok) throw new Error(`Paymob order failed (${orderResponse.status})`);
+  if (!orderResponse.ok) throw new Error(`Wallet acquiring order failed (${orderResponse.status})`);
   const order = (await orderResponse.json()) as { id?: number };
-  if (!order.id) throw new Error('Paymob order returned no id');
+  if (!order.id) throw new Error('Wallet acquiring order returned no id');
 
   const keyResponse = await fetch(`${base}/acceptance/payment_keys`, {
     method: 'POST',
@@ -337,9 +337,9 @@ async function paymobCheckout(request: FiatCheckoutRequest): Promise<FiatCheckou
     }),
     cache: 'no-store',
   });
-  if (!keyResponse.ok) throw new Error(`Paymob payment key failed (${keyResponse.status})`);
+  if (!keyResponse.ok) throw new Error(`Wallet acquiring key failed (${keyResponse.status})`);
   const paymentKey = (await keyResponse.json()) as { token?: string };
-  if (!paymentKey.token) throw new Error('Paymob payment key returned no token');
+  if (!paymentKey.token) throw new Error('Wallet acquiring key returned no token');
 
   return {
     ok: true,
@@ -349,8 +349,8 @@ async function paymobCheckout(request: FiatCheckoutRequest): Promise<FiatCheckou
     checkoutUrl: `${base}/acceptance/iframes/${iframeId}?payment_token=${paymentKey.token}`,
     amountUsd: request.amountUsd,
     currency: chargeCurrency,
-    provider: 'Paymob',
-    detail: 'Paymob iframe session created. Settlement routes to the owner bank account.',
+    provider: 'Apple Pay / Mobile Wallets',
+    detail: 'Secure wallet page created. Settlement routes to the platform treasury.',
   };
 }
 
@@ -379,11 +379,11 @@ export async function createFiatCheckout(request: FiatCheckoutRequest): Promise<
       checkoutUrl: session.checkoutUrl,
       amountUsd: session.amountUsd,
       currency: session.currency,
-      provider: 'Stripe',
+      provider: 'International Card',
       detail:
         session.mode === 'sandbox'
-          ? 'Stripe key absent — sandbox checkout session minted.'
-          : `Stripe Checkout created in ${session.mode} mode.`,
+          ? 'International card acquiring is not enabled on this deployment yet.'
+          : `Secure card page created in ${session.mode} mode.`,
     };
   } catch (cause) {
     return {

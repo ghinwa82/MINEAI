@@ -2,7 +2,7 @@ import type { SupportedLanguage } from '@/types';
 import { DEFAULT_LANGUAGE } from '@/lib/languages';
 
 /**
- * Compliance copy for the four pages Kashier and Paymob reviewers open first.
+ * Compliance copy for the four pages card-acquiring reviewers open first.
  *
  * Every locale is authored, not machine translated, and every document carries
  * the same operative commitments: card data never touches this server, crypto
@@ -91,7 +91,7 @@ const EN: LegalCopy = {
         {
           heading: '3. Payments and settlement',
           body: [
-            'Card payments are processed by Kashier or Paymob. The card form is hosted by the processor; MineAI Node never receives or stores a card number, CVV or full expiry date.',
+            'Card payments are processed by our card acquirer. The card form is hosted by the processor; MineAI Node never receives or stores a card number, CVV or full expiry date.',
             'Crypto payments settle directly to the owner wallet published at checkout. A crypto deposit is credited only after the transaction hash is verified against a public RPC. An unreachable RPC leaves the deposit pending; it is never credited optimistically.',
             'Prices are listed in US dollars. Local card rails may charge the equivalent in Egyptian pounds at the rate displayed before payment. Your bank may apply its own conversion or cross-border fee.',
           ],
@@ -130,7 +130,7 @@ const EN: LegalCopy = {
           heading: '1. What we collect',
           body: [
             'An anonymous operator id generated in your browser, the language you select, the node you activate and the public wallet address you submit for a withdrawal.',
-            'Payment metadata returned by Kashier or Paymob: a session or transaction reference, the amount, the currency and the status. We do not receive card numbers.',
+            'Payment metadata returned by our card acquirer: a session or transaction reference, the amount, the currency and the status. We do not receive card numbers.',
             'Technical logs: IP address, user agent, request path and timestamp, retained to rate-limit abuse and investigate fraud.',
           ],
         },
@@ -158,7 +158,7 @@ const EN: LegalCopy = {
         {
           heading: '5. Processors and transfers',
           body: [
-            'Kashier, Paymob, Supabase, Vercel and public blockchain RPC providers act as processors or independent controllers for the limited purpose of delivering the service.',
+            'our card acquirer, Supabase, Vercel and public blockchain RPC providers act as processors or independent controllers for the limited purpose of delivering the service.',
             'Where data leaves your region it is protected by the processor’s contractual safeguards. We do not transfer data to a party that has no lawful basis to receive it.',
           ],
         },
@@ -180,7 +180,7 @@ const EN: LegalCopy = {
         {
           heading: '1. Card payments',
           body: [
-            'A card payment may be refunded in full within 14 days of settlement if the node was never activated or the service was materially unavailable. Refunds return to the original card through Kashier or Paymob.',
+            'A card payment may be refunded in full within 14 days of settlement if the node was never activated or the service was materially unavailable. Refunds return to the original card through our card acquirer.',
             'Once a node has been activated and compute has been consumed, the unused portion of the current billing period may be refunded pro rata at our discretion.',
           ],
         },
@@ -300,7 +300,7 @@ const AR: LegalCopy = {
         {
           heading: '3. المدفوعات والتسوية',
           body: [
-            'تُعالج مدفوعات البطاقات عبر Kashier أو Paymob. تستضيف بوابة الدفع نموذج البطاقة؛ ولا تستقبل MineAI Node رقم البطاقة أو رمز التحقق أو تاريخ الانتهاء الكامل.',
+            'تُعالج مدفوعات البطاقات عبر بوابة الاستحواذ على البطاقات. تستضيف بوابة الدفع نموذج البطاقة؛ ولا تستقبل MineAI Node رقم البطاقة أو رمز التحقق أو تاريخ الانتهاء الكامل.',
             'تُسوّى مدفوعات العملات الرقمية مباشرة إلى محفظة المالك المنشورة عند الدفع. لا يُضاف الإيداع إلا بعد التحقق من بصمة المعاملة عبر RPC عام. تعذّر الوصول إلى RPC يبقي الإيداع معلقاً ولا يُضاف تخميناً.',
             'تُعرض الأسعار بالدولار الأمريكي. قد تحصّل بوابات البطاقات المحلية المكافئ بالجنيه المصري بالسعر المعروض قبل الدفع. قد يطبّق بنكك رسوم تحويل أو عبر الحدود.',
           ],
@@ -339,7 +339,7 @@ const AR: LegalCopy = {
           heading: '1. ما نجمعه',
           body: [
             'معرّف مشغّل مجهول يُنشأ في متصفحك، واللغة التي تختارها، والعقدة التي تفعّلها، وعنوان المحفظة العام الذي تقدّمه للسحب.',
-            'بيانات وصفية للمدفوعات تعيدها Kashier أو Paymob: مرجع جلسة أو معاملة والمبلغ والعملة والحالة. لا نتلقى أرقام البطاقات.',
+            'بيانات وصفية للمدفوعات تعيدها بوابة الاستحواذ على البطاقات: مرجع جلسة أو معاملة والمبلغ والعملة والحالة. لا نتلقى أرقام البطاقات.',
             'سجلات تقنية: عنوان IP ووكيل المستخدم ومسار الطلب والوقت، تُحفظ للحد من الإساءة والتحقيق في الاحتيال.',
           ],
         },
@@ -367,7 +367,7 @@ const AR: LegalCopy = {
         {
           heading: '5. المعالجون والنقل',
           body: [
-            'تعمل Kashier وPaymob وSupabase وVercel ومزوّدو RPC العامون كمعالجين أو متحكّمين مستقلين لغرض محدود هو تقديم الخدمة.',
+            'تعمل بوابات الاستحواذ وSupabase وVercel ومزوّدو RPC العامون كمعالجين أو متحكّمين مستقلين لغرض محدود هو تقديم الخدمة.',
             'حيث تغادر البيانات منطقتك تحميها ضمانات تعاقدية للمعالج. لا ننقل البيانات إلى طرف لا يملك أساساً قانونياً لتلقيها.',
           ],
         },
@@ -389,7 +389,7 @@ const AR: LegalCopy = {
         {
           heading: '1. مدفوعات البطاقات',
           body: [
-            'يمكن استرداد دفعة البطاقة كاملة خلال 14 يوماً من التسوية إذا لم تُفعَّل العقدة أو كانت الخدمة غير متاحة جوهرياً. تعود المبالغ إلى البطاقة الأصلية عبر Kashier أو Paymob.',
+            'يمكن استرداد دفعة البطاقة كاملة خلال 14 يوماً من التسوية إذا لم تُفعَّل العقدة أو كانت الخدمة غير متاحة جوهرياً. تعود المبالغ إلى البطاقة الأصلية عبر بوابة الاستحواذ على البطاقات.',
             'بعد تفعيل العقدة واستهلاك الحوسبة، قد يُسترد الجزء غير المستخدم من دورة الفوترة الحالية بالتناسب وفق تقديرنا.',
           ],
         },
@@ -509,7 +509,7 @@ const FR: LegalCopy = {
         {
           heading: '3. Paiements et règlement',
           body: [
-            "Les paiements par carte sont traités par Kashier ou Paymob. Le formulaire de carte est hébergé par le processeur ; MineAI Node ne reçoit ni ne stocke jamais un numéro de carte, un CVV ou une date d'expiration complète.",
+            "Les paiements par carte sont traités par notre acquéreur de cartes. Le formulaire de carte est hébergé par le processeur ; MineAI Node ne reçoit ni ne stocke jamais un numéro de carte, un CVV ou une date d'expiration complète.",
             "Les paiements crypto sont réglés directement sur le portefeuille du propriétaire publié au paiement. Un dépôt n'est crédité qu'après vérification du hash de transaction auprès d'un RPC public. Un RPC injoignable laisse le dépôt en attente ; il n'est jamais crédité par optimisme.",
             "Les prix sont affichés en dollars américains. Les rails de carte locaux peuvent débiter l'équivalent en livres égyptiennes au taux affiché avant paiement. Votre banque peut appliquer ses propres frais de conversion ou transfrontaliers.",
           ],
@@ -548,7 +548,7 @@ const FR: LegalCopy = {
           heading: '1. Ce que nous collectons',
           body: [
             "Un identifiant d'opérateur anonyme généré dans votre navigateur, la langue choisie, le nœud activé et l'adresse publique de portefeuille soumise pour un retrait.",
-            "Les métadonnées de paiement renvoyées par Kashier ou Paymob : référence de session ou de transaction, montant, devise et statut. Nous ne recevons pas les numéros de carte.",
+            "Les métadonnées de paiement renvoyées par notre acquéreur de cartes : référence de session ou de transaction, montant, devise et statut. Nous ne recevons pas les numéros de carte.",
             "Des journaux techniques : adresse IP, agent utilisateur, chemin de requête et horodatage, conservés pour limiter les abus et enquêter sur la fraude.",
           ],
         },
@@ -576,7 +576,7 @@ const FR: LegalCopy = {
         {
           heading: '5. Processeurs et transferts',
           body: [
-            "Kashier, Paymob, Supabase, Vercel et les fournisseurs de RPC blockchain publics agissent comme sous-traitants ou responsables indépendants pour la seule finalité de fournir le service.",
+            "Nos acquéreurs, Supabase, Vercel et les fournisseurs de RPC blockchain publics agissent comme sous-traitants ou responsables indépendants pour la seule finalité de fournir le service.",
             "Lorsque des données quittent votre région, elles sont protégées par les garanties contractuelles du processeur. Nous ne transférons pas de données à un tiers sans base légale.",
           ],
         },
@@ -598,7 +598,7 @@ const FR: LegalCopy = {
         {
           heading: '1. Paiements par carte',
           body: [
-            "Un paiement par carte peut être remboursé intégralement dans les 14 jours suivant le règlement si le nœud n'a jamais été activé ou si le service a été matériellement indisponible. Le remboursement retourne sur la carte d'origine via Kashier ou Paymob.",
+            "Un paiement par carte peut être remboursé intégralement dans les 14 jours suivant le règlement si le nœud n'a jamais été activé ou si le service a été matériellement indisponible. Le remboursement retourne sur la carte d'origine via notre acquéreur de cartes.",
             "Une fois le nœud activé et le calcul consommé, la partie inutilisée de la période en cours peut être remboursée au prorata à notre discrétion.",
           ],
         },
@@ -718,7 +718,7 @@ const ES: LegalCopy = {
         {
           heading: '3. Pagos y liquidación',
           body: [
-            'Los pagos con tarjeta los procesan Kashier o Paymob. El formulario de tarjeta lo aloja el procesador; MineAI Node nunca recibe ni almacena un número de tarjeta, CVV o fecha de caducidad completa.',
+            'Los pagos con tarjeta los procesan nuestra pasarela de tarjetas. El formulario de tarjeta lo aloja el procesador; MineAI Node nunca recibe ni almacena un número de tarjeta, CVV o fecha de caducidad completa.',
             'Los pagos cripto se liquidan directamente a la cartera del propietario publicada al pagar. Un depósito se acredita solo tras verificar el hash contra un RPC público. Un RPC inaccesible deja el depósito pendiente; nunca se acredita de forma optimista.',
             'Los precios se muestran en dólares estadounidenses. Los canales de tarjeta locales pueden cobrar el equivalente en libras egipcias al tipo mostrado antes del pago. Tu banco puede aplicar su propia comisión de conversión o transfronteriza.',
           ],
@@ -757,7 +757,7 @@ const ES: LegalCopy = {
           heading: '1. Qué recogemos',
           body: [
             'Un identificador de operador anónimo generado en tu navegador, el idioma que eliges, el nodo que activas y la dirección pública de cartera que envías para un retiro.',
-            'Metadatos de pago devueltos por Kashier o Paymob: referencia de sesión o transacción, importe, moneda y estado. No recibimos números de tarjeta.',
+            'Metadatos de pago devueltos por nuestra pasarela de tarjetas: referencia de sesión o transacción, importe, moneda y estado. No recibimos números de tarjeta.',
             'Registros técnicos: dirección IP, agente de usuario, ruta de la petición y marca temporal, conservados para limitar abusos e investigar fraude.',
           ],
         },
@@ -785,7 +785,7 @@ const ES: LegalCopy = {
         {
           heading: '5. Procesadores y transferencias',
           body: [
-            'Kashier, Paymob, Supabase, Vercel y los proveedores públicos de RPC blockchain actúan como encargados o responsables independientes con la única finalidad de prestar el servicio.',
+            'Nuestras pasarelas, Supabase, Vercel y los proveedores públicos de RPC blockchain actúan como encargados o responsables independientes con la única finalidad de prestar el servicio.',
             'Cuando los datos salen de tu región, los protegen las garantías contractuales del procesador. No transferimos datos a quien no tenga base legal para recibirlos.',
           ],
         },
@@ -807,7 +807,7 @@ const ES: LegalCopy = {
         {
           heading: '1. Pagos con tarjeta',
           body: [
-            'Un pago con tarjeta puede reembolsarse íntegramente en los 14 días siguientes a la liquidación si el nodo nunca se activó o el servicio estuvo materialmente indisponible. El reembolso vuelve a la tarjeta original a través de Kashier o Paymob.',
+            'Un pago con tarjeta puede reembolsarse íntegramente en los 14 días siguientes a la liquidación si el nodo nunca se activó o el servicio estuvo materialmente indisponible. El reembolso vuelve a la tarjeta original a través de nuestra pasarela de tarjetas.',
             'Una vez activado el nodo y consumido cómputo, la parte no utilizada del periodo actual puede reembolsarse a prorrata a nuestra discreción.',
           ],
         },
@@ -927,7 +927,7 @@ const ZH: LegalCopy = {
         {
           heading: '3. 支付与结算',
           body: [
-            '银行卡支付由 Kashier 或 Paymob 处理。卡片表单由支付机构托管；MineAI Node 从不接收或存储卡号、CVV 或完整有效期。',
+            '银行卡支付由 收单机构 处理。卡片表单由支付机构托管；MineAI Node 从不接收或存储卡号、CVV 或完整有效期。',
             '加密货币支付直接结算至结账时公布的所有者钱包。只有在通过公共 RPC 验证交易哈希后才会入账。RPC 不可达时存款保持待处理，绝不乐观入账。',
             '价格以美元标价。本地银行卡通道可按支付前显示的汇率收取等值埃及镑。你的银行可能另收货币转换或跨境费用。',
           ],
@@ -966,7 +966,7 @@ const ZH: LegalCopy = {
           heading: '1. 我们收集的信息',
           body: [
             '在浏览器中生成的匿名运营者标识、你选择的语言、你激活的节点，以及你为提现提交的公开钱包地址。',
-            'Kashier 或 Paymob 返回的支付元数据：会话或交易参考号、金额、币种和状态。我们不接收卡号。',
+            '收单机构 返回的支付元数据：会话或交易参考号、金额、币种和状态。我们不接收卡号。',
             '技术日志：IP 地址、用户代理、请求路径和时间戳，用于限制滥用和调查欺诈。',
           ],
         },
@@ -994,7 +994,7 @@ const ZH: LegalCopy = {
         {
           heading: '5. 处理方与传输',
           body: [
-            'Kashier、Paymob、Supabase、Vercel 和公共区块链 RPC 提供方仅以提供服务为目的，作为处理方或独立控制方行事。',
+            '收单机构、Supabase、Vercel 和公共区块链 RPC 提供方仅以提供服务为目的，作为处理方或独立控制方行事。',
             '数据离开你所在地区时，受处理方的合同保障保护。我们不会将数据传输给无合法依据接收的第三方。',
           ],
         },
@@ -1016,7 +1016,7 @@ const ZH: LegalCopy = {
         {
           heading: '1. 银行卡支付',
           body: [
-            '若节点从未激活或服务实质不可用，银行卡支付可在结算后 14 天内全额退款。退款经 Kashier 或 Paymob 退回原卡。',
+            '若节点从未激活或服务实质不可用，银行卡支付可在结算后 14 天内全额退款。退款经 收单机构 退回原卡。',
             '节点激活且算力已消耗后，当前计费周期的未使用部分可由我们酌情按比例退款。',
           ],
         },
@@ -1136,7 +1136,7 @@ const HI: LegalCopy = {
         {
           heading: '3. भुगतान और निपटान',
           body: [
-            'कार्ड भुगतान Kashier या Paymob द्वारा संसाधित होते हैं। कार्ड फ़ॉर्म प्रोसेसर होस्ट करता है; MineAI Node कभी कार्ड नंबर, CVV या पूर्ण समाप्ति तिथि प्राप्त या संग्रहीत नहीं करता।',
+            'कार्ड भुगतान कार्ड अधिग्राहक द्वारा संसाधित होते हैं। कार्ड फ़ॉर्म प्रोसेसर होस्ट करता है; MineAI Node कभी कार्ड नंबर, CVV या पूर्ण समाप्ति तिथि प्राप्त या संग्रहीत नहीं करता।',
             'क्रिप्टो भुगतान सीधे चेकआउट पर प्रकाशित ओनर वॉलेट में निपटाए जाते हैं। लेन-देन हैश सार्वजनिक RPC से सत्यापित होने के बाद ही जमा श्रेय दिया जाता है। RPC अनुपलब्ध होने पर जमा लंबित रहता है; कभी अनुमान से श्रेय नहीं दिया जाता।',
             'कीमतें अमेरिकी डॉलर में हैं। स्थानीय कार्ड रेल भुगतान से पहले दिखाई गई दर पर मिस्री पाउंड में समतुल्य शुल्क ले सकते हैं। आपका बैंक अपना रूपांतरण या सीमा-पार शुल्क लगा सकता है।',
           ],
@@ -1175,7 +1175,7 @@ const HI: LegalCopy = {
           heading: '1. हम क्या एकत्र करते हैं',
           body: [
             'आपके ब्राउज़र में बनाई गई अनाम ऑपरेटर आईडी, आपकी चुनी भाषा, आपके द्वारा सक्रिय किया गया नोड और निकासी के लिए दिया गया सार्वजनिक वॉलेट पता।',
-            'Kashier या Paymob द्वारा लौटाया गया भुगतान मेटाडेटा: सत्र या लेन-देन संदर्भ, राशि, मुद्रा और स्थिति। हमें कार्ड नंबर नहीं मिलते।',
+            'कार्ड अधिग्राहक द्वारा लौटाया गया भुगतान मेटाडेटा: सत्र या लेन-देन संदर्भ, राशि, मुद्रा और स्थिति। हमें कार्ड नंबर नहीं मिलते।',
             'तकनीकी लॉग: IP पता, यूज़र एजेंट, अनुरोध पथ और समय, दुरुपयोग सीमित करने और धोखाधड़ी जाँचने के लिए।',
           ],
         },
@@ -1203,7 +1203,7 @@ const HI: LegalCopy = {
         {
           heading: '5. प्रोसेसर और स्थानांतरण',
           body: [
-            'Kashier, Paymob, Supabase, Vercel और सार्वजनिक ब्लॉकचेन RPC प्रदाता केवल सेवा देने के उद्देश्य से प्रोसेसर या स्वतंत्र नियंत्रक के रूप में कार्य करते हैं।',
+            'कार्ड और वॉलेट अधिग्राहक, Supabase, Vercel और सार्वजनिक ब्लॉकचेन RPC प्रदाता केवल सेवा देने के उद्देश्य से प्रोसेसर या स्वतंत्र नियंत्रक के रूप में कार्य करते हैं।',
             'जहाँ डेटा आपके क्षेत्र से बाहर जाता है, वहाँ प्रोसेसर की संविदात्मक सुरक्षा लागू होती है। हम ऐसे पक्ष को डेटा नहीं भेजते जिसके पास प्राप्त करने का वैध आधार न हो।',
           ],
         },
@@ -1225,7 +1225,7 @@ const HI: LegalCopy = {
         {
           heading: '1. कार्ड भुगतान',
           body: [
-            'यदि नोड कभी सक्रिय नहीं हुआ या सेवा materially अनुपलब्ध रही, तो निपटान के 14 दिनों के भीतर कार्ड भुगतान पूर्ण रूप से वापस किया जा सकता है। धनवापसी Kashier या Paymob के माध्यम से मूल कार्ड पर लौटती है।',
+            'यदि नोड कभी सक्रिय नहीं हुआ या सेवा materially अनुपलब्ध रही, तो निपटान के 14 दिनों के भीतर कार्ड भुगतान पूर्ण रूप से वापस किया जा सकता है। धनवापसी कार्ड अधिग्राहक के माध्यम से मूल कार्ड पर लौटती है।',
             'नोड सक्रिय होने और कंप्यूट उपभोग के बाद, वर्तमान बिलिंग अवधि का अप्रयुक्त भाग हमारे विवेक से आनुपातिक रूप से वापस किया जा सकता है।',
           ],
         },

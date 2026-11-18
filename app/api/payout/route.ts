@@ -69,7 +69,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, ...session });
   } catch {
     return NextResponse.json(
-      { ok: false, error: 'Failed to initialize the Stripe checkout gateway' },
+      { ok: false, error: 'Failed to initialize the card checkout gateway' },
       { status: 500 },
     );
   }

@@ -74,7 +74,7 @@ export async function getConnectStatus(): Promise<ConnectStatus> {
       chargesEnabled: true,
       payoutsEnabled: true,
       detailsSubmitted: false,
-      detail: 'Sandbox rail — add STRIPE_SECRET_KEY to settle live payouts.',
+      detail: 'Sandbox rail — finalise the acquirer account to settle live payouts.',
     };
   }
 
@@ -86,7 +86,7 @@ export async function getConnectStatus(): Promise<ConnectStatus> {
       chargesEnabled: false,
       payoutsEnabled: false,
       detailsSubmitted: false,
-      detail: 'Stripe key detected — waiting for STRIPE_CONNECT_ACCOUNT_ID.',
+      detail: 'Acquirer key detected — waiting for the payout account id.',
     };
   }
 
@@ -105,7 +105,7 @@ export async function getConnectStatus(): Promise<ConnectStatus> {
         chargesEnabled: false,
         payoutsEnabled: false,
         detailsSubmitted: false,
-        detail: `Stripe account lookup failed with status ${response.status}.`,
+        detail: `Payout account lookup failed with status ${response.status}.`,
       };
     }
 
@@ -143,7 +143,7 @@ export async function getConnectStatus(): Promise<ConnectStatus> {
       chargesEnabled: false,
       payoutsEnabled: false,
       detailsSubmitted: false,
-      detail: 'Stripe could not be reached from this region.',
+      detail: 'The acquiring service could not be reached from this region.',
     };
   }
 }

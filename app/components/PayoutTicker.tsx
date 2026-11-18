@@ -20,6 +20,8 @@ export interface PayoutEntry {
   tokens: number;
   usd: number;
   at: string;
+  status?: 'pending' | 'processing' | 'sent';
+  txHash?: string;
 }
 
 const NETWORK_LABEL: Record<string, string> = {
@@ -111,6 +113,11 @@ function TapeCard({
   entry: PayoutEntry;
   number: Intl.NumberFormat;
 }) {
+  const { eco } = useI18n();
+  const status = entry.status ?? 'sent';
+  const label = eco.mining.pipeline[status];
+  const tone = status === 'sent' ? 'text-mint' : status === 'processing' ? 'text-amber' : 'text-ink-faint';
+
   return (
     <article className="flex shrink-0 items-center gap-3 rounded-xl border border-white/8 bg-white/[0.025] px-3.5 py-2">
       <span className="mx-numeric rounded-md border border-cyan/25 bg-cyan/8 px-1.5 py-0.5 text-[0.58rem] font-bold tracking-[0.08em] text-cyan">
@@ -121,6 +128,20 @@ function TapeCard({
         {number.format(entry.tokens)} <span className="text-ink-faint">$MINEAI</span>
       </span>
       <span className="mx-numeric text-[0.68rem] text-mint">${number.format(entry.usd)}</span>
+      <span className={`inline-flex items-center gap-1 text-[0.58rem] font-semibold ${tone}`}>
+        <span
+          aria-hidden
+          className={`h-1.5 w-1.5 rounded-full ${
+            status === 'sent' ? 'bg-mint' : status === 'processing' ? 'animate-pulse bg-amber' : 'bg-ink-faint'
+          }`}
+        />
+        {label}
+      </span>
+      {status === 'sent' && entry.txHash ? (
+        <span className="mx-numeric text-[0.58rem] text-ink-faint" title={entry.txHash}>
+          {entry.txHash.slice(0, 10)}…
+        </span>
+      ) : null}
     </article>
   );
 }
