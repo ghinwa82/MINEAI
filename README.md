@@ -105,8 +105,14 @@ blank label.
 | `/api/payments/checkout` | GET/POST | Fiat rail status and owner bank; open a Paymob, Lemon Squeezy or Stripe session. |
 | `/api/payments/crypto` | GET/POST | Seven deposit networks with QR intents; verify a `txHash` on-chain before crediting. |
 | `/api/webhooks/payment` | POST | Signature-verified settlement callbacks; refuses unsigned bodies. |
-| `/api/mining` | GET/POST | Position snapshot; `claim-streak`, `stake`, `unstake`, `withdraw`. |
+| `/api/mining` | GET/POST | Position snapshot; `claim-streak`, `stake`, `unstake`, `allocate`, `withdraw`, `share-boost`, `toggle`. |
 | `/api/mining/cron` | GET | Accrues every position; guarded by `CRON_SECRET`. |
+| `/api/auth/register` · `login` · `verify` · `forgot` · `reset` · `session` | POST | Account lifecycle. Supabase Auth is primary; the local sealed-cookie ledger is the fallback. |
+| `/api/auth/send-otp` | POST | Passwordless six-digit code, minted and mailed by the identity provider. |
+| `/api/auth/2fa` | POST | TOTP enrol/confirm/disable. Supabase factors for provider accounts, sealed local secrets otherwise. |
+| `/api/auth/oauth/[provider]` · `oauth/session` · `providers` | GET/POST | Apple, Google and Facebook handshakes and per-provider availability. |
+| `/api/checkout/activate` | POST | Arms a plan: free instantly, crypto only after an RPC confirms the hash, card rails refuse until keys exist. |
+| `/api/ai/support` | POST | Model-backed concierge (Groq → Gemini → OpenRouter) with the six-language knowledge base as fallback. |
 | `/api/rewards` | GET/POST | Streak, VIP tier and referral graph. |
 | `/api/security/2fa` | GET/POST | TOTP enrol/verify/recover. Secrets sealed with AES-256-GCM. |
 | `/api/markets` | GET | Indices, commodities, FX, top crypto and the internal $MINEAI quote. |
@@ -122,6 +128,26 @@ Without a processor key the matching fiat rail downgrades to a clearly-labelled
 sandbox session and says so in the interface rather than pretending to settle
 live money. Crypto deposits are never credited optimistically: an unreachable RPC
 leaves the intent `pending`.
+
+## Accounts, checkout and support
+
+Supabase Auth is the primary identity provider: it owns password hashes, email
+codes, OAuth handshakes and TOTP factors. The app stores a signed HttpOnly cookie
+that carries a sealed refresh token, refreshed on every read; a second factor
+that is still owed travels as a ten-minute encrypted ticket instead of shared
+memory. When the project is unreachable the local ledger answers, so sign-in
+never becomes a dead end — and the response always says which path ran.
+
+`/checkout?plan=<slug>` is three steps: plan and display currency, a payment
+rail, then live. The free plan arms immediately; a paid plan activates only after
+`/api/checkout/activate` confirms the transaction hash against a public RPC, with
+one hash spendable once. Card rails state plainly that their processor keys are
+absent rather than opening a page that cannot charge.
+
+Support tries Groq, then Gemini, then OpenRouter, and falls back to the
+deterministic six-language knowledge base on any failure. The model sees only the
+caller's own plan, hashrate, pending balance, 2FA state and a hash they pasted;
+the prompt forbids promising a return, a fee or a payout window.
 
 ## Financial rails
 
