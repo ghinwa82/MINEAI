@@ -190,7 +190,7 @@ const en: Dictionary = {
     network: 'MineAI DePIN mesh',
   },
   nav: {
-    home: 'Overview',
+    home: 'Home',
     store: 'Node Store',
     notes: 'Field Notes',
     product: 'Node detail',
@@ -396,7 +396,7 @@ const ar: Dictionary = {
     network: 'شبكة MineAI اللامركزية',
   },
   nav: {
-    home: 'نظرة عامة',
+    home: 'الرئيسية',
     store: 'متجر العقد',
     notes: 'الميدانية',
     product: 'تفاصيل العقدة',
@@ -602,7 +602,7 @@ const fr: Dictionary = {
     network: 'Maille DePIN MineAI',
   },
   nav: {
-    home: 'Vue d’ensemble',
+    home: 'Accueil',
     store: 'Catalogue de nœuds',
     notes: 'Carnet de terrain',
     product: 'Détail du nœud',
@@ -808,7 +808,7 @@ const es: Dictionary = {
     network: 'Malla DePIN de MineAI',
   },
   nav: {
-    home: 'Panorama',
+    home: 'Inicio',
     store: 'Catálogo de nodos',
     notes: 'Cuaderno de campo',
     product: 'Detalle del nodo',
@@ -1014,7 +1014,7 @@ const zh: Dictionary = {
     network: 'MineAI DePIN 网格',
   },
   nav: {
-    home: '总览',
+    home: '首页',
     store: '节点商城',
     notes: '现场笔记',
     product: '节点详情',
@@ -1219,7 +1219,7 @@ const hi: Dictionary = {
     network: 'MineAI DePIN मेश',
   },
   nav: {
-    home: 'अवलोकन',
+    home: 'होम',
     store: 'नोड स्टोर',
     notes: 'फील्ड नोट्स',
     product: 'नोड विवरण',

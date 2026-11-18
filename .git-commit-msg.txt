@@ -1,0 +1,5 @@
+Label the first navigation item "Home" in every language
+
+The header and footer link to the landing page, so "Home"/"Accueil"/"Inicio"/
+"首页"/"होम"/"الرئيسية" reads faster than the old "Overview" wording for the
+same destination.
