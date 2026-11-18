@@ -30,8 +30,8 @@ function hasVerifiedFactor(user: AuthUser): boolean {
  *
  * The first two are exchanged for a real session and answered with an HttpOnly
  * cookie before the visitor sees a page, so `/dashboard` is never rendered in a
- * half-signed-in state. The third is handed to a client page by rewrite rather
- * than redirect, because a redirect would drop the fragment.
+ * half-signed-in state. The third is forwarded to a client page; the redirect
+ * inherits the fragment, which no server ever sees.
  */
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -55,9 +55,9 @@ export async function GET(request: Request) {
   const tokenHash = params.get('token_hash');
 
   if (!code && !tokenHash) {
-    // Fragment flow. The rewrite keeps `/auth/callback` in the address bar and
-    // the fragment intact for the client handler that completes the cookie.
-    return NextResponse.rewrite(new URL('/auth/callback/complete', request.url));
+    // Fragment flow. The redirect inherits the fragment (RFC 7231 §7.1.2), so
+    // the client handler still receives the tokens, which never reach a server.
+    return NextResponse.redirect(new URL('/auth/callback/complete', request.url), 303);
   }
 
   const verifyType = asVerifyType(params.get('type'));
