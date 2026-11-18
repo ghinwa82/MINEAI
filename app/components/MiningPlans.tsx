@@ -97,7 +97,7 @@ export default function MiningPlans({ withCalculator = true }: { withCalculator?
             </ul>
 
             <Link
-              href={href(plan.priceUsd === 0 ? '/register' : `/store?plan=${plan.id}`)}
+              href={href(`/checkout?plan=${plan.slug}`)}
               className={`mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-[0.78rem] font-semibold transition ${
                 plan.popular
                   ? 'bg-[linear-gradient(100deg,#d4af37,#fff3b0)] text-[#120d02] hover:brightness-110'
@@ -193,7 +193,7 @@ export default function MiningPlans({ withCalculator = true }: { withCalculator?
           </div>
 
           <div className="mt-7 flex flex-wrap gap-3">
-            <Link href={href('/register')} className="mx-btn">
+            <Link href={href(`/checkout?plan=${selected.slug}`)} className="mx-btn">
               {selected.text.cta}
             </Link>
             <Link href={href('/mining')} className="mx-btn-quiet">

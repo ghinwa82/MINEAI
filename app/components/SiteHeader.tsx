@@ -6,9 +6,11 @@ import { usePathname } from 'next/navigation';
 
 import Logo from './Logo';
 import LanguageSwitcher from './LanguageSwitcher';
+import SoundToggle from './SoundToggle';
 import BreakingNewsTicker from './BreakingNewsTicker';
 import ReferralCapture from './ReferralCapture';
 import { useI18n } from '@/lib/i18n-provider';
+import { getAuthCopy } from '@/lib/auth-i18n';
 import { useMesh } from '@/lib/use-mesh';
 import { stripLocale } from '@/lib/routes';
 
@@ -24,6 +26,7 @@ export default function SiteHeader() {
   const { t, lang, eco, href: to } = useI18n();
   const pathname = usePathname();
   const { state } = useMesh(20_000);
+  const auth = getAuthCopy(lang);
 
   const routes = [
     { href: '/', label: t.nav.home },
@@ -88,19 +91,20 @@ export default function SiteHeader() {
           </div>
 
           <LanguageSwitcher />
+          <SoundToggle />
 
           <Link
             href={to('/login')}
             className="hidden rounded-xl px-2.5 py-2 text-[0.78rem] font-medium text-ink-mute transition hover:text-ink lg:inline-flex"
           >
-            {t.nav.openConsole}
+            {auth.signIn}
           </Link>
 
           <Link
             href={to('/register')}
             className="hidden items-center gap-1.5 rounded-xl bg-[linear-gradient(100deg,#d4af37,#fff3b0)] px-4 py-2 text-[0.78rem] font-bold text-[#120d02] ring-1 ring-cyan-300/60 shadow-[0_10px_28px_-12px_rgba(212,175,55,0.8)] transition hover:brightness-110 sm:inline-flex"
           >
-            {eco.nav.startFree}
+            {auth.createAccount}
             <span aria-hidden>→</span>
           </Link>
         </div>
@@ -124,6 +128,18 @@ export default function SiteHeader() {
             {route.label}
           </Link>
         ))}
+        <Link
+          href={to('/login')}
+          className="shrink-0 rounded-lg px-3 py-1.5 text-[0.78rem] font-medium text-ink-mute transition hover:text-ink"
+        >
+          {auth.signIn}
+        </Link>
+        <Link
+          href={to('/register')}
+          className="shrink-0 rounded-lg px-3 py-1.5 text-[0.78rem] font-semibold text-amber transition hover:text-[#f3d06b]"
+        >
+          {auth.createAccount}
+        </Link>
       </nav>
     </header>
   );

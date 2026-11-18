@@ -382,22 +382,55 @@ export interface SessionPayload {
   email: string;
   sv: number;
   iat: number;
+  /**
+   * Which account ledger owns this session. `local` accounts live in the
+   * in-memory store and rotate a session version on every password change;
+   * `supabase` accounts live in Supabase Auth, where the version check does not
+   * apply and the sealed refresh token (`srt`) is the real proof of life.
+   */
+  src?: 'local' | 'supabase';
+  /** AES-256-GCM sealed Supabase refresh token (supabase sessions only). */
+  srt?: string;
 }
 
 function sign(value: string): string {
   return createHmac('sha256', sessionSecret()).update(value).digest('base64url');
 }
 
+function sealSession(payload: SessionPayload): string {
+  const body = Buffer.from(JSON.stringify(payload), 'utf8').toString('base64url');
+  return `${body}.${sign(body)}`;
+}
+
 export function createSessionToken(member: PublicMember): string {
   const account = findMember(member.email);
-  const payload: SessionPayload = {
+  return sealSession({
     uid: member.uid,
     email: member.email,
     sv: account?.sessionVersion ?? 1,
     iat: Date.now(),
-  };
-  const body = Buffer.from(JSON.stringify(payload), 'utf8').toString('base64url');
-  return `${body}.${sign(body)}`;
+    src: 'local',
+  });
+}
+
+/** Strips the UUID prefix so a Supabase member gets a short, stable operator id. */
+export function supabaseMemberUid(supabaseUserId: string): string {
+  return `SB-${supabaseUserId}`;
+}
+
+export function createSupabaseSessionToken(user: {
+  id: string;
+  email?: string | null;
+  refreshToken: string;
+}): string {
+  return sealSession({
+    uid: supabaseMemberUid(user.id),
+    email: user.email?.trim().toLowerCase() ?? '',
+    sv: 0,
+    iat: Date.now(),
+    src: 'supabase',
+    srt: encryptField(user.refreshToken),
+  });
 }
 
 export function readSessionToken(token: string | undefined | null): SessionPayload | null {
@@ -408,10 +441,62 @@ export function readSessionToken(token: string | undefined | null): SessionPaylo
   try {
     const payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8')) as SessionPayload;
     if (!payload.uid || typeof payload.iat !== 'number') return null;
+    // Supabase sessions are refreshed against the identity provider, so their
+    // 7-day cookie is the authority; local sessions additionally check that the
+    // account's session version has not been rotated by a password change.
     if (Date.now() - payload.iat > SESSION_TTL_SECONDS * 1000) return null;
-    const account = findMemberByUid(payload.uid);
-    if (account && account.sessionVersion !== payload.sv) return null;
+    if (payload.src !== 'supabase') {
+      const account = findMemberByUid(payload.uid);
+      if (account && account.sessionVersion !== payload.sv) return null;
+    }
     return payload;
+  } catch {
+    return null;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Short-lived MFA tickets
+ * ------------------------------------------------------------------ */
+
+const MFA_TICKET_TTL_MS = 10 * 60_000;
+
+interface MfaTicket {
+  accessToken: string;
+  refreshToken: string;
+  email: string;
+  exp: number;
+}
+
+/**
+ * A password grant that still owes a second factor cannot set the session
+ * cookie yet. The aal1 tokens are sealed into a ten-minute ticket instead, so
+ * any serverless instance can finish the challenge without shared memory.
+ */
+export function createMfaTicket(input: {
+  accessToken: string;
+  refreshToken: string;
+  email: string;
+}): string {
+  return encryptField(
+    JSON.stringify({
+      accessToken: input.accessToken,
+      refreshToken: input.refreshToken,
+      email: input.email,
+      exp: Date.now() + MFA_TICKET_TTL_MS,
+    } satisfies MfaTicket),
+  );
+}
+
+export function readMfaTicket(ticket: string | undefined | null): MfaTicket | null {
+  if (!ticket) return null;
+  const raw = decryptField(ticket);
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw) as MfaTicket;
+    if (!parsed.accessToken || !parsed.refreshToken || typeof parsed.exp !== 'number') return null;
+    if (Date.now() > parsed.exp) return null;
+    return parsed;
   } catch {
     return null;
   }

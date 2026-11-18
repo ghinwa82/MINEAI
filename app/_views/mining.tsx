@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 
 import MineAICoinLogo from '../components/MineAICoinLogo';
+import MiningReactor from '../components/MiningReactor';
 import PayoutTicker from '../components/PayoutTicker';
 import { useI18n } from '@/lib/i18n-provider';
 import { useUid } from '@/lib/use-uid';
@@ -87,6 +88,12 @@ interface Snapshot {
   shareBoostUntil?: string | null;
   shareBoostMultiplier?: number;
   sharedLinks?: number;
+  /** Active cloud plan and reactor switch. */
+  planId?: string;
+  planName?: string;
+  planHashrateMhs?: number;
+  planMultiplier?: number;
+  miningActive?: boolean;
   constants?: { minWithdraw: number; genesisGrant: number; tokenPriceUsd: number };
 }
 
@@ -162,6 +169,88 @@ const BOOST_COPY: Record<
     cta: 'अभी शेयर करें',
     active: 'बोनस सक्रिय: +15% हैशरेट',
     until: 'तक',
+  },
+};
+
+const SHARE_COPY: Record<
+  string,
+  {
+    label: string;
+    whatsapp: string;
+    telegram: string;
+    x: string;
+    facebook: string;
+    linkedin: string;
+    copy: string;
+    copied: string;
+    note: string;
+  }
+> = {
+  en: {
+    label: 'Share to',
+    whatsapp: 'WhatsApp',
+    telegram: 'Telegram',
+    x: 'X',
+    facebook: 'Facebook',
+    linkedin: 'LinkedIn',
+    copy: 'Copy link',
+    copied: 'Link copied',
+    note: 'Each channel counts as one share. The +15% boost starts on the first share of the day.',
+  },
+  ar: {
+    label: 'شارك على',
+    whatsapp: 'واتساب',
+    telegram: 'تيليجرام',
+    x: 'إكس',
+    facebook: 'فيسبوك',
+    linkedin: 'لينكدإن',
+    copy: 'نسخ الرابط',
+    copied: 'تم نسخ الرابط',
+    note: 'كل قناة تُحسب مشاركة واحدة. يبدأ مضاعف +15% من أول مشاركة في اليوم.',
+  },
+  fr: {
+    label: 'Partager sur',
+    whatsapp: 'WhatsApp',
+    telegram: 'Telegram',
+    x: 'X',
+    facebook: 'Facebook',
+    linkedin: 'LinkedIn',
+    copy: 'Copier le lien',
+    copied: 'Lien copié',
+    note: 'Chaque canal compte pour un partage. Le bonus de +15 % démarre au premier partage du jour.',
+  },
+  es: {
+    label: 'Compartir en',
+    whatsapp: 'WhatsApp',
+    telegram: 'Telegram',
+    x: 'X',
+    facebook: 'Facebook',
+    linkedin: 'LinkedIn',
+    copy: 'Copiar enlace',
+    copied: 'Enlace copiado',
+    note: 'Cada canal cuenta como un uso compartido. El bono de +15% empieza con el primer uso del día.',
+  },
+  zh: {
+    label: '分享到',
+    whatsapp: 'WhatsApp',
+    telegram: 'Telegram',
+    x: 'X',
+    facebook: 'Facebook',
+    linkedin: 'LinkedIn',
+    copy: '复制链接',
+    copied: '链接已复制',
+    note: '每个渠道计为一次分享。+15% 加成从当天第一次分享开始计算。',
+  },
+  hi: {
+    label: 'यहाँ शेयर करें',
+    whatsapp: 'WhatsApp',
+    telegram: 'Telegram',
+    x: 'X',
+    facebook: 'Facebook',
+    linkedin: 'LinkedIn',
+    copy: 'लिंक कॉपी करें',
+    copied: 'लिंक कॉपी हो गया',
+    note: 'हर चैनल एक शेयर माना जाता है। +15% बोनस दिन के पहले शेयर से शुरू होता है।',
   },
 };
 
@@ -545,6 +634,7 @@ export default function MiningView() {
   const [twoFactorCode, setTwoFactorCode] = useState('');
   const [busy, setBusy] = useState<string | null>(null);
   const [toast, setToast] = useState<{ tone: Tone; text: string } | null>(null);
+  const [copiedChannel, setCopiedChannel] = useState<string | null>(null);
 
   const copy = eco.mining;
 
@@ -581,7 +671,7 @@ export default function MiningView() {
   }, [snapshot, allocation]);
 
   const act = useCallback(
-    async (action: 'claim-streak' | 'stake' | 'unstake' | 'withdraw' | 'allocate' | 'share-boost', body: Record<string, unknown>) => {
+    async (action: 'claim-streak' | 'stake' | 'unstake' | 'withdraw' | 'allocate' | 'share-boost' | 'toggle', body: Record<string, unknown>) => {
       if (!uid) return;
       setBusy(action);
       try {
@@ -610,6 +700,8 @@ export default function MiningView() {
           notify('ok', `${copy.withdrawSuccess} ${payload.payout?.wallet ?? ''}`);
         } else if (action === 'allocate') {
           notify('ok', copy.allocationSaved);
+        } else if (action === 'toggle') {
+          notify('info', payload.miningActive ? copy.resumeMining : copy.pauseMining);
         } else {
           notify('info', action === 'stake' ? copy.stake : copy.unstake);
         }
@@ -680,22 +772,55 @@ export default function MiningView() {
 
   const boost = BOOST_COPY[lang] ?? BOOST_COPY.en;
   const telemetry = TELEMETRY_COPY[lang] ?? TELEMETRY_COPY.en;
+  const shareCopy = SHARE_COPY[lang] ?? SHARE_COPY.en;
 
-  const shareBoost = useCallback(async () => {
-    const url = `${window.location.origin}${to('/mining')}?ref=${encodeURIComponent(snapshot?.referralCode ?? '')}`;
-    const text = `${copy.hashrate}: ${snapshot ? number.format(snapshot.hashrateMhs) : '—'} MH/s · MineAI`;
-    try {
-      if (typeof navigator !== 'undefined' && navigator.share) {
-        await navigator.share({ title: 'MineAI', text, url });
-      } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
-        await navigator.clipboard.writeText(`${text}\n${url}`);
+  /**
+   * Share-to-Boost across six channels.
+   *
+   * Every channel opens the network's own composer with the referral link
+   * already attached; the copy fallback is the only one that cannot be
+   * intercepted. The first share of the day arms the +15% window server-side —
+   * the panel only reports it.
+   */
+  const shareTo = useCallback(
+    async (channel: 'whatsapp' | 'telegram' | 'x' | 'facebook' | 'linkedin' | 'copy') => {
+      const url = `${window.location.origin}${to('/mining')}?ref=${encodeURIComponent(snapshot?.referralCode ?? '')}`;
+      const text = `${copy.hashrate}: ${snapshot ? number.format(snapshot.hashrateMhs) : '—'} MH/s · MineAI`;
+      const encodedUrl = encodeURIComponent(url);
+      const encodedText = encodeURIComponent(text);
+
+      try {
+        if (channel === 'copy') {
+          await navigator.clipboard.writeText(`${text}\n${url}`);
+          setCopiedChannel('copy');
+          window.setTimeout(() => setCopiedChannel(null), 2000);
+        } else {
+          const targets: Record<Exclude<typeof channel, 'copy'>, string> = {
+            whatsapp: `https://wa.me/?text=${encodedText}%20${encodedUrl}`,
+            telegram: `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`,
+            x: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
+            facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+            linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+          };
+          window.open(targets[channel], '_blank', 'noopener,noreferrer');
+        }
+      } catch {
+        // A blocked popup or clipboard still counts as a share attempt here; the
+        // server decides whether the boost window opens.
       }
-    } catch {
-      // A dismissed share sheet still counts as a share attempt from our side;
-      // the server is the authority on the boost window.
-    }
-    await act('share-boost', {});
-  }, [act, copy.hashrate, number, snapshot?.hashrateMhs, snapshot?.referralCode, to]);
+      await act('share-boost', {});
+    },
+    [act, copy.hashrate, number, snapshot?.hashrateMhs, snapshot?.referralCode, to],
+  );
+
+  const shareChannels = [
+    { id: 'whatsapp' as const, label: shareCopy.whatsapp },
+    { id: 'telegram' as const, label: shareCopy.telegram },
+    { id: 'x' as const, label: shareCopy.x },
+    { id: 'facebook' as const, label: shareCopy.facebook },
+    { id: 'linkedin' as const, label: shareCopy.linkedin },
+    { id: 'copy' as const, label: copiedChannel === 'copy' ? shareCopy.copied : shareCopy.copy },
+  ];
 
   return (
     <>
@@ -742,29 +867,50 @@ export default function MiningView() {
         </div>
       </section>
 
+      {/* --------------------------------------------------------- Reactor */}
+      <div className="mb-6">
+        <MiningReactor
+          hashrateMhs={snapshot?.hashrateMhs ?? 0}
+          active={snapshot?.miningActive !== false}
+          planName={snapshot?.planName ?? 'Genesis Free Cloud'}
+          busy={busy === 'toggle'}
+          onToggle={() => void act('toggle', { active: snapshot?.miningActive === false })}
+        />
+      </div>
+
       {/* ------------------------------------------------ Share-to-Boost */}
-      <section className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-amber/25 bg-[linear-gradient(120deg,rgba(212,175,55,0.12),rgba(8,13,24,0.95))] px-5 py-4">
-        <div>
-          <p className="text-[0.86rem] font-bold text-amber">{boost.title}</p>
-          <p className="mt-1 max-w-2xl text-[0.74rem] leading-relaxed text-ink-mute">{boost.body}</p>
-          {snapshot?.shareBoostActive ? (
-            <p className="mx-numeric mt-1.5 text-[0.68rem] text-mint">
-              {boost.active}
-              {snapshot.shareBoostUntil ? ` · ${boost.until} ${new Date(snapshot.shareBoostUntil).toLocaleTimeString(
-                lang === 'zh' ? 'zh-CN' : 'en-US',
-                { hour: '2-digit', minute: '2-digit' },
-              )}` : ''}
-            </p>
-          ) : null}
+      <section className="mb-6 rounded-2xl border border-amber/25 bg-[linear-gradient(120deg,rgba(212,175,55,0.12),rgba(8,13,24,0.95))] px-5 py-4">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-[0.86rem] font-bold text-amber">{boost.title}</p>
+            <p className="mt-1 max-w-2xl text-[0.74rem] leading-relaxed text-ink-mute">{boost.body}</p>
+            {snapshot?.shareBoostActive ? (
+              <p className="mx-numeric mt-1.5 text-[0.68rem] text-mint">
+                {boost.active}
+                {snapshot.shareBoostUntil ? ` · ${boost.until} ${new Date(snapshot.shareBoostUntil).toLocaleTimeString(
+                  lang === 'zh' ? 'zh-CN' : 'en-US',
+                  { hour: '2-digit', minute: '2-digit' },
+                )}` : ''}
+              </p>
+            ) : null}
+          </div>
+          <p className="text-[0.62rem] tracking-[0.14em] text-ink-faint uppercase">{shareCopy.label}</p>
         </div>
-        <button
-          type="button"
-          onClick={shareBoost}
-          disabled={busy === 'share-boost' || !snapshot}
-          className="mx-btn !py-2.5 !text-[0.78rem]"
-        >
-          {busy === 'share-boost' ? `${boost.cta}…` : boost.cta}
-        </button>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          {shareChannels.map((channel) => (
+            <button
+              key={channel.id}
+              type="button"
+              onClick={() => void shareTo(channel.id)}
+              disabled={busy === 'share-boost' || !snapshot}
+              className="rounded-lg border border-white/12 bg-white/[0.03] px-3 py-2 text-[0.72rem] font-semibold text-ink-soft transition hover:border-amber/45 hover:text-amber disabled:opacity-50"
+            >
+              {channel.label}
+            </button>
+          ))}
+        </div>
+        <p className="mt-3 text-[0.66rem] leading-relaxed text-ink-faint">{shareCopy.note}</p>
       </section>
 
       {toast ? (

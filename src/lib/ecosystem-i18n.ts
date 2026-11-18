@@ -142,6 +142,8 @@ export interface EcosystemCopy {
     perDay: string;
     allocationSaved: string;
     addressHint: string;
+    pauseMining: string;
+    resumeMining: string;
   };
   markets: {
     eyebrow: string;
@@ -323,6 +325,8 @@ const EN: EcosystemCopy = {
     perDay: 'Emission / day',
     allocationSaved: 'Emission split updated.',
     addressHint: 'Withdrawal address for the selected chain.',
+    pauseMining: 'Mining paused. The reactor keeps your balance where it is.',
+    resumeMining: 'Reactor armed. Your cloud power is streaming again.',
   },
   markets: {
     eyebrow: 'Institutional terminal',
@@ -521,6 +525,8 @@ const AR: EcosystemCopy = {
     perDay: 'الإصدار / يوم',
     allocationSaved: 'تم تحديث تقسيم الإصدار.',
     addressHint: 'عنوان السحب للسلسلة المختارة.',
+    pauseMining: 'توقف التعدين. يحتفظ المفاعل برصيدك كما هو.',
+    resumeMining: 'المفاعل يعمل. عادت قوة السحابة للتدفق.',
   },
   markets: {
     eyebrow: 'محطة مؤسسية',
@@ -720,6 +726,8 @@ const FR: EcosystemCopy = {
     perDay: 'Émission / jour',
     allocationSaved: 'Répartition de l’émission mise à jour.',
     addressHint: 'Adresse de retrait pour la chaîne sélectionnée.',
+    pauseMining: 'Minage en pause. Le réacteur conserve votre solde tel quel.',
+    resumeMining: 'Réacteur armé. Votre puissance cloud circule de nouveau.',
   },
   markets: {
     eyebrow: 'Terminal institutionnel',
@@ -919,6 +927,8 @@ const ES: EcosystemCopy = {
     perDay: 'Emisión / día',
     allocationSaved: 'Reparto de emisión actualizado.',
     addressHint: 'Dirección de retiro para la cadena seleccionada.',
+    pauseMining: 'Minería en pausa. El reactor conserva tu saldo tal como está.',
+    resumeMining: 'Reactor armado. Tu potencia en la nube vuelve a fluir.',
   },
   markets: {
     eyebrow: 'Terminal institucional',
@@ -1117,6 +1127,8 @@ const ZH: EcosystemCopy = {
     perDay: '每日发行',
     allocationSaved: '发行分配已更新。',
     addressHint: '所选链的提现地址。',
+    pauseMining: '挖矿已暂停，反应堆会原样保留你的余额。',
+    resumeMining: '反应堆已启动，云算力重新流动。',
   },
   markets: {
     eyebrow: '机构级终端',
@@ -1315,6 +1327,8 @@ const HI: EcosystemCopy = {
     perDay: 'उत्सर्जन / दिन',
     allocationSaved: 'उत्सर्जन विभाजन अद्यतन हुआ।',
     addressHint: 'चयनित चेन के लिए निकासी पता।',
+    pauseMining: 'माइनिंग रुकी है। रिएक्टर आपका बैलेंस जैसा है वैसा ही रखता है।',
+    resumeMining: 'रिएक्टर चालू है। आपकी क्लाउड पावर फिर बह रही है।',
   },
   markets: {
     eyebrow: 'संस्थागत टर्मिनल',

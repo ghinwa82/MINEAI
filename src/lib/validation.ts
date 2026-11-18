@@ -82,6 +82,7 @@ export const miningActionSchema = z.discriminatedUnion('action', [
   }),
   z.object({ action: z.literal('apply-referral'), uid: uidSchema, code: z.string().trim().min(4).max(24) }),
   z.object({ action: z.literal('share-boost'), uid: uidSchema }),
+  z.object({ action: z.literal('toggle'), uid: uidSchema, active: z.boolean() }),
 ]);
 
 export const twoFactorSchema = z.discriminatedUnion('action', [

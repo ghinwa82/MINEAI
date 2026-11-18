@@ -183,6 +183,21 @@ const BASE_HASHRATE = 320;
 const GENESIS_GRANT = 250;
 const MAX_STREAK_MULTIPLIER = 1.7;
 const ACCRUAL_DECIMALS = 12;
+
+/**
+ * The free plan every operator starts on.
+ *
+ * It matches `MINING_PLANS[0]` in `src/lib/plans.ts`. Keeping the default here
+ * means a mining position is fully valid before the checkout route ever runs —
+ * a brand-new visitor still sees a live reactor instead of an empty state.
+ */
+export const GENESIS_PLAN = {
+  id: 'genesis-free-cloud',
+  name: 'Genesis Free Cloud',
+  hashrateMhs: 120,
+  multiplier: 1,
+} as const;
+
 /** Share-to-Boost: +15% hashrate for 24 hours after a share. */
 export const SHARE_BOOST_MULTIPLIER = 1.15;
 export const SHARE_BOOST_MS = 24 * 60 * 60 * 1000;
@@ -221,6 +236,13 @@ export interface MiningPosition {
   shareBoostUntil: string | null;
   /** How many boost links this operator has shared. */
   sharedLinks: number;
+  /** Cloud plan currently provisioned on this operator. */
+  planId: string;
+  planName: string;
+  planHashrateMhs: number;
+  planMultiplier: number;
+  /** The reactor switch. Paused positions accrue nothing. */
+  miningActive: boolean;
 }
 
 export interface PayoutRecord {
@@ -258,6 +280,12 @@ export interface MiningSnapshot {
   uid: string;
   referralCode: string;
   hashrateMhs: number;
+  /** Active plan and reactor state. */
+  planId: string;
+  planName: string;
+  planHashrateMhs: number;
+  planMultiplier: number;
+  miningActive: boolean;
   minedTokens: number;
   lifetimeMinedTokens: number;
   stakedTokens: number;
@@ -412,6 +440,11 @@ export function getPosition(uid: string): MiningPosition {
     network: null,
     shareBoostUntil: null,
     sharedLinks: 0,
+    planId: GENESIS_PLAN.id,
+    planName: GENESIS_PLAN.name,
+    planHashrateMhs: GENESIS_PLAN.hashrateMhs,
+    planMultiplier: GENESIS_PLAN.multiplier,
+    miningActive: true,
   };
   current.positions.set(uid, position);
   return position;
@@ -422,7 +455,8 @@ export function shareBoostActive(position: MiningPosition): boolean {
 }
 
 export function hashrateFor(position: MiningPosition): number {
-  const base = Math.min(2_400, BASE_HASHRATE + position.stakedTokens * 0.05);
+  const plan = Number.isFinite(position.planHashrateMhs) ? position.planHashrateMhs : GENESIS_PLAN.hashrateMhs;
+  const base = Math.min(60_000, BASE_HASHRATE + plan + position.stakedTokens * 0.05);
   return shareBoostActive(position) ? base * SHARE_BOOST_MULTIPLIER : base;
 }
 
@@ -447,6 +481,37 @@ export function unlockShareBoost(uid: string): {
   position.sharedLinks += 1;
   store().positions.set(uid, position);
   return { ok: true, position, until, multiplier: SHARE_BOOST_MULTIPLIER };
+}
+
+/**
+ * Provisions a paid (or free) cloud plan.
+ *
+ * The current position is settled first, so the switch cannot be used to
+ * retroactively accrue the higher hashrate over time already elapsed. Activation
+ * also arms the reactor, which is what the checkout's success step promises.
+ */
+export function activatePlan(
+  uid: string,
+  plan: { id: string; name: string; hashrateMhs: number; multiplier: number },
+): MiningPosition {
+  const position = accrue(uid);
+  position.planId = plan.id;
+  position.planName = plan.name;
+  position.planHashrateMhs = Math.max(0, Math.min(60_000, plan.hashrateMhs));
+  position.planMultiplier = Math.max(1, Math.min(10, plan.multiplier));
+  position.miningActive = true;
+  position.lastAccrualAt = new Date().toISOString();
+  store().positions.set(uid, position);
+  return position;
+}
+
+/** The reactor switch. Pausing stops emission; resuming starts from now. */
+export function setMiningActive(uid: string, active: boolean): MiningPosition {
+  const position = accrue(uid);
+  position.miningActive = active;
+  position.lastAccrualAt = new Date().toISOString();
+  store().positions.set(uid, position);
+  return position;
 }
 
 export function vipTierFor(stakedTokens: number): VipDefinition {
@@ -499,6 +564,16 @@ export function accrue(uid: string): MiningPosition {
   const position = getPosition(uid);
   const now = Date.now();
   const last = new Date(position.lastAccrualAt).getTime();
+
+  // A paused reactor earns nothing, and time spent paused is not banked: the
+  // cursor moves forward even though no emission is added.
+  if (position.miningActive === false) {
+    position.lastAccrualAt = new Date(now).toISOString();
+    current.lastAccrualAt = position.lastAccrualAt;
+    current.positions.set(uid, position);
+    return position;
+  }
+
   const elapsedSeconds = Math.max(0, Math.min(86_400, (now - last) / 1000));
 
   if (elapsedSeconds > 0.5) {
@@ -827,6 +902,11 @@ function serialisePosition(position: MiningPosition): Record<string, unknown> {
     coins: position.coins,
     allocations: position.allocations,
     last_accrual_at: position.lastAccrualAt,
+    plan_id: position.planId,
+    plan_name: position.planName,
+    plan_hashrate_mhs: position.planHashrateMhs,
+    plan_multiplier: position.planMultiplier,
+    mining_active: position.miningActive,
     updated_at: new Date().toISOString(),
   };
 }
@@ -875,7 +955,7 @@ export async function hydratePosition(uid: string): Promise<boolean> {
   if (!fresh) return false;
 
   const rows = await readTable('mining_positions', {
-    query: `operator_ref=eq.${encodeURIComponent(uid)}&select=coins,allocations,staked_tokens,streak_days,last_claim_at,last_accrual_at`,
+    query: `operator_ref=eq.${encodeURIComponent(uid)}&select=coins,allocations,staked_tokens,streak_days,last_claim_at,last_accrual_at,plan_id,plan_name,plan_hashrate_mhs,plan_multiplier,mining_active`,
     limit: 1,
   });
   const row = rows[0];
@@ -912,6 +992,17 @@ export async function hydratePosition(uid: string): Promise<boolean> {
   if (typeof lastAccrual === 'string' && !Number.isNaN(Date.parse(lastAccrual))) {
     position.lastAccrualAt = lastAccrual;
   }
+
+  // Older rows predate plans; absent columns keep the genesis defaults.
+  if (typeof row.plan_id === 'string' && row.plan_id) position.planId = row.plan_id;
+  if (typeof row.plan_name === 'string' && row.plan_name) position.planName = row.plan_name;
+  if (row.plan_hashrate_mhs !== undefined && row.plan_hashrate_mhs !== null) {
+    position.planHashrateMhs = Math.max(0, Math.min(60_000, num(row.plan_hashrate_mhs, GENESIS_PLAN.hashrateMhs)));
+  }
+  if (row.plan_multiplier !== undefined && row.plan_multiplier !== null) {
+    position.planMultiplier = Math.max(1, Math.min(10, num(row.plan_multiplier, 1)));
+  }
+  if (typeof row.mining_active === 'boolean') position.miningActive = row.mining_active;
 
   syncMineaiMirror(position);
   return true;
@@ -967,6 +1058,11 @@ export function snapshotFor(uid: string, lang: SupportedLanguage): MiningSnapsho
     uid: position.uid,
     referralCode: position.referralCode,
     hashrateMhs: Number(hashrate.toFixed(2)),
+    planId: position.planId,
+    planName: position.planName,
+    planHashrateMhs: position.planHashrateMhs,
+    planMultiplier: position.planMultiplier,
+    miningActive: position.miningActive !== false,
     minedTokens: round(position.coins.mineai.amount, 6),
     lifetimeMinedTokens: round(position.coins.mineai.lifetime, 6),
     stakedTokens: round(position.stakedTokens, 6),

@@ -61,6 +61,15 @@ export interface AuthCopy {
   openReset: string;
   secureNote: string;
   lockoutNote: string;
+  orContinue: string;
+  socialUnavailable: string;
+  otpLogin: string;
+  otpSent: string;
+  mfaTitle: string;
+  mfaLead: string;
+  scanQr: string;
+  manualKey: string;
+  codeEmailed: string;
 }
 
 export const AUTH_COPY: Record<SupportedLanguage, AuthCopy> = {
@@ -122,6 +131,15 @@ export const AUTH_COPY: Record<SupportedLanguage, AuthCopy> = {
     openReset: 'Open reset page',
     secureNote: 'Your password is stored as a one-way hash. We never see it.',
     lockoutNote: 'After 5 wrong tries the account pauses for 15 minutes.',
+    orContinue: 'Or continue with',
+    socialUnavailable: 'Social sign-in is not switched on yet. Use email below.',
+    otpLogin: 'Email me a sign-in code',
+    otpSent: 'Check your inbox — a 6-digit code is on its way. It can take a minute.',
+    mfaTitle: 'Two-step verification',
+    mfaLead: 'Enter the 6-digit code from your authenticator app to finish signing in.',
+    scanQr: 'Scan with Google Authenticator, 1Password or Authy.',
+    manualKey: 'Or enter this key manually',
+    codeEmailed: 'A fresh code was sent to your inbox.',
   },
   ar: {
     registerTitle: 'أنشئ حسابك المجاني',
@@ -181,6 +199,15 @@ export const AUTH_COPY: Record<SupportedLanguage, AuthCopy> = {
     openReset: 'افتح صفحة إعادة التعيين',
     secureNote: 'كلمة المرور تُحفظ كتجزئة أحادية الاتجاه. نحن لا نراها.',
     lockoutNote: 'بعد 5 محاولات خاطئة يتوقف الحساب لمدة 15 دقيقة.',
+    orContinue: 'أو تابع باستخدام',
+    socialUnavailable: 'تسجيل الدخول الاجتماعي غير مفعّل بعد. استخدم البريد أدناه.',
+    otpLogin: 'أرسل لي رمز دخول بالبريد',
+    otpSent: 'تحقّق من بريدك — رمز من 6 أرقام في الطريق. قد يستغرق دقيقة.',
+    mfaTitle: 'التحقق بخطوتين',
+    mfaLead: 'أدخل الرمز المكوّن من 6 أرقام من تطبيق المصادقة لإتمام الدخول.',
+    scanQr: 'امسح الرمز بتطبيق Google Authenticator أو 1Password أو Authy.',
+    manualKey: 'أو أدخل هذا المفتاح يدويًا',
+    codeEmailed: 'أُرسل رمز جديد إلى بريدك.',
   },
   fr: {
     registerTitle: 'Créez votre compte gratuit',
@@ -240,6 +267,15 @@ export const AUTH_COPY: Record<SupportedLanguage, AuthCopy> = {
     openReset: 'Ouvrir la page de réinitialisation',
     secureNote: 'Votre mot de passe est stocké sous forme de hachage à sens unique. Nous ne le voyons jamais.',
     lockoutNote: 'Après 5 essais incorrects, le compte se met en pause 15 minutes.',
+    orContinue: 'Ou continuer avec',
+    socialUnavailable: 'La connexion sociale n’est pas encore activée. Utilisez l’e-mail ci-dessous.',
+    otpLogin: 'Recevoir un code de connexion par e-mail',
+    otpSent: 'Vérifiez votre boîte : un code à 6 chiffres arrive. Cela peut prendre une minute.',
+    mfaTitle: 'Vérification en deux étapes',
+    mfaLead: 'Saisissez le code à 6 chiffres de votre application d’authentification pour terminer la connexion.',
+    scanQr: 'Scannez avec Google Authenticator, 1Password ou Authy.',
+    manualKey: 'Ou saisissez cette clé manuellement',
+    codeEmailed: 'Un nouveau code a été envoyé à votre boîte.',
   },
   es: {
     registerTitle: 'Crea tu cuenta gratis',
@@ -299,6 +335,15 @@ export const AUTH_COPY: Record<SupportedLanguage, AuthCopy> = {
     openReset: 'Abrir página de restablecimiento',
     secureNote: 'Tu contraseña se guarda como un hash de un solo sentido. Nunca la vemos.',
     lockoutNote: 'Después de 5 intentos fallidos la cuenta se pausa 15 minutos.',
+    orContinue: 'O continúa con',
+    socialUnavailable: 'El inicio de sesión social aún no está activo. Usa el correo de abajo.',
+    otpLogin: 'Enviarme un código por correo',
+    otpSent: 'Revisa tu bandeja: un código de 6 dígitos va en camino. Puede tardar un minuto.',
+    mfaTitle: 'Verificación en dos pasos',
+    mfaLead: 'Introduce el código de 6 dígitos de tu app de autenticación para terminar de entrar.',
+    scanQr: 'Escanea con Google Authenticator, 1Password o Authy.',
+    manualKey: 'O escribe esta clave manualmente',
+    codeEmailed: 'Se envió un código nuevo a tu bandeja.',
   },
   zh: {
     registerTitle: '创建免费账户',
@@ -358,6 +403,15 @@ export const AUTH_COPY: Record<SupportedLanguage, AuthCopy> = {
     openReset: '打开重置页面',
     secureNote: '密码以单向哈希保存，我们永远看不到您的密码。',
     lockoutNote: '连续 5 次输错后，账户会暂停 15 分钟。',
+    orContinue: '或使用以下方式继续',
+    socialUnavailable: '社交登录尚未启用，请使用下方邮箱登录。',
+    otpLogin: '通过邮箱发送登录验证码',
+    otpSent: '请查收邮箱——6 位验证码正在发送，可能需要一分钟。',
+    mfaTitle: '两步验证',
+    mfaLead: '输入身份验证器应用中的 6 位验证码以完成登录。',
+    scanQr: '用 Google Authenticator、1Password 或 Authy 扫描。',
+    manualKey: '或手动输入此密钥',
+    codeEmailed: '新验证码已发送到你的邮箱。',
   },
   hi: {
     registerTitle: 'अपना मुफ़्त खाता बनाएँ',
@@ -417,6 +471,15 @@ export const AUTH_COPY: Record<SupportedLanguage, AuthCopy> = {
     openReset: 'रीसेट पेज खोलें',
     secureNote: 'आपका पासवर्ड एक-तरफ़ा हैश के रूप में रखा जाता है। हम इसे कभी नहीं देखते।',
     lockoutNote: '5 गलत कोशिशों के बाद खाता 15 मिनट के लिए रुक जाता है।',
+    orContinue: 'या इसके साथ जारी रखें',
+    socialUnavailable: 'सोशल साइन-इन अभी चालू नहीं है। नीचे ईमेल का उपयोग करें।',
+    otpLogin: 'मुझे ईमेल पर साइन-इन कोड भेजें',
+    otpSent: 'अपना इनबॉक्स देखें — 6 अंकों का कोड आ रहा है। एक मिनट लग सकता है।',
+    mfaTitle: 'दो-चरण सत्यापन',
+    mfaLead: 'साइन इन पूरा करने के लिए ऑथेंटिकेटर ऐप से 6 अंकों का कोड डालें।',
+    scanQr: 'Google Authenticator, 1Password या Authy से स्कैन करें।',
+    manualKey: 'या यह कुंजी मैन्युअल रूप से डालें',
+    codeEmailed: 'आपके इनबॉक्स पर नया कोड भेजा गया।',
   },
 };
 

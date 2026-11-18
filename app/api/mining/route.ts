@@ -13,6 +13,7 @@ import {
   isValidUid,
   persistPosition,
   requestCoinWithdrawal,
+  setMiningActive,
   snapshotFor,
   stake,
   unlockShareBoost,
@@ -168,6 +169,21 @@ export async function POST(request: Request) {
         },
       });
       return NextResponse.json({ ok: true, payout: result.payout, ...snapshotFor(input.uid, 'en') });
+    }
+
+    if (input.action === 'toggle') {
+      const position = setMiningActive(input.uid, input.active);
+      await persistPosition(input.uid);
+      pushAgentLog({
+        agentName: 'TelemetryAuditor',
+        action: `${input.active ? 'Reactor armed' : 'Reactor paused'} for ${position.planName}.`,
+        status: 'success',
+        details: { uid: input.uid, active: input.active, plan: position.planId },
+      });
+      return NextResponse.json({
+        ok: true,
+        ...snapshotFor(input.uid, 'en'),
+      });
     }
 
     if (input.action === 'share-boost') {

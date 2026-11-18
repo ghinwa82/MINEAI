@@ -83,7 +83,14 @@ alter table public.mining_positions
   add column if not exists coins jsonb not null default '{}'::jsonb,
   add column if not exists allocations jsonb not null default '{}'::jsonb,
   add column if not exists last_accrual_at timestamptz,
-  add column if not exists vip_tier text not null default 'observer';
+  add column if not exists vip_tier text not null default 'observer',
+  -- The provisioned plan and the reactor switch. A paused position has
+  -- `mining_active = false` and accrues nothing until it is armed again.
+  add column if not exists plan_id text,
+  add column if not exists plan_name text,
+  add column if not exists plan_hashrate_mhs numeric(18, 4) not null default 120,
+  add column if not exists plan_multiplier numeric(6, 3) not null default 1,
+  add column if not exists mining_active boolean not null default true;
 
 drop trigger if exists mining_positions_touch on public.mining_positions;
 create trigger mining_positions_touch
@@ -175,6 +182,32 @@ create table if not exists public.two_factor_secrets (
 drop trigger if exists two_factor_secrets_touch on public.two_factor_secrets;
 create trigger two_factor_secrets_touch
   before update on public.two_factor_secrets
+  for each row execute function public.set_updated_at();
+
+-- The security module owns `totp_secrets` under that exact name. It is the same
+-- vault as `two_factor_secrets`, kept beside it so a server that reads either
+-- name finds a row: the sealed secret, the recovery hashes and a confirmation
+-- timestamp. Only the non-secret columns are ever grantable to a client.
+create table if not exists public.totp_secrets (
+  id                uuid primary key default gen_random_uuid(),
+  owner_id          uuid references auth.users (id) on delete cascade,
+  operator_ref      text not null unique,
+  secret_ciphertext text not null,
+  recovery_hashes   text[] not null default '{}',
+  enabled           boolean not null default false,
+  confirmed_at      timestamptz,
+  last_used_at      timestamptz,
+  created_at        timestamptz not null default now(),
+  updated_at        timestamptz not null default now(),
+  constraint totp_secrets_operator_ref_format
+    check (operator_ref ~ '^[A-Za-z0-9_-]{8,48}$')
+);
+
+create index if not exists totp_secrets_owner_idx on public.totp_secrets (owner_id);
+
+drop trigger if exists totp_secrets_touch on public.totp_secrets;
+create trigger totp_secrets_touch
+  before update on public.totp_secrets
   for each row execute function public.set_updated_at();
 
 -- -------------------------------------------------------------- audit log ---
@@ -295,6 +328,7 @@ alter table public.deposits            enable row level security;
 alter table public.withdrawals         enable row level security;
 alter table public.referral_edges      enable row level security;
 alter table public.two_factor_secrets  enable row level security;
+alter table public.totp_secrets        enable row level security;
 alter table public.audit_log           enable row level security;
 
 -- profiles: an operator reads and edits only their own row.
@@ -391,6 +425,10 @@ grant insert, update on public.profiles to authenticated;
 
 comment on table public.two_factor_secrets is
   'TOTP secrets sealed with AES-256-GCM. Service-role access only; no RLS policy grants client reads.';
+comment on table public.totp_secrets is
+  'The same sealed TOTP vault under the name the security module uses. Clients may read only the enabled flag and timestamps, never secret_ciphertext or recovery_hashes.';
+comment on column public.totp_secrets.secret_ciphertext is
+  'AES-256-GCM ciphertext (iv.tag.payload, base64url). Decryption requires ENCRYPTION_KEY and happens only in a node-runtime server function.';
 comment on table public.audit_log is
   'Append-only record of money movement and security events. Service-role access only.';
 
@@ -607,6 +645,35 @@ alter default privileges in schema public
 
 revoke all on public.two_factor_secrets from anon, authenticated;
 revoke all on public.audit_log from anon, authenticated;
+
+-- `totp_secrets` gets an explicit, column-scoped grant instead of the blanket
+-- one above: an owner may see whether two-factor is on, never the ciphertext or
+-- the recovery hashes. RLS then narrows those rows to the caller.
+revoke all on public.totp_secrets from anon, authenticated;
+grant select (id, owner_id, operator_ref, enabled, confirmed_at, last_used_at, created_at, updated_at)
+  on public.totp_secrets to authenticated;
+grant select, insert, update, delete on public.totp_secrets to service_role;
+
+drop policy if exists totp_secrets_select_own on public.totp_secrets;
+create policy totp_secrets_select_own on public.totp_secrets
+  for select to authenticated
+  using (owner_id = auth.uid());
+
+drop policy if exists totp_secrets_insert_own on public.totp_secrets;
+create policy totp_secrets_insert_own on public.totp_secrets
+  for insert to authenticated
+  with check (owner_id = auth.uid());
+
+drop policy if exists totp_secrets_update_own on public.totp_secrets;
+create policy totp_secrets_update_own on public.totp_secrets
+  for update to authenticated
+  using (owner_id = auth.uid())
+  with check (owner_id = auth.uid());
+
+drop policy if exists totp_secrets_delete_own on public.totp_secrets;
+create policy totp_secrets_delete_own on public.totp_secrets
+  for delete to authenticated
+  using (owner_id = auth.uid());
 
 comment on table public.mining_nodes is
   'Cloud node registry rendered by the mining terminal. Public read; service-role write.';
