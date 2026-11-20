@@ -32,7 +32,7 @@ export default function SiteFooter() {
   ];
 
   return (
-    <footer className="relative mt-24 border-t border-white/8 bg-[#04060d]/80">
+    <footer className="relative mt-24 border-t border-white/8 bg-[#050507]/80">
       <div className="mx-auto w-full max-w-[84rem] px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.4fr_0.8fr_0.8fr_1fr]">
           <div className="max-w-md">
@@ -98,7 +98,7 @@ export default function SiteFooter() {
                     aria-current={code === lang ? 'true' : undefined}
                     className={`w-full rounded-lg border px-3 py-1.5 text-start text-[0.78rem] transition ${
                       code === lang
-                        ? 'border-cyan-400/45 bg-cyan-400/10 text-cyan'
+                        ? 'border-gold/45 bg-gold/10 text-cyan'
                         : 'border-white/8 text-ink-mute hover:border-white/20 hover:text-ink'
                     }`}
                     dir={LANGUAGES[code].dir}

@@ -44,7 +44,7 @@ export default function SupportView() {
 
         <ul className="mt-5 grid gap-3 sm:grid-cols-3">
           {CHANNELS.map((channel) => (
-            <li key={channel.email} className="rounded-xl border border-white/8 bg-[#04060d]/70 p-4">
+            <li key={channel.email} className="rounded-xl border border-white/8 bg-[#050507]/70 p-4">
               <p className="text-[0.6rem] tracking-[0.14em] text-ink-faint uppercase">
                 {copy.page[channel.key]}
               </p>
@@ -65,7 +65,7 @@ export default function SupportView() {
           {Object.values(copy.topics).map((topic) => (
             <li
               key={topic}
-              className="rounded-lg border border-white/8 bg-[#04060d]/70 px-3.5 py-2.5 text-[0.76rem] text-ink-soft"
+              className="rounded-lg border border-white/8 bg-[#050507]/70 px-3.5 py-2.5 text-[0.76rem] text-ink-soft"
             >
               {topic}
             </li>

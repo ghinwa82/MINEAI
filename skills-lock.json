@@ -1,0 +1,596 @@
+{
+  "version": 2,
+  "skills": {
+    "academy-guide": {
+      "source": "anthropics/skills",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+      "sourceType": "github",
+      "skillPath": "skills/academy-guide/SKILL.md",
+      "computedHash": "cc7e2ace6f4953fc564189865fb5529ba557a322826bbc73f3599d6441ce741f"
+    },
+    "algorithmic-art": {
+      "source": "anthropics/skills",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+      "sourceType": "github",
+      "skillPath": "skills/algorithmic-art/SKILL.md",
+      "computedHash": "4a85abfeaa09f2dd2c4b76c85d57b65f61dc10d55c3cca245989cee8897c2be5"
+    },
+    "brand-guidelines": {
+      "source": "anthropics/skills",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+      "sourceType": "github",
+      "skillPath": "skills/brand-guidelines/SKILL.md",
+      "computedHash": "10067cdd9be9cd5d97c741fc6e25830135afa0e11cc71e567b75763e26d08799"
+    },
+    "canvas-design": {
+      "source": "anthropics/skills",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+      "sourceType": "github",
+      "skillPath": "skills/canvas-design/SKILL.md",
+      "computedHash": "1866477474e694f562261008bb6a817e53f027b6347b062fbd1e2ee2eb83f20d"
+    },
+    "claude-api": {
+      "source": "anthropics/skills",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+      "sourceType": "github",
+      "skillPath": "skills/claude-api/SKILL.md",
+      "computedHash": "c567eeb8da5332098cb747d97f1a1f482c401a80e089ee069e673744575191bf"
+    },
+    "cli-anything": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "1d97f589137cc6f8247451f13415fe84a10f94b1756f14871e4268c33cbd7abe"
+    },
+    "cli-anything-adguardhome": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "d22caf6508e24155fb7ce1714f731d38a91dcb0d4fe7db2280a575a10861580d"
+    },
+    "cli-anything-anygen": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "dfe86f81e2ce404a7a7ff656fbeb0801c55b2aa4ef40960e7fba8c1963ed2366"
+    },
+    "cli-anything-audacity": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "9598079f72a9fb0330152e79f1d6534c0f060f8d0395c3f2356b3311af984a04"
+    },
+    "cli-anything-blender": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "526dec1e61da472da08259e74be0d4387d679ce43dcd8a19560c091075e6545c"
+    },
+    "cli-anything-browser": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "9778b64cdc1619fddb4eda01015153c332ae982dbd1a8e574617095748af6e06"
+    },
+    "cli-anything-calibre": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "f4f15e46bd17b2bc6be3c8f9f9b2556acd121193dc31d15681691614eb29e38a"
+    },
+    "cli-anything-ccswitch": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "04150af06b605a04a69874ed8d3a723efac19f46db1226ff4058964088e063e6"
+    },
+    "cli-anything-chromadb": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "53437566b0551e4aaef02299e04354b398def9a38e070b08740a74b9a66b46ea"
+    },
+    "cli-anything-cloudanalyzer": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "1b47d082884c64c9eafed0360df51b4e86fcffd3362842adf97f4a073ee38470"
+    },
+    "cli-anything-cloudcompare": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "1c53fbecb8e2075340a1f033de3e4b574bf1d422235afbea01868f745b1a9309"
+    },
+    "cli-anything-comfyui": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "a13047d9e2a28336dd6c9bba38a66d227d80ef8ee09bd7cd23fa205ce72bb5b3"
+    },
+    "cli-anything-dify-workflow": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "4f6e36c279bb105700378c620b033b8c46c4734d8d2fabf077fa8443db47397f"
+    },
+    "cli-anything-drawio": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "c2f7e41cddc4dec46e543033a56cbbaa8ab24969002d9b4d014e821cb2058c11"
+    },
+    "cli-anything-eez-studio": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "3af67931279fc5eee76b39d924862f82d068fac2bc92ab59c31ee2a8dca111b6"
+    },
+    "cli-anything-eth2-quickstart": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "88661e8faa8e0cf06f57894412da72419c559e02f466d512edb3f43de9f7e6f2"
+    },
+    "cli-anything-exa": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "5431efc2ab5db8f848141d7c5ac0790890f40f1693d8fa0765f54f4c41f87fa8"
+    },
+    "cli-anything-firefly-iii": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "12fb3fdd72657b6ab74c236948c48d1a73499b3cf83f448f60e0dad11e6321f8"
+    },
+    "cli-anything-freecad": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "a6965a80679e56a74626deb6b5da916b28d9a7f822c4ecaaf2c08cf2ed5356f3"
+    },
+    "cli-anything-gimp": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "f4d3dbd40f02b84da943c51a1118820a676ee78a52e0291bc9e6e2c9581458b8"
+    },
+    "cli-anything-godot": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "7cf32fb16d8e783f7b3475bfa42345cede57bac150d6311e437866abd1ee1800"
+    },
+    "cli-anything-hermes": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "7aaf490fb51afa096a342c17f12faebf5e7b1133a5c4e2f3acc7158b3019de25"
+    },
+    "cli-anything-inkscape": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "0ed2596fc7178ba826d9f15b57f9ced1ff342a818f0299bbf42aa6c89d6c9ba1"
+    },
+    "cli-anything-intelwatch": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "a72dc6fa80102285a2a3b332f782bbd03fe4d187ae71aff14258993ded71325c"
+    },
+    "cli-anything-iterm2": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "950435f5292984cc761a2364bc23f2e2c0aa355a419e4c55cc342d1bc826f959"
+    },
+    "cli-anything-iterm2-ctl": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "ddaab24a5af6e80dec74916d0a2f5e4b1f73fb7185d9ddb72d90e509a04b2cde"
+    },
+    "cli-anything-joplin": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "e16004a01f89d8da20704edebff28cb4d1aac9f4c32aad595f518a9e60d4169a"
+    },
+    "cli-anything-jumpserver": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "700517bebda14a3f1de684984b946e961f9d41be0e8c268277c7afa33e94581f"
+    },
+    "cli-anything-kdenlive": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "4a565c5b8ee9144f83de23e516a4937ed3d23a79c6e865be982c1b44b36c21e2"
+    },
+    "cli-anything-krita": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "6861c82a1ccb15bc29ccd6b7f255ea9ab1286a05a3bf70e20408949001b87d01"
+    },
+    "cli-anything-libreoffice": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "94fbdab1cf82eaaaa4a748bdf98c727739c0f99bb1df28ad10499893caef7312"
+    },
+    "cli-anything-live2d": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "72472e1fd2525aa900f040888ed93a23c3e3aaf9e1ac97a255a342dd48b2f405"
+    },
+    "cli-anything-lldb": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "3104a793add758ce763093148193db72ee36323ddce3828dfa61db581369ded4"
+    },
+    "cli-anything-macrocli": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "3c8e6e3d5b77d1ff4279232893c8af69138fb2eefe5ba25d06b4dc431cdfb339"
+    },
+    "cli-anything-mailchimp": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "999322e1808aceb991a5112113d92f8cc71b859a88a41284909db413c02fe39f"
+    },
+    "cli-anything-mermaid": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "74808c2088858b38707591ea81a81ad243d8546d51699c6d5c5ec13126a86057"
+    },
+    "cli-anything-minimax": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "48f474f28dd2abf2a3e793579c7ebf01abcb01474e7ea71cc94e8e63f7ea467a"
+    },
+    "cli-anything-mubu": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "57dffb6e26500193231ea9f35f9c6cd6c4c37a8fa0a1a64c18ca7e245a0a6dad"
+    },
+    "cli-anything-musescore": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "698049abc85ef6fffb557dc29deb186811f7d87a9e63baa2ca67d5ffa66ef766"
+    },
+    "cli-anything-n8n": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "a0204e5579f3cc9952010c49cace73f953c367780a6f78bf37796e51ef8c414c"
+    },
+    "cli-anything-notebooklm": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "323be5ecf647ef27b4888d6b4fd866e615e423f79a67b900bfea77e5423b353e"
+    },
+    "cli-anything-novita": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "918be7a91729151cad4ce85b46a99ccce1d786e792405a816ad4fe1ae92a5267"
+    },
+    "cli-anything-nsight-graphics": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "4b0390ac18c4f180caa9b7d2dc2ac2c62530dfaf19116e83e646837bdce7f800"
+    },
+    "cli-anything-nslogger": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "b9cbddae20723b50ca6019a3d1b17944852f31c7dc510ce7becdfdf41ad9d78b"
+    },
+    "cli-anything-obs-studio": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "4a7e4b60cbfff0190a21f65510a4ed1b4eda8085dd6a139267adf0036dfa997e"
+    },
+    "cli-anything-obsidian": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "3419eae32b3613ec7cd502088c1ffacc2b06f65322bc8aab0a4f7d0df4058bdd"
+    },
+    "cli-anything-ollama": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "7fc3851a099c8726556d6b532a7ff2f28b802fde26a1c2d334c99061024d12bf"
+    },
+    "cli-anything-openrefine": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "b5b94abf38f06e48d564e4d5f2445b000768134ad8aebb9f11f97df60a912dd7"
+    },
+    "cli-anything-openscreen": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "e2dd2923db985c7621d07da0fb38ae9391844262ea4f1b8694869d49ea72c0b8"
+    },
+    "cli-anything-pm2": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "a351033e120cca6ed64931d5e1cd1b39bffa1149561c4bdfb34b7e52bc25de6b"
+    },
+    "cli-anything-qgis": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "8b3c1bd5b9f1620d06b05ed88d745507b3c85edcef9537d0e6faabe6dc2de618"
+    },
+    "cli-anything-quietshrink": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "52b11e54a34338da071783e2ffcc664671dd2b8eebc3d6672ae55ee24b35c303"
+    },
+    "cli-anything-rekordbox": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "73e1df0ca99222636db1052f89b43cf778a3dc3152f86a62e4f628413459b96b"
+    },
+    "cli-anything-renderdoc": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "b556aed5a1d4f7e8c87627261513c7af2e3f0caa4d1ed43cf088a35b9549f6ba"
+    },
+    "cli-anything-rms": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "07b655729ebbfc45af0bf50f20aa5b3d6a57c8d24525d6cc6096cc8dba3a567e"
+    },
+    "cli-anything-safari": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "94bfb2f1d28a130a6087ea7816fe8aca1cca4be9ac873ddaa2b9ac993ff0b7f2"
+    },
+    "cli-anything-sbox": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "6553fcd8eaf48f543ea70567b694969c04b5f3fe32b52e3443ff7c6a4f895a3f"
+    },
+    "cli-anything-seaclip": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "1e3585eb29f5323a0ba46292b5cc1b158f3025b83e46852fdb28085490daddd2"
+    },
+    "cli-anything-shotcut": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "9c6e2eec78c8ee9b90c22afc549a32531bc5ac58bd0699f90e70b8aa673da202"
+    },
+    "cli-anything-siyuan": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "90a36a9c61e3e44b6d2f8b89959e3fc9cc605d75aaa4d0ba8cba53d8e5fcedc5"
+    },
+    "cli-anything-slay-the-spire-ii": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "dff3969a0bed8a447ff77f423d33748b734431243c1b73c6cecf4197be22271b"
+    },
+    "cli-anything-threemf": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "c4594b26dd1eeaaa9d56bf9f053335cd2dcbaa3186baaa468cfb2d3b15545fc6"
+    },
+    "cli-anything-tigris": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "1047d058299cb3797e810c44a83adbb8703971cc67c14f378b4dfc8d6b87e97e"
+    },
+    "cli-anything-unimol-tools": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "337ab50f3eb79b41c3f05a56f2146621cb14f3bd46f917e2ff2d26fbf04acf79"
+    },
+    "cli-anything-unrealinsights": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "15f30c87933b60c35f2b2f7a7968b9e9f6f1e774d6a62f4171d2350d1fdf2fd6"
+    },
+    "cli-anything-videocaptioner": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "5f1421fe4ede9d06c367c50bc12b1fa5ed58d7fed50c7857697e3bb8feef43d4"
+    },
+    "cli-anything-wavetone": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "1b9556a15853c0447ae84699e0acfa0b31022836b5ac7d7fe620e93a0992e3cf"
+    },
+    "cli-anything-web-yu-pri": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "ff0a1079b8466698be0825ba6a724ef9c3b6f8f9ae925f52de23949d6ffbcdff"
+    },
+    "cli-anything-wiremock": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "b612633c4d6c363b5dda444d263bd9fcf3729e469ff0e02e410cacd1b0adc862"
+    },
+    "cli-anything-zoom": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "9439b88939bfc7c83082b1edf5e3e992f284aa61a59caaecea833f04ab2a6279"
+    },
+    "cli-anything-zotero": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "d13e4683a7be7a87ab41d5add66123acfd737e5593bd6832afd9024ea8f9e624"
+    },
+    "cli-hub-meta-skill": {
+      "source": "../CLI-Anything",
+      "sourceType": "local",
+      "computedHash": "dc795a30a4e2a154c735d2e048e005018ef134378fc48556184c7eaa2eef313e"
+    },
+    "discernment-nudge": {
+      "source": "anthropics/skills",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+      "sourceType": "github",
+      "skillPath": "skills/discernment-nudge/SKILL.md",
+      "computedHash": "c3f503f343e5e32f7c8539e47853ca4d69e0cfdbd294789510c8203ae8f92e1d"
+    },
+    "doc-coauthoring": {
+      "source": "anthropics/skills",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+      "sourceType": "github",
+      "skillPath": "skills/doc-coauthoring/SKILL.md",
+      "computedHash": "d32facc16a25b47a21a90e79c1e6c072d342a9e41b595b58b86f869ff33ccc26"
+    },
+    "docx": {
+      "source": "anthropics/skills",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+      "sourceType": "github",
+      "skillPath": "skills/docx/SKILL.md",
+      "computedHash": "20881307726dc87b9a1b0b2f9770ae869c2753081faedb5f89249d89a94e30a2"
+    },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-design/SKILL.md",
+      "computedHash": "83485963700bcf11d5bf78118facb301676b69d918fee2e45a95e7f1a2840f6c"
+    },
+    "internal-comms": {
+      "source": "anthropics/skills",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+      "sourceType": "github",
+      "skillPath": "skills/internal-comms/SKILL.md",
+      "computedHash": "a864e111fed981a514102493dafd2bf426929af06cf35e8943ccbdeb4be65724"
+    },
+    "mcp-builder": {
+      "source": "anthropics/skills",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+      "sourceType": "github",
+      "skillPath": "skills/mcp-builder/SKILL.md",
+      "computedHash": "5a699fa929d99d7e6b1ebe10f13bf960d9ad452b70bd0733efd5d1de9524e285"
+    },
+    "pdf": {
+      "source": "anthropics/skills",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+      "sourceType": "github",
+      "skillPath": "skills/pdf/SKILL.md",
+      "computedHash": "c9c58ce1e1c334d4beb50dfe97aee27aee1d074aed17b3aa1df03b8982028200"
+    },
+    "pptx": {
+      "source": "anthropics/skills",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+      "sourceType": "github",
+      "skillPath": "skills/pptx/SKILL.md",
+      "computedHash": "e3c37c284de3a271a7e135d0cea5ead7cfaf002b83719d72e958963ccc5dd52f"
+    },
+    "remotion-best-practices": {
+      "source": "remotion-dev/skills",
+      "commit": "6f55706d1069e512430582ad86e4e57dc07afe1b",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-best-practices/SKILL.md",
+      "computedHash": "3a00c916c1a0ee0ccb64b27b08049508d712d65c04ee1bd84d96709854c488e4"
+    },
+    "remotion-captions": {
+      "source": "remotion-dev/skills",
+      "commit": "6f55706d1069e512430582ad86e4e57dc07afe1b",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-captions/SKILL.md",
+      "computedHash": "a26b226c7f335a15e63b245ff2a170d9a2ea497bee8f56de32cdc4f95c5c451a"
+    },
+    "remotion-create": {
+      "source": "remotion-dev/skills",
+      "commit": "6f55706d1069e512430582ad86e4e57dc07afe1b",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-create/SKILL.md",
+      "computedHash": "9402d545b7881ff9485f922cb44fca4b518ef6b735a4ea1842f46b4e11d991be"
+    },
+    "remotion-docs": {
+      "source": "remotion-dev/skills",
+      "commit": "6f55706d1069e512430582ad86e4e57dc07afe1b",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-docs/SKILL.md",
+      "computedHash": "0b592dfd33e9f964a93d1cf3f4d13b650f9c958fd37c347a601569e7095d773d"
+    },
+    "remotion-interactivity": {
+      "source": "remotion-dev/skills",
+      "commit": "6f55706d1069e512430582ad86e4e57dc07afe1b",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-interactivity/SKILL.md",
+      "computedHash": "8e86fcc3c985a68c318b90e1fc4d2c27fc3a27924dac10e21c9c6812a50a4ad4"
+    },
+    "remotion-license": {
+      "source": "remotion-dev/skills",
+      "commit": "6f55706d1069e512430582ad86e4e57dc07afe1b",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-license/SKILL.md",
+      "computedHash": "8a6af8bd4b6ac44e267a41786763086d181e3b319cddb4aee3f5b26774d05be4"
+    },
+    "remotion-maps": {
+      "source": "remotion-dev/skills",
+      "commit": "6f55706d1069e512430582ad86e4e57dc07afe1b",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-maps/SKILL.md",
+      "computedHash": "4399b0010ab8bce1036723ca887dd1f6979236b8cfa24fb4668a109d5cf751ae"
+    },
+    "remotion-markup": {
+      "source": "remotion-dev/skills",
+      "commit": "6f55706d1069e512430582ad86e4e57dc07afe1b",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-markup/SKILL.md",
+      "computedHash": "d2d9c6abc7596a196a3a3026aeebd9720650d6fb80365219b849605f27a30a5f"
+    },
+    "remotion-multimedia": {
+      "source": "remotion-dev/skills",
+      "commit": "6f55706d1069e512430582ad86e4e57dc07afe1b",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-multimedia/SKILL.md",
+      "computedHash": "55b93b66e67f34eb5f1a377d34a6d3fd155f3a23bdcfbfaf6bb07ba5a0cdda5a"
+    },
+    "remotion-render": {
+      "source": "remotion-dev/skills",
+      "commit": "6f55706d1069e512430582ad86e4e57dc07afe1b",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-render/SKILL.md",
+      "computedHash": "c2c5b613675efce3196a12b6323686ba493212f12de317cc2876ffe2e1eb8061"
+    },
+    "remotion-saas": {
+      "source": "remotion-dev/skills",
+      "commit": "6f55706d1069e512430582ad86e4e57dc07afe1b",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-saas/SKILL.md",
+      "computedHash": "1fc0011f05167e2e33f353209e07311ced106c424b6dd059c0f8c84fbc956d37"
+    },
+    "remotion-studio": {
+      "source": "remotion-dev/skills",
+      "commit": "6f55706d1069e512430582ad86e4e57dc07afe1b",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-studio/SKILL.md",
+      "computedHash": "fd7645d47c6f5935ec5dc9486d5391bd0bab90ca7de810a4c9f6621f4b963cc9"
+    },
+    "remotion-upgrade": {
+      "source": "remotion-dev/skills",
+      "commit": "6f55706d1069e512430582ad86e4e57dc07afe1b",
+      "sourceType": "github",
+      "skillPath": "skills/remotion-upgrade/SKILL.md",
+      "computedHash": "47399c091f8504a9225d057c78981c1d1f45baf976dad2bb002a38f52fdcdfec"
+    },
+    "skill-creator": {
+      "source": "anthropics/skills",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+      "sourceType": "github",
+      "skillPath": "skills/skill-creator/SKILL.md",
+      "computedHash": "2d7f889e6ae93c6c27d699856942c336b5b8644537496987d5571043d059b1dc"
+    },
+    "slack-gif-creator": {
+      "source": "anthropics/skills",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+      "sourceType": "github",
+      "skillPath": "skills/slack-gif-creator/SKILL.md",
+      "computedHash": "25581243f719e75121f9051ec671e810e53375fe648a6362d673d6bfbbe9d479"
+    },
+    "template-skill": {
+      "source": "anthropics/skills",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+      "sourceType": "github",
+      "skillPath": "template/SKILL.md",
+      "computedHash": "143ecbef94ad1b41d05d13ed6a1f52a80aef7ae7114d9cfa88a3fdf2f2049754"
+    },
+    "theme-factory": {
+      "source": "anthropics/skills",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+      "sourceType": "github",
+      "skillPath": "skills/theme-factory/SKILL.md",
+      "computedHash": "f426a07c06316201360be19324f2689c5bd3ab2d1669848c9383c321efa4386f"
+    },
+    "web-artifacts-builder": {
+      "source": "anthropics/skills",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+      "sourceType": "github",
+      "skillPath": "skills/web-artifacts-builder/SKILL.md",
+      "computedHash": "7a081b86fd5068d3ca2c4d9c059956634feff65ccbf1c39c3d34a6e5d0971139"
+    },
+    "webapp-testing": {
+      "source": "anthropics/skills",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+      "sourceType": "github",
+      "skillPath": "skills/webapp-testing/SKILL.md",
+      "computedHash": "48cd9a742a59250edec6db89cf081ef5465f365e2133f6d6c5e29c380b754b7d"
+    },
+    "xlsx": {
+      "source": "anthropics/skills",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
+      "sourceType": "github",
+      "skillPath": "skills/xlsx/SKILL.md",
+      "computedHash": "5100b54957a73ce2cb55933b224a483793f5f71555a181f287f43f94a9c1e149"
+    }
+  }
+}

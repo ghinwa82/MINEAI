@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 
 import { pushAgentLog } from '@/lib/agents';
+import { resolveSession } from '@/lib/member-session';
+import { clientKey, checkRateLimit } from '@/lib/rate-limit';
 import { logEventToDatabase } from '@/lib/supabase';
 import { getConnectStatus } from '@/lib/stripe';
 import { debitTreasury, snapshot } from '@/lib/treasury';
@@ -18,7 +20,11 @@ export const runtime = 'nodejs';
 /**
  * Treasury readout — balance, ledger and the state of the settlement rail.
  */
-export async function GET() {
+export async function GET(request: Request) {
+  const session = await resolveSession(request).catch(() => null);
+  if (!session) {
+    return NextResponse.json({ ok: false, error: 'Sign in to read the treasury' }, { status: 401 });
+  }
   try {
     const treasury = snapshot();
     const connect = await getConnectStatus();
@@ -44,8 +50,32 @@ export async function GET() {
  * treasury is debited only after the rail has accepted the instruction, and
  * the movement is written to the audit trail and the ledger with its own
  * reference.
+ *
+ * A bank transfer is the one action on this platform that can drain the
+ * treasury, so it is gated three ways: a live session, a second factor on that
+ * account, and a per-client rate limit. An anonymous request is refused before
+ * the body is even parsed.
  */
 export async function POST(request: Request) {
+  const session = await resolveSession(request).catch(() => null);
+  if (!session) {
+    return NextResponse.json({ ok: false, error: 'Sign in to book a payout' }, { status: 401 });
+  }
+  if (!session.member.totpEnabled) {
+    return NextResponse.json(
+      { ok: false, error: 'Enable two-factor authentication before booking a payout' },
+      { status: 403 },
+    );
+  }
+
+  const limit = checkRateLimit(clientKey(request, 'wallet-withdraw'), 6, 60_000);
+  if (!limit.allowed) {
+    return NextResponse.json(
+      { ok: false, error: 'Too many payout attempts. Wait a minute.' },
+      { status: 429, headers: { 'Retry-After': String(limit.resetSeconds) } },
+    );
+  }
+
   try {
     const payload = await request.json();
 

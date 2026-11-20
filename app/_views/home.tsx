@@ -46,7 +46,7 @@ export default function HomeView() {
           <div className="mt-9 flex flex-wrap items-center gap-3">
             <Link
               href={to('/register')}
-              className="inline-flex items-center gap-2 rounded-xl bg-[linear-gradient(100deg,#d4af37,#fff3b0)] px-6 py-3 text-sm font-bold text-[#120d02] ring-1 ring-cyan-300/60 shadow-[0_16px_40px_-18px_rgba(212,175,55,0.9),0_0_24px_-6px_rgba(34,224,255,0.55)] transition hover:brightness-110"
+              className="inline-flex items-center gap-2 rounded-xl bg-[linear-gradient(100deg,#E2C275,#FFF1C1)] px-6 py-3 text-sm font-bold text-[#17120a] ring-1 ring-gold/60 shadow-[0_16px_40px_-18px_rgba(226,194,117,0.9),0_0_24px_-6px_rgba(226,194,117,0.55)] transition hover:brightness-110"
             >
               {eco.nav.startFree}
               <svg width="14" height="10" viewBox="0 0 14 10" aria-hidden>
@@ -74,9 +74,9 @@ export default function HomeView() {
 
         {/* Telemetry panel */}
         <aside className="relative">
-          <div className="absolute -inset-6 rounded-[2rem] bg-[radial-gradient(circle_at_50%_0%,rgba(34,224,255,0.16),transparent_68%)] blur-2xl" aria-hidden />
+          <div className="absolute -inset-6 rounded-[2rem] bg-[radial-gradient(circle_at_50%_0%,rgba(226,194,117,0.16),transparent_68%)] blur-2xl" aria-hidden />
 
-          <div className="relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#080d18]/85 p-6 backdrop-blur-xl sm:p-8">
+          <div className="relative overflow-hidden rounded-[1.5rem] border border-[#e2c275]/22 bg-[#101016]/72 p-6 backdrop-blur-2xl sm:p-8">
             <div className="flex items-center justify-between gap-4">
               <span className="mx-chip">
                 <span className="relative flex h-1.5 w-1.5">
@@ -276,7 +276,7 @@ export default function HomeView() {
       {/* ------------------------------------------------------- Closing */}
       <section className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#080d18] px-7 py-14 sm:px-14">
         <div
-          className="pointer-events-none absolute -top-24 left-1/3 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(74,222,159,0.18),transparent_70%)] blur-2xl"
+          className="pointer-events-none absolute -top-24 left-1/3 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(52,211,153,0.18),transparent_70%)] blur-2xl"
           aria-hidden
         />
         <div className="relative flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">

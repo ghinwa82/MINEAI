@@ -103,10 +103,10 @@ interface Snapshot {
 type Tone = 'ok' | 'error' | 'info';
 
 const COIN_TONE: Record<string, string> = {
-  mineai: 'from-[#FFF3B0] via-[#D4AF37] to-[#8a6a12] text-[#241a02]',
+  mineai: 'from-[#FFF3B0] via-[#E2C275] to-[#8a6a12] text-[#241a02]',
   btc: 'from-[#f7931a] via-[#e07b12] to-[#7a3f05] text-[#1a0d00]',
   eth: 'from-[#c3cbe6] via-[#8b96c9] to-[#3c477a] text-[#0b1024]',
-  sol: 'from-[#a6f5d6] via-[#4ade9f] to-[#0f9d63] text-[#04231a]',
+  sol: 'from-[#a6f5d6] via-[#34D399] to-[#10B981] text-[#04231a]',
   bnb: 'from-[#ffe082] via-[#f3ba2f] to-[#8a6300] text-[#1f1500]',
   ton: 'from-[#bfe6ff] via-[#3aa7e0] to-[#0b5c86] text-[#03141f]',
   doge: 'from-[#f6e3a1] via-[#c9a94a] to-[#6d5a12] text-[#1a1602]',
@@ -428,7 +428,7 @@ function TelemetryPanel({
     value.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
   const nodes = ['edge-01', 'edge-02', 'edge-03'];
 
-  const PALETTE = ['#ffd27a', '#22e0ff', '#4ade9f', '#a78bfa', '#fb923c', '#facc15', '#60a5fa', '#f472b6'];
+  const PALETTE = ['#E2C275', '#E2C275', '#34D399', '#B68D3A', '#E8B44A', '#FFF1C1', '#F0CF8B', '#E8858F'];
   const shares = Object.entries(allocation ?? {})
     .filter(([, value]) => Number.isFinite(value) && value > 0)
     .sort((a, b) => b[1] - a[1])
@@ -486,7 +486,7 @@ function TelemetryPanel({
             <defs>
               <linearGradient id="telemetry-gauge" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0%" stopColor="#ffd27a" />
-                <stop offset="100%" stopColor="#22e0ff" />
+                <stop offset="100%" stopColor="#E2C275" />
               </linearGradient>
             </defs>
             <text x="80" y="76" textAnchor="middle" fill="#f5f7fb" style={{ fontSize: 22, fontWeight: 700 }}>
@@ -500,7 +500,7 @@ function TelemetryPanel({
                 <circle r="2.4" fill="#ffd27a">
                   <animateMotion dur="6s" repeatCount="indefinite" path="M80 22 a58 58 0 1 1 -0.1 0" />
                 </circle>
-                <circle r="1.6" fill="#22e0ff" opacity="0.9">
+                <circle r="1.6" fill="#E2C275" opacity="0.9">
                   <animateMotion dur="9.5s" begin="1.1s" repeatCount="indefinite" path="M80 22 a58 58 0 1 1 -0.1 0" />
                 </circle>
               </g>
@@ -523,12 +523,12 @@ function TelemetryPanel({
         <div>
           <h3 className="text-[0.6rem] tracking-[0.14em] text-ink-faint uppercase">{copy.nodes}</h3>
 
-          <div className="mt-2.5 rounded-xl border border-white/8 bg-[#04060d]/70 px-3 py-2">
+          <div className="mt-2.5 rounded-xl border border-white/8 bg-[#050507]/70 px-3 py-2">
             <svg viewBox="0 0 280 76" className="h-20 w-full" aria-hidden>
               <defs>
                 <linearGradient id="topology-link" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="rgba(212,175,55,0.65)" />
-                  <stop offset="100%" stopColor="rgba(34,224,255,0.65)" />
+                  <stop offset="100%" stopColor="rgba(226,194,117,0.65)" />
                 </linearGradient>
               </defs>
 
@@ -544,7 +544,7 @@ function TelemetryPanel({
                 />
               ))}
 
-              <circle cx={hub.x} cy={hub.y} r="6" fill="#d4af37" opacity="0.22" />
+              <circle cx={hub.x} cy={hub.y} r="6" fill="#E2C275" opacity="0.22" />
               <circle cx={hub.x} cy={hub.y} r="3.4" fill="#ffd27a" />
 
               {satellites.map((node) => (
@@ -555,12 +555,12 @@ function TelemetryPanel({
                       cy={node.y}
                       r="5"
                       fill="none"
-                      stroke="#4ade9f"
+                      stroke="#34D399"
                       strokeWidth="1"
                       className="mx-node-ring"
                     />
                   ) : null}
-                  <circle cx={node.x} cy={node.y} r="4" fill={snapshot ? '#4ade9f' : '#39435a'} />
+                  <circle cx={node.x} cy={node.y} r="4" fill={snapshot ? '#34D399' : '#39435a'} />
                   <circle cx={node.x} cy={node.y} r="8" fill="none" stroke="rgba(255,255,255,0.1)" />
                 </g>
               ))}
@@ -571,7 +571,7 @@ function TelemetryPanel({
             {nodes.map((node) => (
               <li
                 key={node}
-                className="flex items-center justify-between gap-2 rounded-lg border border-white/8 bg-[#04060d]/70 px-3 py-2"
+                className="flex items-center justify-between gap-2 rounded-lg border border-white/8 bg-[#050507]/70 px-3 py-2"
               >
                 <span className="mx-numeric text-[0.68rem] text-ink-soft">{node}</span>
                 <span className={`inline-flex items-center gap-1.5 text-[0.62rem] ${snapshot ? 'text-mint' : 'text-ink-faint'}`}>
@@ -586,7 +586,7 @@ function TelemetryPanel({
           </ul>
         </div>
 
-        <div className="rounded-xl border border-white/8 bg-[#04060d]/70 p-4">
+        <div className="rounded-xl border border-white/8 bg-[#050507]/70 p-4">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h3 className="text-[0.78rem] font-semibold text-ink">{copy.yieldTitle}</h3>
             <span className="mx-numeric text-[0.8rem] font-bold text-cyan">{usd(projected)}</span>
@@ -595,8 +595,8 @@ function TelemetryPanel({
           <svg viewBox="0 0 280 90" className="mt-3 h-24 w-full" role="img" aria-label={copy.yieldTitle}>
             <defs>
               <linearGradient id="telemetry-area" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="rgba(34,224,255,0.38)" />
-                <stop offset="100%" stopColor="rgba(34,224,255,0)" />
+                <stop offset="0%" stopColor="rgba(226,194,117,0.38)" />
+                <stop offset="100%" stopColor="rgba(226,194,117,0)" />
               </linearGradient>
             </defs>
             <g stroke="rgba(248,250,252,0.06)" strokeWidth="0.6" aria-hidden>
@@ -604,12 +604,12 @@ function TelemetryPanel({
             </g>
             {area ? <path d={area} fill="url(#telemetry-area)" /> : null}
             {line ? (
-              <path d={line} fill="none" stroke="#22e0ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d={line} fill="none" stroke="#E2C275" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             ) : null}
-            <circle cx={lastPoint.x} cy={lastPoint.y} r="4.4" fill="rgba(34,224,255,0.22)" aria-hidden>
+            <circle cx={lastPoint.x} cy={lastPoint.y} r="4.4" fill="rgba(226,194,117,0.22)" aria-hidden>
               <animate attributeName="r" values="3.4;5.4;3.4" dur="2.4s" repeatCount="indefinite" />
             </circle>
-            <circle cx={lastPoint.x} cy={lastPoint.y} r="2" fill="#22e0ff" />
+            <circle cx={lastPoint.x} cy={lastPoint.y} r="2" fill="#E2C275" />
           </svg>
           <div className="mx-numeric mt-1 flex justify-between text-[0.56rem] text-ink-faint">
             <span>−2h</span>
@@ -618,7 +618,7 @@ function TelemetryPanel({
           </div>
         </div>
 
-        <div className="rounded-xl border border-white/8 bg-[#04060d]/70 p-4">
+        <div className="rounded-xl border border-white/8 bg-[#050507]/70 p-4">
           <div className="flex items-baseline justify-between gap-2">
             <h3 className="text-[0.78rem] font-semibold text-ink">{copy.portfolio}</h3>
             <span className="mx-numeric text-[0.72rem] text-ink-faint">
@@ -633,7 +633,7 @@ function TelemetryPanel({
               role="img"
               aria-label={copy.portfolio}
             >
-              <div className="absolute inset-[19%] rounded-full bg-[#04060d]" />
+              <div className="absolute inset-[19%] rounded-full bg-[#050507]" />
               <div className="absolute inset-0 grid place-items-center">
                 <span className="mx-numeric text-[0.78rem] font-bold text-ink">
                   {slices.length ? `${Math.round(leadShare)}%` : '—'}
@@ -1065,7 +1065,7 @@ export default function MiningView() {
                   <div className="mt-1 flex items-center gap-2">
                     <div className="h-1 w-16 overflow-hidden rounded-full bg-white/10">
                       <span
-                        className="block h-full rounded-full bg-gradient-to-r from-[#FFF3B0] to-[#D4AF37]"
+                        className="block h-full rounded-full bg-gradient-to-r from-[#FFF3B0] to-[#E2C275]"
                         style={{ width: `${Math.min(100, coin.sharePct)}%` }}
                       />
                     </div>
@@ -1087,7 +1087,7 @@ export default function MiningView() {
                         [coin.id]: Number.isFinite(value) ? value : 0,
                       }));
                     }}
-                    className="mx-numeric w-full rounded-lg border border-white/12 bg-[#04060d] px-2.5 py-2 text-[0.78rem] text-ink outline-none focus:border-amber/55"
+                    className="mx-numeric w-full rounded-lg border border-white/12 bg-[#050507] px-2.5 py-2 text-[0.78rem] text-ink outline-none focus:border-amber/55"
                   />
                 </label>
               </div>
@@ -1173,7 +1173,7 @@ export default function MiningView() {
             inputMode="decimal"
             value={stakeAmount}
             onChange={(event) => setStakeAmount(event.target.value.replace(/[^0-9.]/g, ''))}
-            className="mx-numeric mt-1.5 w-full rounded-lg border border-white/12 bg-[#04060d] px-3 py-2.5 text-[0.85rem] text-ink outline-none focus:border-cyan/55"
+            className="mx-numeric mt-1.5 w-full rounded-lg border border-white/12 bg-[#050507] px-3 py-2.5 text-[0.85rem] text-ink outline-none focus:border-cyan/55"
           />
 
           <div className="mt-3 grid grid-cols-2 gap-2">
@@ -1217,7 +1217,7 @@ export default function MiningView() {
             id="withdraw-coin"
             value={selectedCoin}
             onChange={(event) => selectCoin(event.target.value)}
-            className="mt-1.5 w-full rounded-lg border border-white/12 bg-[#04060d] px-3 py-2.5 text-[0.8rem] text-ink outline-none focus:border-cyan/55"
+            className="mt-1.5 w-full rounded-lg border border-white/12 bg-[#050507] px-3 py-2.5 text-[0.8rem] text-ink outline-none focus:border-cyan/55"
           >
             {coins.map((coin) => (
               <option key={coin.id} value={coin.id}>
@@ -1234,7 +1234,7 @@ export default function MiningView() {
             value={wallet}
             onChange={(event) => setWallet(event.target.value.trim())}
             placeholder={WALLET_PLACEHOLDER[selected?.family ?? 'evm'] ?? '0x…'}
-            className="mx-numeric mt-1.5 w-full rounded-lg border border-white/12 bg-[#04060d] px-3 py-2.5 text-[0.75rem] text-ink outline-none focus:border-cyan/55"
+            className="mx-numeric mt-1.5 w-full rounded-lg border border-white/12 bg-[#050507] px-3 py-2.5 text-[0.75rem] text-ink outline-none focus:border-cyan/55"
           />
           <p className="mt-1.5 text-[0.6rem] leading-relaxed text-ink-faint">{copy.addressHint}</p>
 
@@ -1248,7 +1248,7 @@ export default function MiningView() {
                 inputMode="decimal"
                 value={withdrawAmount}
                 onChange={(event) => setWithdrawAmount(event.target.value.replace(/[^0-9.]/g, ''))}
-                className="mx-numeric mt-1.5 w-full rounded-lg border border-white/12 bg-[#04060d] px-3 py-2.5 text-[0.85rem] text-ink outline-none focus:border-cyan/55"
+                className="mx-numeric mt-1.5 w-full rounded-lg border border-white/12 bg-[#050507] px-3 py-2.5 text-[0.85rem] text-ink outline-none focus:border-cyan/55"
               />
             </div>
             <span className="mx-numeric mb-2.5 text-[0.62rem] text-ink-faint">
@@ -1267,7 +1267,7 @@ export default function MiningView() {
                 value={twoFactorCode}
                 onChange={(event) => setTwoFactorCode(event.target.value.replace(/[^0-9]/g, '').slice(0, 6))}
                 placeholder="123456"
-                className="mx-numeric mt-1.5 w-full rounded-lg border border-white/12 bg-[#04060d] px-3 py-2.5 text-[0.85rem] tracking-[0.2em] text-ink outline-none focus:border-cyan/55"
+                className="mx-numeric mt-1.5 w-full rounded-lg border border-white/12 bg-[#050507] px-3 py-2.5 text-[0.85rem] tracking-[0.2em] text-ink outline-none focus:border-cyan/55"
               />
             </div>
           ) : null}
@@ -1294,7 +1294,7 @@ export default function MiningView() {
           </button>
 
           {latestPayout ? (
-            <div className="mt-4 rounded-xl border border-white/10 bg-[#04060d]/70 p-3.5">
+            <div className="mt-4 rounded-xl border border-white/10 bg-[#050507]/70 p-3.5">
               <div className="flex items-center justify-between gap-2">
                 <span className="mx-numeric text-[0.58rem] tracking-[0.08em] text-ink-faint uppercase">
                   {latestPayout.id}

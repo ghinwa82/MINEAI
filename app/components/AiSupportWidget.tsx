@@ -60,7 +60,7 @@ export default function AiSupportWidget() {
         type="button"
         onClick={() => setOpen((previous) => !previous)}
         aria-expanded={open}
-        className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(100deg,#d4af37,#fff3b0)] px-4 py-2.5 text-[0.78rem] font-bold text-[#120d02] shadow-[0_16px_40px_-16px_rgba(212,175,55,0.9)] transition hover:brightness-110"
+        className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(100deg,#E2C275,#fff3b0)] px-4 py-2.5 text-[0.78rem] font-bold text-[#120d02] shadow-[0_16px_40px_-16px_rgba(212,175,55,0.9)] transition hover:brightness-110"
       >
         <span className="relative flex h-2 w-2" aria-hidden>
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#120d02] opacity-40" />

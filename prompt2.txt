@@ -1,0 +1,48 @@
+Act as an Elite Principal Full-Stack Systems Architect, Senior Brand Identity & Product Designer (Apple / Stripe / Linear caliber), Geometric Motion & Web Audio Engineer, and Cybersecurity Specialist. Perform a complete, ground-up architectural reconstruction of the `MINEAI` platform (`C:\Users\AMAL SELMANI\OneDrive\Desktop\MINEAI`) so that every single page, authentication flow, cloud mining terminal, subscription plan, and payment checkout is 100% real, bug-free, seamlessly interconnected, and deployed live to `https://vercel.app`.
+
+CRITICAL DESIGN, BRANDING & PRIVACY MANDATES:
+- **White-Label Payment Branding (ZERO Gateway Brand Names Visible):** Never display the names of third-party payment processors (do NOT display "Kashier", "Paymob", "Stripe", "Paddle", or "LemonSqueezy" anywhere in the UI text, buttons, or labels). Present clean, universal institutional payment options only: **"Credit / Debit Card (Visa & Mastercard)"**, **"Apple Pay / Google Pay"**, **"Mobile Wallets"**, and **"Direct Cryptocurrency (USDT / BTC)"**, while silently routing backend API calls through the configured keys in `.env.local`.
+- **Bespoke Human-Crafted Geometric Luxury UI:** Eliminate all generic AI templates and cluttered layouts. Engineer an architectural, editorial dark-luxury interface built on strict color harmony: Deep Obsidian (`#06080D`), Elevated Glass (`#0D121E`), Royal Champagne Gold (`#D4AF37` to `#F5D77F`), Electric Cyan (`#06B6D4`), and Crisp Ivory (`#F8FAFC`) with WCAG AAA contrast across all **6 languages (English, Arabic RTL, French, Spanish, Chinese, Hindi)**.
+- **Geometric Motion Choreography & Web Audio Sound Effects (`lib/sound-engine.ts`):** Build hardware-accelerated Framer Motion geometric transitions, precision SVG grid/node animations, and a subtle, non-intrusive **Web Audio API Synthesizer** (with a header mute/unmute toggle) producing crisp tactile clicks and harmonic chimes on login, mining activation, and plan upgrades.
+- **Strict Privacy:** Never hardcode personal names, national IDs, or bank IBANs in source code or `.env.example`.
+
+Execute all 9 modules autonomously without stopping:
+
+1. Bespoke Brand Identity Overhaul (Website Logo & `$MINEAI` Royal Gold Coin):
+   - **New Architectural Website Logo (`components/BrandLogo.tsx`):** Completely redesign the main `MINEAI` platform logo used across the navbar, footer, auth vault, and favicons into an ultra-sharp, bespoke geometric emblem combining an interlocking **Royal Gold & Electric Cyan Precision Monogram ("M" + Quantum Node Hexagon)** with clean institutional typography (`MINEAI`), crisp vector paths, and subtle hover sheen.
+   - **Museum-Grade `$MINEAI` Cryptocurrency Coin Logo (`components/MineAICoinLogo.tsx`):** Completely redesign the `$MINEAI` token emblem as an ultra-high-precision **3D Brushed Royal Gold Bullion Coin** (`#D4AF37` -> `#FFF4B8` -> `#AA7C11`) featuring intricate micro-engraved guilloché rings, beveled reeded edges, a bold sculpted letter **"M"** fused with a majestic **Crowned Lion's Head**, and realistic dynamic light reflections.
+
+2. End-to-End Diagnostic & Broken-Link Elimination:
+   - Audit every route, API endpoint, component, and form across the entire repository. Fix all broken buttons, dead links, hydration mismatches, and TypeScript errors so every interaction executes a real, verified state transition.
+
+3. Bulletproof Authentication, Email Verification Callback (`/auth/callback`) & Google Authenticator (2FA):
+   - Fix the Supabase email confirmation error page by building a rock-solid **`app/auth/callback/route.ts`** handler that exchanges `code` / `token_hash` parameters cleanly (`exchangeCodeForSession` and `verifyOtp`) and redirects verified users straight into `/dashboard` or `/mining` with an active session cookie.
+   - Build a unified, cinematic **Authentication Vault (`/login`, `/register`, `/forgot-password`, `/reset-password`)** featuring:
+     - Working **Email + Password Registration & Login** with instant session persistence, clear error feedback, and working **Forgot Password / Reset Password** emails.
+     - **One-Click Social Sign-In Buttons** (`Continue with Apple`, `Continue with Google`, `Continue with Facebook`) wired to `supabase.auth.signInWithOAuth` with `redirectTo: '${window.location.origin}/auth/callback'`.
+     - **Google Authenticator (TOTP 2FA) & Account Security Center (`/dashboard/security`):** Full QR code generator, secret key backup, 6-digit TOTP verification, and active session protection.
+
+4. Architectural Multi-Coin Cloud Mining Command Center (`app/mining/page.tsx`):
+   - Completely rebuild `/mining` from scratch into a breathtaking, institutional-grade interactive mining dashboard:
+     - **Geometric Motion & Telemetry:** Animated hexagonal/radial quantum reactor core that spins and pulses dynamically when mining is active, live hashrate speedometer (`MH/s` / `TH/s`), animated energy flow streams into coin vaults, efficiency gauges, and interactive **Real-Time Earnings Area Charts**.
+     - **Real Persistent Mining Engine:** Backed by real Supabase tables (`mining_nodes`, `mining_balances`, `withdrawals`). Users allocate power across **`$MINEAI` (3x yield bonus)** and **7 major cryptocurrencies (`BTC`, `ETH`, `SOL`, `BNB`, `TON`, `DOGE`, `LTC`)**, watch real-time balances grow deterministically every second, and submit real **"Withdraw to My Wallet"** requests with on-chain status tracking (`Pending` -> `Processing` -> `Sent with txHash`).
+
+5. Seamless Subscription Plans & Multi-Step White-Label Checkout (`/store` & `/checkout`):
+   - Ensure all **5 Zero-Electricity Cloud Mining & Subscription Plans** (`Genesis Free Cloud $0`, `Cloud Node v1 $29.99`, `Cloud Pro v2 $99.99`, `Cloud Elite v3 $299.99`, `Sovereign Master v4 $799.99`) are prominently displayed near the top of the Homepage and on `/store`, with every CTA button working reliably.
+   - Clicking any plan opens a sleek, unified **3-Step Checkout Flow (`/checkout?plan=...`)**:
+     - **Step 1:** Plan summary + live **`USD $` / `EGP ج.م`** currency switcher.
+     - **Step 2:** White-label payment selection (**Visa / Mastercard / Debit Card**, **Mobile Wallets**, or **Direct Multi-Chain Crypto `USDT / BTC` with `0%` fee** reading public receiving addresses from `.env.local`).
+     - **Step 3:** Payment / `txHash` verification that writes the active subscription directly into Supabase (`subscriptions` & `transactions` tables), upgrades the user's hashrate immediately, and redirects to `/mining`.
+
+6. Synchronized Services & Real Supabase Database Wiring:
+   - Ensure `supabase/security_schema.sql` has all tables (`profiles`, `mining_nodes`, `mining_balances`, `subscriptions`, `transactions`, `withdrawals`, `support_tickets`, `referrals`, `totp_secrets`) with explicit `GRANT` permissions and `RLS` policies, and ensure the Dashboard (`/dashboard`), Mining (`/mining`), Checkout (`/checkout`), VIP Rewards, and Support (`/support`) all read/write from the exact same synchronized user state.
+
+7. Natural Explainer Video, Live Exchange Markets & Automated Global News:
+   - Ensure `components/ExplainerVideoPlayer.tsx` on the Homepage features smooth animated motion-graphic scenes and natural studio-paced narration across all **6 languages**.
+   - Ensure `components/LiveMarketTracker.tsx` displays real-time exchange prices (Binance / CoinGecko / Gold XAU / Forex `USD/EGP`) with a live date and real-time clock, and `app/news/page.tsx` + Homepage Breaking News Ticker auto-refresh with global economy, gold, and crypto news.
+
+8. Intelligent 24/7 AI Concierge & Growth Engine:
+   - Wire `components/AiSupportWidget.tsx` and `/support` to a real LLM backend (`/api/ai/support`) that assists users across all **6 languages** with registration, 2FA, checkout verification, and mining, plus viral social sharing buttons (`WhatsApp`, `Telegram`, `X`, `Facebook`, `Copy Link`) granting `+15%` hashrate boosts.
+
+9. Zero-Bug Audit, Clean Build & Live Production Deployment:
+   - Preserve `public/google0d409ac877429b1f.html` and `.env.local` wallet/API keys, run `npm run build` to guarantee **0 TypeScript, ESLint, or Next.js build errors**, commit all changes, and deploy live to Vercel (`npx vercel --prod`) targeting `https://vercel.app`.

@@ -112,7 +112,7 @@ export default function VipMembershipCard({
           className="absolute inset-0"
           style={{
             background:
-              'linear-gradient(128deg, #2a1d05 0%, #6a4a0b 16%, #d4af37 34%, #fff3b0 46%, #d4af37 58%, #7d5708 74%, #241804 100%)',
+              'linear-gradient(128deg, #2a1d05 0%, #6a4a0b 16%, #E2C275 34%, #fff3b0 46%, #E2C275 58%, #7d5708 74%, #241804 100%)',
           }}
         />
         {/* Guilloché rosette printed under the data */}

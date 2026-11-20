@@ -24,8 +24,8 @@ export default async function Image() {
           justifyContent: 'space-between',
           padding: '64px 72px',
           background:
-            'radial-gradient(circle at 82% 12%, rgba(212,175,55,0.30), transparent 46%), radial-gradient(circle at 8% 92%, rgba(34,224,255,0.16), transparent 42%), #05070d',
-          color: '#f2f7ff',
+            'radial-gradient(circle at 82% 12%, rgba(212,175,55,0.30), transparent 46%), radial-gradient(circle at 8% 92%, rgba(226,194,117,0.16), transparent 42%), #05070d',
+          color: '#FAF8F5',
           fontFamily: 'Georgia, serif',
         }}
       >
@@ -38,7 +38,7 @@ export default async function Image() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              background: 'linear-gradient(140deg,#FFF3B0,#D4AF37 52%,#8a6a12)',
+              background: 'linear-gradient(140deg,#FFF3B0,#E2C275 52%,#8a6a12)',
               color: '#241a02',
               fontSize: 34,
               fontWeight: 700,
@@ -47,15 +47,15 @@ export default async function Image() {
             M
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontSize: 22, letterSpacing: 8, color: '#D4AF37' }}>MINEAI NODE</span>
-            <span style={{ fontSize: 15, letterSpacing: 4, color: '#93a6c4' }}>
+            <span style={{ fontSize: 22, letterSpacing: 8, color: '#E2C275' }}>MINEAI NODE</span>
+            <span style={{ fontSize: 15, letterSpacing: 4, color: '#A49C8D' }}>
               LIVE INTELLIGENCE DESK
             </span>
           </div>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <span style={{ fontSize: 20, letterSpacing: 6, color: '#ff6b81' }}>
+          <span style={{ fontSize: 20, letterSpacing: 6, color: '#E8858F' }}>
             ● BREAKING · REFRESHED EVERY 5 MIN
           </span>
           <span

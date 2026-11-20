@@ -47,7 +47,7 @@ export default function SiteHeader() {
     href === '/' ? current === '/' : current.startsWith(href);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/8 bg-[#04060d]/72 backdrop-blur-2xl">
+    <header className="sticky top-0 z-40 border-b border-white/8 bg-[#050507]/72 backdrop-blur-2xl">
       <ReferralCapture />
       <div className="mx-auto flex h-16 w-full max-w-[84rem] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Logo />
@@ -60,13 +60,13 @@ export default function SiteHeader() {
               aria-current={isActive(route.href) ? 'page' : undefined}
               className={`relative rounded-xl px-3 py-2 text-[0.82rem] font-medium transition ${
                 isActive(route.href)
-                  ? 'bg-cyan-400/10 text-cyan'
+                  ? 'bg-gold/10 text-cyan'
                   : 'text-ink-mute hover:bg-white/5 hover:text-ink'
               }`}
             >
               {route.label}
               {isActive(route.href) ? (
-                <span className="absolute inset-x-3 -bottom-px h-px bg-gradient-to-r from-transparent via-cyan-400 to-transparent" />
+                <span className="absolute inset-x-3 -bottom-px h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
               ) : null}
             </Link>
           ))}
@@ -102,7 +102,7 @@ export default function SiteHeader() {
 
           <Link
             href={to('/register')}
-            className="hidden items-center gap-1.5 rounded-xl bg-[linear-gradient(100deg,#d4af37,#fff3b0)] px-4 py-2 text-[0.78rem] font-bold text-[#120d02] ring-1 ring-cyan-300/60 shadow-[0_10px_28px_-12px_rgba(212,175,55,0.8)] transition hover:brightness-110 sm:inline-flex"
+            className="hidden items-center gap-1.5 rounded-xl bg-[linear-gradient(100deg,#E2C275,#FFF1C1)] px-4 py-2 text-[0.78rem] font-bold text-[#17120a] ring-1 ring-cyan-300/60 shadow-[0_10px_28px_-12px_rgba(212,175,55,0.8)] transition hover:brightness-110 sm:inline-flex"
           >
             {auth.createAccount}
             <span aria-hidden>→</span>
@@ -122,7 +122,7 @@ export default function SiteHeader() {
             href={to(route.href)}
             aria-current={isActive(route.href) ? 'page' : undefined}
             className={`shrink-0 rounded-lg px-3 py-1.5 text-[0.78rem] font-medium transition ${
-              isActive(route.href) ? 'bg-cyan-400/12 text-cyan' : 'text-ink-mute hover:text-ink'
+              isActive(route.href) ? 'bg-gold/12 text-cyan' : 'text-ink-mute hover:text-ink'
             }`}
           >
             {route.label}

@@ -90,7 +90,7 @@ function shell(title: string, body: string, code?: string): string {
   return [
     '<div style="margin:0;padding:32px 16px;background:#07090e;font-family:Inter,Segoe UI,Arial,sans-serif">',
     '<div style="max-width:520px;margin:0 auto;background:#0e131f;border:1px solid rgba(212,175,55,0.28);border-radius:18px;padding:32px">',
-    '<p style="margin:0 0 8px;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#d4af37">MineAI</p>',
+    '<p style="margin:0 0 8px;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#E2C275">MineAI</p>',
     `<h1 style="margin:0 0 16px;font-size:22px;color:#f8fafc">${title}</h1>`,
     `<p style="margin:0;font-size:14px;line-height:1.7;color:#cbd5e1">${body}</p>`,
     code
@@ -121,7 +121,7 @@ export async function sendResetToken(email: string, token: string, link: string)
     text: `Reset your MineAI password: ${link}\n\nOr paste this token: ${token}\n\nThe link expires in 30 minutes.`,
     html: shell(
       'Reset your password',
-      `Open this link within 30 minutes: <a href="${link}" style="color:#06b6d4">${link}</a><br/>Or paste this token: <strong style="color:#f3d06b">${token}</strong>`,
+      `Open this link within 30 minutes: <a href="${link}" style="color:#B68D3A">${link}</a><br/>Or paste this token: <strong style="color:#f3d06b">${token}</strong>`,
     ),
   });
 }

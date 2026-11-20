@@ -5,17 +5,16 @@ import React, { useId, useMemo } from 'react';
 import { useI18n } from '@/lib/i18n-provider';
 
 /**
- * The MineAI institutional mark.
+ * The MineAI royal monogram.
  *
- * A precision quantum node — a hexagonal lattice cut into six facets — wrapped
- * around an interlocking monogram. The two strokes of the M are separate metals:
- * the left spine is brushed royal gold, the right is electric cyan, and they
- * cross at a diamond core that reads as a node on the lattice. Every gradient id
- * is namespaced with `useId` because the lockup appears in the header, the
- * footer and the auth vault on the same page.
+ * A chamfered diamond shield struck in champagne gold, holding a sculpted "M"
+ * whose centre valley rises into a crown spire — the mark reads as a crest at
+ * 220px and as a clean golden lozenge at 16px. A faint prismatic refraction
+ * sits behind the shield so the metal appears to bend light rather than glow.
  *
- * The mark is drawn on a 64-unit grid with 0.5px sub-pixel alignment so it stays
- * sharp from a 16px favicon to a 220px hero.
+ * Every gradient id is namespaced with `useId` because the lockup is mounted in
+ * the header, the footer and the auth vault on the same document, and duplicate
+ * SVG ids resolve to the first definition.
  */
 
 export type BrandLogoSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -26,6 +25,15 @@ const FRAME: Record<BrandLogoSize, { box: string; word: string; node: string; su
   lg: { box: 'h-14 w-14', word: 'text-[1.32rem]', node: 'text-[0.56rem]', sub: 'text-[0.64rem]', gap: 'gap-3.5' },
   xl: { box: 'h-20 w-20', word: 'text-[1.9rem]', node: 'text-[0.62rem]', sub: 'text-[0.72rem]', gap: 'gap-4' },
 };
+
+/** Chamfered diamond shield — the crest's outer plate. */
+const SHIELD = 'M48 3 L85 24.5 V63.5 L48 93 L11 63.5 V24.5 Z';
+/** Same plate inset by 3.4 units: the engraved second hairline. */
+const INNER = 'M48 7.6 L81.2 26.6 V61.4 L48 88.4 L14.8 61.4 V26.6 Z';
+/** Sculptural M: two gold spines and the valley that becomes the spire. */
+const MONOGRAM = 'M29 71 V41.5 L48 58.5 L67 41.5 V71';
+/** The crown spire rising out of the M's valley to the apex. */
+const SPIRE = 'M48 58.5 V13.5';
 
 export default function BrandLogo({
   size = 'md',
@@ -49,152 +57,121 @@ export default function BrandLogo({
 
   const emblem = (
     <span className={`relative grid shrink-0 ${scale.box} place-items-center`}>
-      {/* Ambient bloom, only on approach. */}
+      {/* Warm bloom, only on approach. */}
       <span
         aria-hidden
-        className="pointer-events-none absolute -inset-1.5 rounded-[38%] bg-[radial-gradient(circle_at_38%_32%,rgba(245,215,127,0.34),rgba(6,182,212,0.16)_52%,transparent_72%)] opacity-0 blur-md transition-opacity duration-500 group-hover/logo:opacity-100"
+        className="pointer-events-none absolute -inset-1.5 rounded-[34%] bg-[radial-gradient(circle_at_40%_30%,rgba(255,241,193,0.34),rgba(182,141,58,0.18)_54%,transparent_74%)] opacity-0 blur-md transition-opacity duration-500 group-hover/logo:opacity-100"
       />
-      {/* Outer precision ring released on hover. */}
+      {/* Prismatic halo released on hover — the refraction pass. */}
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-[30%] border border-amber/30 opacity-0 group-hover/logo:animate-[mx-ring_1.5s_cubic-bezier(0.22,1,0.36,1)_infinite]"
+        className="pointer-events-none absolute -inset-2 rounded-full opacity-0 blur-xl transition-opacity duration-500 group-hover/logo:opacity-70"
+        style={{
+          background:
+            'conic-gradient(from 210deg, rgba(226,194,117,0.32), rgba(52,211,153,0.22), rgba(255,241,193,0.3), rgba(182,141,58,0.24), rgba(226,194,117,0.32))',
+        }}
+      />
+      {/* Engraved ring released on hover. */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 rounded-[30%] border border-gold/35 opacity-0 group-hover/logo:animate-[mx-ring_1.5s_cubic-bezier(0.22,1,0.36,1)_infinite]"
       />
 
-      <svg viewBox="0 0 64 64" className={`relative ${scale.box}`} role="presentation" aria-hidden>
+      <svg viewBox="0 0 96 96" className={`relative ${scale.box}`} role="presentation" aria-hidden>
         <defs>
-          <linearGradient id={`${id}-gold`} x1="0.1" y1="0" x2="0.9" y2="1">
-            <stop offset="0%" stopColor="#FFF6D2" />
-            <stop offset="26%" stopColor="#F5D77F" />
-            <stop offset="58%" stopColor="#D4AF37" />
-            <stop offset="100%" stopColor="#9A7414" />
+          {/* Champagne ramp: highlight upper-left, shadow lower-right. */}
+          <linearGradient id={`${id}-gold`} x1="0.12" y1="0" x2="0.88" y2="1">
+            <stop offset="0%" stopColor="#FFF9E6" />
+            <stop offset="18%" stopColor="#FFF1C1" />
+            <stop offset="44%" stopColor="#E2C275" />
+            <stop offset="72%" stopColor="#B68D3A" />
+            <stop offset="100%" stopColor="#8A6A22" />
           </linearGradient>
-          <linearGradient id={`${id}-cyan`} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#A5F3FC" />
-            <stop offset="45%" stopColor="#22D3EE" />
-            <stop offset="100%" stopColor="#0693AD" />
+          <linearGradient id={`${id}-gold-soft`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#FFF1C1" />
+            <stop offset="50%" stopColor="#D9B463" />
+            <stop offset="100%" stopColor="#9C7A2C" />
           </linearGradient>
-          <linearGradient id={`${id}-frame`} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="rgba(245,215,127,0.9)" />
-            <stop offset="46%" stopColor="rgba(212,175,55,0.34)" />
-            <stop offset="100%" stopColor="rgba(6,182,212,0.72)" />
+          <linearGradient id={`${id}-edge`} x1="0.1" y1="0" x2="0.9" y2="1">
+            <stop offset="0%" stopColor="rgba(255,241,193,0.92)" />
+            <stop offset="42%" stopColor="rgba(226,194,117,0.34)" />
+            <stop offset="100%" stopColor="rgba(182,141,58,0.86)" />
           </linearGradient>
-          <linearGradient id={`${id}-facet`} x1="0" y1="0" x2="0.4" y2="1">
-            <stop offset="0%" stopColor="rgba(248,250,252,0.1)" />
-            <stop offset="100%" stopColor="rgba(6,8,13,0)" />
-          </linearGradient>
+          <radialGradient id={`${id}-plate`} cx="36%" cy="26%" r="82%">
+            <stop offset="0%" stopColor="#191519" />
+            <stop offset="58%" stopColor="#0E0C10" />
+            <stop offset="100%" stopColor="#050507" />
+          </radialGradient>
           <linearGradient id={`${id}-sheen`} x1="0" y1="0" x2="1" y2="0">
             <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-            <stop offset="48%" stopColor="rgba(255,255,255,0.85)" />
+            <stop offset="46%" stopColor="rgba(255,253,240,0.9)" />
             <stop offset="100%" stopColor="rgba(255,255,255,0)" />
           </linearGradient>
-          <radialGradient id={`${id}-core`} cx="42%" cy="38%" r="62%">
-            <stop offset="0%" stopColor="#FFFFFF" />
-            <stop offset="52%" stopColor="#BFEFFF" />
-            <stop offset="100%" stopColor="#06B6D4" />
+          <radialGradient id={`${id}-core`} cx="42%" cy="34%" r="64%">
+            <stop offset="0%" stopColor="#FFFDF4" />
+            <stop offset="48%" stopColor="#FFF1C1" />
+            <stop offset="100%" stopColor="#B68D3A" />
           </radialGradient>
+          <filter id={`${id}-strike`} x="-40%" y="-40%" width="180%" height="180%">
+            <feDropShadow dx="0.5" dy="1" stdDeviation="0.7" floodColor="#3A2A08" floodOpacity="0.7" />
+          </filter>
           <filter id={`${id}-glow`} x="-40%" y="-40%" width="180%" height="180%">
-            <feGaussianBlur stdDeviation="1.5" result="b" />
+            <feGaussianBlur stdDeviation="1.1" result="b" />
             <feMerge>
               <feMergeNode in="b" />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
           <clipPath id={`${id}-clip`}>
-            <path d="M32 3.2 56.6 17.6v28.8L32 60.8 7.4 46.4V17.6Z" />
+            <path d={SHIELD} />
           </clipPath>
         </defs>
 
-        {/* Obsidian body of the node */}
-        <path
-          d="M32 3.2 56.6 17.6v28.8L32 60.8 7.4 46.4V17.6Z"
-          fill="#06080D"
-          stroke={`url(#${id}-frame)`}
-          strokeWidth="1.35"
-          strokeLinejoin="round"
-        />
-        {/* Inner bevel */}
-        <path
-          d="M32 7.4 52.8 19.4v25.2L32 56.6 11.2 44.6V19.4Z"
-          fill="none"
-          stroke="rgba(248,250,252,0.14)"
-          strokeWidth="0.7"
-          strokeLinejoin="round"
-        />
-
-        {/* Six lattice facets: every vertex is a quantum node */}
-        <g clipPath={`url(#${id}-clip)`} aria-hidden>
-          <path d="M32 3.2 32 32 7.4 17.6Z" fill={`url(#${id}-facet)`} />
-          <path d="M32 32 56.6 17.6 32 3.2Z" fill="rgba(6,182,212,0.05)" />
-          <path d="M7.4 46.4 32 32 32 60.8Z" fill="rgba(245,215,127,0.05)" />
-          <path d="M56.6 46.4 32 60.8 32 32Z" fill={`url(#${id}-facet)`} />
-          <path d="M7.4 17.6 32 32 7.4 46.4Z" fill="rgba(248,250,252,0.03)" />
-          <path d="M56.6 17.6 56.6 46.4 32 32Z" fill="rgba(6,182,212,0.04)" />
+        {/* ---------------------------------------------- Prism refraction */}
+        <g clipPath={`url(#${id}-clip)`} className="mx-refract" aria-hidden opacity="0.5">
+          <path d={SHIELD} transform="translate(-1.15,0)" fill="rgba(232,133,143,0.2)" />
+          <path d={SHIELD} transform="translate(1.15,0)" fill="rgba(52,211,153,0.18)" />
+          <path d={SHIELD} transform="translate(0,1.15)" fill="rgba(255,241,193,0.2)" />
         </g>
 
-        {/* Lattice edges drawn as hairline telemetry */}
-        <g stroke="rgba(248,250,252,0.1)" strokeWidth="0.5" aria-hidden>
-          <path d="M32 3.2V32M32 32v28.8M7.4 17.6 32 32l24.6-14.4M7.4 46.4 32 32l24.6 14.4" fill="none" />
+        {/* ---------------------------------------------- Shield plate */}
+        <path d={SHIELD} fill={`url(#${id}-plate)`} stroke={`url(#${id}-edge)`} strokeWidth="1.9" strokeLinejoin="miter" />
+        <path d={INNER} fill="none" stroke="rgba(255,241,193,0.16)" strokeWidth="0.7" strokeLinejoin="miter" />
+
+        {/* Milled edge: short hairlines around the chamfers, machined not painted */}
+        <g aria-hidden stroke="rgba(255,241,193,0.2)" strokeWidth="0.45">
+          <path d="M48 3.9V7.2M85 24.9v3.1M85 60v3.1M48 92.1v-3.1M11 60v3.1M11 24.9v3.1" />
         </g>
 
-        {/* ------------------------------- Interlocking M + node core */}
-        <g filter={`url(#${id}-glow)`}>
-          {/* Gold spine: a cut diamond stroke */}
-          <path
-            d="M17.4 47.2V20.6L32 36.4"
-            fill="none"
-            stroke={`url(#${id}-gold)`}
-            strokeWidth="4.6"
-            strokeLinecap="square"
-            strokeLinejoin="miter"
-            strokeMiterlimit={3}
-          />
-          {/* Cyan counter-spine, crossing behind the core */}
-          <path
-            d="M46.6 47.2V20.6L32 36.4"
-            fill="none"
-            stroke={`url(#${id}-cyan)`}
-            strokeWidth="4.6"
-            strokeLinecap="square"
-            strokeLinejoin="miter"
-            strokeMiterlimit={3}
-          />
-          {/* Hairline highlight on the gold face */}
-          <path
-            d="M17.4 47.2V20.6L32 36.4"
-            fill="none"
-            stroke="rgba(255,250,230,0.65)"
-            strokeWidth="0.9"
-            strokeLinecap="square"
-          />
+        {/* ---------------------------------------------- The M and its spire */}
+        <g filter={`url(#${id}-strike)`}>
+          {/* Occlusion under the gold, so the relief sits *in* the plate */}
+          <path d={MONOGRAM} fill="none" stroke="rgba(0,0,0,0.72)" strokeWidth="8.4" strokeLinecap="square" strokeLinejoin="miter" transform="translate(0.9,1.4)" />
+          <path d={MONOGRAM} fill="none" stroke={`url(#${id}-gold)`} strokeWidth="7.2" strokeLinecap="square" strokeLinejoin="miter" />
+          {/* Chamfer light walking the upper edge */}
+          <path d={MONOGRAM} fill="none" stroke="rgba(255,253,240,0.72)" strokeWidth="0.9" strokeLinecap="square" strokeLinejoin="miter" transform="translate(-0.7,-0.8)" />
+
+          {/* Spire: a tapering needle out of the valley */}
+          <path d={SPIRE} fill="none" stroke="rgba(0,0,0,0.66)" strokeWidth="5.4" strokeLinecap="round" transform="translate(0.8,1.2)" />
+          <path d={SPIRE} fill="none" stroke={`url(#${id}-gold-soft)`} strokeWidth="4.2" strokeLinecap="round" />
+
+          {/* Crown finial: a cut diamond at the apex */}
+          <path d="M48 7.4 51.4 12.4 48 17.4 44.6 12.4Z" fill={`url(#${id}-core)`} stroke="rgba(58,42,8,0.7)" strokeWidth="0.6" strokeLinejoin="round" />
+          <path d="M48 8.6 50.2 12.4 48 16.2" fill="none" stroke="rgba(255,253,242,0.6)" strokeWidth="0.45" />
         </g>
 
-        {/* The crossing is the node: a faceted diamond with a live pupil */}
-        <path
-          d="M32 30.2 36.4 36.4 32 42.6 27.6 36.4Z"
-          fill="#06080D"
-          stroke={`url(#${id}-gold)`}
-          strokeWidth="1.1"
-          strokeLinejoin="round"
-        />
-        <circle cx="32" cy="36.4" r="2.55" fill={`url(#${id}-core)`} />
-        <circle cx="32" cy="36.4" r="4.6" fill="none" stroke="rgba(6,182,212,0.42)" strokeWidth="0.55" />
-
-        {/* Vertex pins */}
-        <g fill="#F8FAFC" aria-hidden>
-          <circle cx="32" cy="3.2" r="1.05" />
-          <circle cx="56.6" cy="17.6" r="1.05" />
-          <circle cx="56.6" cy="46.4" r="1.05" />
-          <circle cx="32" cy="60.8" r="1.05" />
-          <circle cx="7.4" cy="46.4" r="1.05" />
-          <circle cx="7.4" cy="17.6" r="1.05" />
+        {/* Ticker plinth — the base of the crest */}
+        <g filter={`url(#${id}-glow)`} aria-hidden>
+          <rect x="33" y="76.4" width="30" height="5.4" rx="1.6" fill="rgba(226,194,117,0.14)" stroke="rgba(255,241,193,0.34)" strokeWidth="0.5" />
+          <path d="M36.4 79.1h23.2" stroke="rgba(255,241,193,0.55)" strokeWidth="0.55" strokeLinecap="round" />
         </g>
 
-        {/* Hover sheen sweeping across the emblem */}
+        {/* Hover sheen sweeping across the plate */}
         <rect
-          x="-24"
+          x="-30"
           y="0"
-          width="24"
-          height="64"
+          width="30"
+          height="96"
           fill={`url(#${id}-sheen)`}
           clipPath={`url(#${id}-clip)`}
           className="mx-logo-sheen"
@@ -212,7 +189,7 @@ export default function BrandLogo({
         </span>
         {showNode ? (
           <span
-            className={`rounded-[4px] border border-amber/35 px-[0.34rem] py-[0.1rem] ${scale.node} font-bold tracking-[0.18em] text-amber/90 uppercase`}
+            className={`rounded-[4px] border border-gold/35 px-[0.34rem] py-[0.1rem] ${scale.node} font-bold tracking-[0.18em] text-gold/90 uppercase`}
           >
             {t.brand.product.toUpperCase()}
           </span>
@@ -239,7 +216,7 @@ export default function BrandLogo({
     <a
       href={to(href)}
       aria-label={`${t.brand.name} ${t.brand.product} — ${t.brand.tagline}`}
-      className={`group/logo relative flex items-center ${scale.gap} rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-amber/45 ${className}`}
+      className={`group/logo relative flex items-center ${scale.gap} rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-gold/45 ${className}`}
     >
       {emblem}
       {wordmark}

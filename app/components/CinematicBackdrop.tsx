@@ -68,27 +68,27 @@ export default function CinematicBackdrop() {
       }
     >
       {/* Base wash */}
-      <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_-10%,#0d1730_0%,#070b16_45%,#04060d_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_-10%,#141118_0%,#0a0a0e_46%,#050507_100%)]" />
 
-      {/* Drifting aurora bodies */}
-      <div className="absolute -top-[22%] left-[6%] h-[46vw] w-[46vw] rounded-full bg-[radial-gradient(circle,rgba(34,224,255,0.20),transparent_62%)] blur-[90px] animate-[mx-drift_26s_ease-in-out_infinite]" />
-      <div className="absolute right-[2%] top-[28%] h-[40vw] w-[40vw] rounded-full bg-[radial-gradient(circle,rgba(74,222,159,0.16),transparent_64%)] blur-[100px] animate-[mx-drift-alt_34s_ease-in-out_infinite]" />
-      <div className="absolute bottom-[-18%] left-[26%] h-[38vw] w-[38vw] rounded-full bg-[radial-gradient(circle,rgba(99,102,241,0.16),transparent_66%)] blur-[110px] animate-[mx-drift_44s_ease-in-out_infinite_reverse]" />
+      {/* Drifting aurora bodies — one warm smoke, one imperial emerald */}
+      <div className="absolute -top-[22%] left-[6%] h-[46vw] w-[46vw] rounded-full bg-[radial-gradient(circle,rgba(226,194,117,0.16),transparent_62%)] blur-[90px] animate-[mx-drift_26s_ease-in-out_infinite]" />
+      <div className="absolute right-[2%] top-[28%] h-[40vw] w-[40vw] rounded-full bg-[radial-gradient(circle,rgba(16,185,129,0.13),transparent_64%)] blur-[100px] animate-[mx-drift-alt_34s_ease-in-out_infinite]" />
+      <div className="absolute bottom-[-18%] left-[26%] h-[38vw] w-[38vw] rounded-full bg-[radial-gradient(circle,rgba(20,17,24,0.95),transparent_66%)] blur-[110px] animate-[mx-drift_44s_ease-in-out_infinite_reverse]" />
 
       {/* Pointer-tracked light */}
       <div
-        className="absolute h-[34vw] w-[34vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(126,240,255,0.13),transparent_66%)] blur-[80px]"
+        className="absolute h-[34vw] w-[34vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,241,193,0.10),transparent_66%)] blur-[80px]"
         style={{ left: 'var(--mx-pointer-x)', top: 'var(--mx-pointer-y)' }}
       />
 
       {/* Blueprint grid */}
-      <div className="absolute inset-0 opacity-[0.55] [mask-image:radial-gradient(ellipse_75%_60%_at_50%_25%,#000_20%,transparent_80%)] bg-[linear-gradient(to_right,rgba(34,224,255,0.055)_1px,transparent_1px),linear-gradient(to_bottom,rgba(34,224,255,0.055)_1px,transparent_1px)] bg-[size:72px_72px]" />
+      <div className="absolute inset-0 opacity-[0.55] [mask-image:radial-gradient(ellipse_75%_60%_at_50%_25%,#000_20%,transparent_80%)] bg-[linear-gradient(to_right,rgba(226,194,117,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(226,194,117,0.05)_1px,transparent_1px)] bg-[size:72px_72px]" />
 
       {/* Horizon line */}
-      <div className="absolute inset-x-0 top-[38%] h-px bg-gradient-to-r from-transparent via-cyan-400/12 to-transparent" />
+      <div className="absolute inset-x-0 top-[38%] h-px bg-gradient-to-r from-transparent via-[#e2c275]/14 to-transparent" />
 
       {/* Vignette + grain */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(2,4,10,0.72)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(5,5,7,0.78)_100%)]" />
       <div className="mx-grain absolute inset-0 opacity-[0.22] mix-blend-overlay" />
     </div>
   );

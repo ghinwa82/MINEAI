@@ -108,7 +108,7 @@ const COPY: Record<string, Copy> = {
     continue: 'Continue to payment',
     payTitle: 'Choose a payment method', payLead: 'Direct crypto settles instantly at the exact plan price. Card and wallet rails open automatically once the merchant account is live.',
     freeNote: 'This plan is free. Activation is instant and needs no payment.',
-    crypto: 'Direct Cryptocurrency', cryptoNote: 'USDT or BTC from any exchange or wallet. The hash is verified on-chain. 0% platform fee.',
+    crypto: 'Direct Cryptocurrency (USDT / BTC — 0% Fee)', cryptoNote: 'USDT or BTC from any exchange or wallet. The hash is verified on-chain. 0% platform fee.',
     card: 'Credit / Debit Card', cardNote: 'Visa, Mastercard and debit cards, authorised on a hosted secure page. Card details never reach this server.',
     applepay: 'Apple Pay / Google Pay', applepayNote: 'One-tap checkout with the wallet already on your device. Nothing to type.',
     wallet: 'Mobile Wallets', walletNote: 'Settle from a mobile wallet balance in your local currency.',
@@ -499,7 +499,7 @@ export default function CheckoutFlow({ initialPlan }: { initialPlan?: string }) 
                   id="checkout-currency"
                   value={currency}
                   onChange={(event) => setCurrency(event.target.value as (typeof CURRENCIES)[number])}
-                  className="mt-2 w-full max-w-[12rem] rounded-xl border border-white/12 bg-[#04060d] px-3 py-2.5 text-sm text-ink outline-none focus:border-cyan/50"
+                  className="mt-2 w-full max-w-[12rem] rounded-xl border border-white/12 bg-[#050507] px-3 py-2.5 text-sm text-ink outline-none focus:border-cyan/50"
                 >
                   {CURRENCIES.map((code) => (
                     <option key={code} value={code}>
@@ -634,7 +634,7 @@ export default function CheckoutFlow({ initialPlan }: { initialPlan?: string }) 
                         </div>
 
                         {intent ? (
-                          <div className="mt-5 space-y-4 rounded-xl border border-white/10 bg-[#04060d]/70 p-4">
+                          <div className="mt-5 space-y-4 rounded-xl border border-white/10 bg-[#050507]/70 p-4">
                             <div className="flex items-center justify-between gap-3">
                               <div>
                                 <p className="text-[0.62rem] tracking-[0.12em] text-ink-faint uppercase">{copy.amount}</p>
@@ -685,7 +685,7 @@ export default function CheckoutFlow({ initialPlan }: { initialPlan?: string }) 
                         )}
                       </div>
 
-                      <div className="rounded-xl border border-white/10 bg-[#04060d]/70 p-4">
+                      <div className="rounded-xl border border-white/10 bg-[#050507]/70 p-4">
                         <label htmlFor="checkout-tx" className="block text-[0.66rem] tracking-[0.12em] text-ink-faint uppercase">
                           {copy.txLabel}
                         </label>
@@ -695,7 +695,7 @@ export default function CheckoutFlow({ initialPlan }: { initialPlan?: string }) 
                           onChange={(event) => setTxHash(event.target.value.trim())}
                           placeholder="0x…"
                           autoComplete="off"
-                          className="mt-2 w-full rounded-xl border border-white/12 bg-[#04060d] px-3 py-2.5 font-mono text-[0.76rem] text-ink outline-none focus:border-cyan/50"
+                          className="mt-2 w-full rounded-xl border border-white/12 bg-[#050507] px-3 py-2.5 font-mono text-[0.76rem] text-ink outline-none focus:border-cyan/50"
                         />
                         <p className="mt-2 text-[0.68rem] leading-relaxed text-ink-faint">{copy.txHint}</p>
                         <button

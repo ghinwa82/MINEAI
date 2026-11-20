@@ -129,7 +129,7 @@ export default function MiningReactor({
     <section className="relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#070c17] p-5 sm:p-7">
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-32 start-1/3 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.22),transparent_70%)] blur-2xl"
+        className="pointer-events-none absolute -top-32 start-1/3 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(226,194,117,0.22),transparent_70%)] blur-2xl"
       />
 
       <div className="relative grid gap-6 lg:grid-cols-[minmax(0,300px)_1fr] lg:items-center">
@@ -161,7 +161,7 @@ export default function MiningReactor({
             aria-hidden
             className={`absolute inset-[34%] rounded-full transition ${
               active
-                ? 'bg-[radial-gradient(circle_at_35%_30%,#fff3b0,#d4af37_38%,#06b6d4_78%,#04121a)] shadow-[0_0_60px_rgba(6,182,212,0.45)]'
+                ? 'bg-[radial-gradient(circle_at_35%_30%,#FFF1C1,#E2C275_38%,#B68D3A_78%,#0a0a0e)] shadow-[0_0_60px_rgba(226,194,117,0.45)]'
                 : 'bg-[radial-gradient(circle_at_35%_30%,rgba(248,250,252,0.35),rgba(14,19,31,0.9)_70%)] shadow-none'
             }`}
           />
@@ -250,8 +250,8 @@ export default function MiningReactor({
             <svg viewBox="0 0 200 112" className="h-[74px] w-[132px]" role="img" aria-label={copy.speed}>
               <defs>
                 <linearGradient id="gauge-gold" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#06b6d4" />
-                  <stop offset="55%" stopColor="#d4af37" />
+                  <stop offset="0%" stopColor="#B68D3A" />
+                  <stop offset="55%" stopColor="#E2C275" />
                   <stop offset="100%" stopColor="#f3d06b" />
                 </linearGradient>
               </defs>
@@ -314,7 +314,7 @@ export default function MiningReactor({
             className={`mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-[0.78rem] font-bold transition sm:w-auto ${
               active
                 ? 'border border-rose-400/35 text-rose-200 hover:border-rose-400/60'
-                : 'bg-[linear-gradient(100deg,#d4af37,#fff3b0)] text-[#120d02] shadow-[0_10px_28px_-12px_rgba(212,175,55,0.8)] hover:brightness-110'
+                : 'bg-[linear-gradient(100deg,#E2C275,#FFF1C1)] text-[#120d02] shadow-[0_10px_28px_-12px_rgba(212,175,55,0.8)] hover:brightness-110'
             } disabled:opacity-60`}
           >
             <span aria-hidden>{active ? '❚❚' : '▶'}</span>

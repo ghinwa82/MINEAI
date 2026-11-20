@@ -227,8 +227,8 @@ export default function SupportChat({ dense = false }: { dense?: boolean }) {
             <p
               className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-[0.82rem] leading-relaxed ${
                 message.role === 'user'
-                  ? 'bg-[linear-gradient(100deg,#d4af37,#fff3b0)] font-medium text-[#120d02]'
-                  : 'border border-white/8 bg-[#04060d]/80 text-ink-soft'
+                  ? 'bg-[linear-gradient(100deg,#E2C275,#fff3b0)] font-medium text-[#120d02]'
+                  : 'border border-white/8 bg-[#050507]/80 text-ink-soft'
               }`}
             >
               {message.text}
@@ -237,7 +237,7 @@ export default function SupportChat({ dense = false }: { dense?: boolean }) {
         ))}
         {busy ? (
           <div className="flex justify-start">
-            <p className="rounded-2xl border border-white/8 bg-[#04060d]/80 px-4 py-2.5 text-[0.8rem] text-ink-faint">
+            <p className="rounded-2xl border border-white/8 bg-[#050507]/80 px-4 py-2.5 text-[0.8rem] text-ink-faint">
               {copy.thinking}…
             </p>
           </div>
@@ -260,7 +260,7 @@ export default function SupportChat({ dense = false }: { dense?: boolean }) {
           onChange={(event) => setInput(event.target.value)}
           placeholder={copy.placeholder}
           maxLength={600}
-          className="min-w-0 flex-1 rounded-xl border border-white/10 bg-[#04060d]/80 px-4 py-2.5 text-[0.85rem] text-ink outline-none transition placeholder:text-ink-faint focus:border-amber/50"
+          className="min-w-0 flex-1 rounded-xl border border-white/10 bg-[#050507]/80 px-4 py-2.5 text-[0.85rem] text-ink outline-none transition placeholder:text-ink-faint focus:border-amber/50"
         />
         <button
           type="submit"

@@ -27,7 +27,7 @@ interface ProviderInfo {
 }
 
 const inputClass =
-  'w-full rounded-xl border border-white/12 bg-[#04060d]/80 px-4 py-3 text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-cyan/50 focus:ring-2 focus:ring-cyan/15';
+  'w-full rounded-xl border border-white/12 bg-[#050507]/80 px-4 py-3 text-sm text-ink outline-none transition placeholder:text-ink-faint focus:border-cyan/50 focus:ring-2 focus:ring-cyan/15';
 
 const labelClass = 'block text-[0.72rem] font-semibold tracking-[0.08em] text-ink-soft';
 

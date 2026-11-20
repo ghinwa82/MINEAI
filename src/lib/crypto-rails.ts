@@ -252,7 +252,7 @@ export async function createDepositIntent(
     errorCorrectionLevel: 'M',
     margin: 1,
     width: 420,
-    color: { dark: '#04060d', light: '#f2f7ff' },
+    color: { dark: '#050507', light: '#FAF8F5' },
   });
 
   const id = `DEP-${Date.now().toString(36).toUpperCase()}-${Math.random()

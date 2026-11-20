@@ -59,7 +59,7 @@ export default function BriefReader({ brief }: { brief: GrowthBrief }) {
         <p className="mt-2 text-[0.78rem] leading-relaxed text-ink-mute">{copy.scriptsLead}</p>
         <div className="mt-5 space-y-4">
           {CHANNELS.map((channel) => (
-            <div key={channel.key} className="rounded-xl border border-white/8 bg-[#04060d]/70 p-4">
+            <div key={channel.key} className="rounded-xl border border-white/8 bg-[#050507]/70 p-4">
               <div className="flex items-center justify-between gap-3">
                 <span className="text-[0.68rem] font-semibold tracking-[0.1em] text-cyan uppercase">{channel.label}</span>
                 <button

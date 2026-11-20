@@ -31,23 +31,23 @@ const VOICE: Record<SupportedLanguage, string> = {
 
 const STAGE = [
   {
-    accent: '#22e0ff',
-    second: '#4ade9f',
+    accent: '#E2C275',
+    second: '#34D399',
     glyph: 'mesh',
   },
   {
-    accent: '#4ade9f',
-    second: '#ffbe4d',
+    accent: '#34D399',
+    second: '#F0CF8B',
     glyph: 'scout',
   },
   {
-    accent: '#ffbe4d',
-    second: '#22e0ff',
+    accent: '#F0CF8B',
+    second: '#E2C275',
     glyph: 'settle',
   },
   {
     accent: '#a78bfa',
-    second: '#22e0ff',
+    second: '#E2C275',
     glyph: 'proof',
   },
 ] as const;
@@ -235,7 +235,7 @@ export default function ExplainerVideoPlayer() {
           <div
             className="absolute inset-0 transition-colors duration-700"
             style={{
-              background: `radial-gradient(circle at 28% 18%, ${stage.accent}2e, transparent 58%), radial-gradient(circle at 78% 82%, ${stage.second}24, transparent 62%), #04060d`,
+              background: `radial-gradient(circle at 28% 18%, ${stage.accent}2e, transparent 58%), radial-gradient(circle at 78% 82%, ${stage.second}24, transparent 62%), #050507`,
             }}
             aria-hidden
           />
@@ -392,7 +392,7 @@ export default function ExplainerVideoPlayer() {
               <defs>
                 <linearGradient id="explainer-profit" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor={stage.accent} />
-                  <stop offset="100%" stopColor="#d4af37" />
+                  <stop offset="100%" stopColor="#E2C275" />
                 </linearGradient>
               </defs>
               <g fill="none" stroke="url(#explainer-profit)" strokeWidth="1.3" strokeLinecap="round">
@@ -488,7 +488,7 @@ function StageGlyph({
             )),
           )}
           {nodes.map((node, i) => (
-            <circle key={i} cx={node.x} cy={node.y} r={i === 5 ? 3.4 : 1.9} fill={i === 5 ? accent : '#04060d'} strokeWidth="0.9">
+            <circle key={i} cx={node.x} cy={node.y} r={i === 5 ? 3.4 : 1.9} fill={i === 5 ? accent : '#050507'} strokeWidth="0.9">
               {!reduce && i === 5 ? <animate attributeName="r" values="3;4.4;3" dur="2.4s" repeatCount="indefinite" /> : null}
             </circle>
           ))}

@@ -100,7 +100,7 @@ export default function MiningPlans({ withCalculator = true }: { withCalculator?
               href={href(`/checkout?plan=${plan.slug}`)}
               className={`mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-[0.78rem] font-semibold transition ${
                 plan.popular
-                  ? 'bg-[linear-gradient(100deg,#d4af37,#fff3b0)] text-[#120d02] hover:brightness-110'
+                  ? 'bg-[linear-gradient(100deg,#E2C275,#fff3b0)] text-[#120d02] hover:brightness-110'
                   : 'border border-white/12 text-ink hover:border-cyan/40 hover:text-cyan'
               }`}
             >
@@ -139,7 +139,7 @@ export default function MiningPlans({ withCalculator = true }: { withCalculator?
       </div>
 
       {withCalculator ? (
-        <section className="rounded-[1.35rem] border border-white/10 bg-[linear-gradient(140deg,rgba(34,224,255,0.07),rgba(8,13,24,0.9))] p-6 sm:p-9">
+        <section className="rounded-[1.35rem] border border-white/10 bg-[linear-gradient(140deg,rgba(226,194,117,0.07),rgba(8,13,24,0.9))] p-6 sm:p-9">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="mx-eyebrow">{notes.calculatorTitle}</p>
@@ -164,7 +164,7 @@ export default function MiningPlans({ withCalculator = true }: { withCalculator?
                 step={120}
                 value={power}
                 onChange={(event) => setPower(Number(event.target.value))}
-                className="mt-3 w-full accent-[#22e0ff]"
+                className="mt-3 w-full accent-[#E2C275]"
               />
               <div className="mt-3 flex justify-between text-[0.62rem] text-ink-faint">
                 <span>120 MH/s</span>
@@ -174,11 +174,11 @@ export default function MiningPlans({ withCalculator = true }: { withCalculator?
             </div>
 
             <dl className="grid grid-cols-2 gap-3">
-              <div className="rounded-xl border border-white/8 bg-[#04060d]/70 p-4">
+              <div className="rounded-xl border border-white/8 bg-[#050507]/70 p-4">
                 <dt className="text-[0.62rem] tracking-[0.12em] text-ink-faint uppercase">{notes.daily}</dt>
                 <dd className="mx-numeric mt-1 text-xl font-bold text-mint">{formatUsd(daily, lang)}</dd>
               </div>
-              <div className="rounded-xl border border-white/8 bg-[#04060d]/70 p-4">
+              <div className="rounded-xl border border-white/8 bg-[#050507]/70 p-4">
                 <dt className="text-[0.62rem] tracking-[0.12em] text-ink-faint uppercase">{notes.monthly}</dt>
                 <dd className="mx-numeric mt-1 text-xl font-bold text-cyan">{formatUsd(monthly, lang)}</dd>
               </div>

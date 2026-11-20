@@ -119,7 +119,10 @@ export async function POST(request: Request) {
     txHash: parsed.data.txHash?.trim() || null,
   };
 
-  if (parsed.data.uid && isValidUid(parsed.data.uid)) {
+  // The position snapshot is personal data. It is only attached when the
+  // caller proved ownership by carrying a session whose uid matches — a uid
+  // alone is a guessable identifier, not a credential.
+  if (parsed.data.uid && isValidUid(parsed.data.uid) && session?.member.uid === parsed.data.uid) {
     try {
       const snapshot = snapshotFor(parsed.data.uid, lang);
       context = {

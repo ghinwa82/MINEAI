@@ -743,7 +743,7 @@ export default function PayoutSetupPage() {
             <p className="mt-2 text-[0.72rem] leading-relaxed text-ink-mute">
               The same bytecode deploys from the CLI and seeds the four staking pools:
             </p>
-            <pre className="mt-3 overflow-x-auto rounded-lg border border-white/8 bg-[#04060d] px-3 py-2.5 text-[0.66rem] leading-relaxed text-ink-soft">
+            <pre className="mt-3 overflow-x-auto rounded-lg border border-white/8 bg-[#050507] px-3 py-2.5 text-[0.66rem] leading-relaxed text-ink-soft">
 {`npm run contract:compile
 npm run contract:artifact
 npm --prefix hardhat run deploy:testnet`}
@@ -757,7 +757,7 @@ npm --prefix hardhat run deploy:testnet`}
       </section>
 
       {/* ------------------------------------------- Growth Agents Monitor */}
-      <section className="mt-10 rounded-2xl border border-cyan/20 bg-[linear-gradient(140deg,rgba(34,224,255,0.06),rgba(8,13,24,0.97)_55%)] p-6 sm:p-7">
+      <section className="mt-10 rounded-2xl border border-cyan/20 bg-[linear-gradient(140deg,rgba(226,194,117,0.06),rgba(8,13,24,0.97)_55%)] p-6 sm:p-7">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-[0.58rem] font-semibold tracking-[0.18em] text-ink-faint uppercase">
@@ -789,7 +789,7 @@ npm --prefix hardhat run deploy:testnet`}
             { label: 'Signups', value: growth?.signups ?? 0 },
             { label: 'Campaigns', value: growth?.campaigns.length ?? 0 },
           ].map((stat) => (
-            <div key={stat.label} className="rounded-xl border border-white/8 bg-[#04060d]/70 px-3 py-2.5">
+            <div key={stat.label} className="rounded-xl border border-white/8 bg-[#050507]/70 px-3 py-2.5">
               <dt className="text-[0.54rem] tracking-[0.12em] text-ink-faint uppercase">{stat.label}</dt>
               <dd className="mx-numeric mt-1 text-lg font-bold text-cyan">{stat.value}</dd>
             </div>

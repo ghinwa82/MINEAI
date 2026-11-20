@@ -1,0 +1,45 @@
+Act as an Elite Principal Full-Stack Systems Architect, AI Routing & Infrastructure Engineer, Luxury Brand Identity & Creative Director (Apple / Cartier / Stripe / Linear caliber), 3D Motion & Web Audio Engineer, and Cybersecurity Specialist. Execute a complete, autonomous two-phase operation on this Windows machine (`C:\Users\AMAL SELMANI`): first, repair and optimize all `OmniRoute` providers and sequential free-model failover so your own execution never stalls; second, perform a ground-up visual and architectural transformation of the `MINEAI` platform (`C:\Users\AMAL SELMANI\OneDrive\Desktop\MINEAI`) and deploy it bug-free to `https://mineai-three.vercel.app`.
+
+CRITICAL BRANDING, COLOR PALETTE & PRIVACY MANDATES:
+1. **Radical New Luxury Color Palette & Layered Spatial Backgrounds (Completely New Aesthetic):**
+   - Abandon the old generic dark-blue/cyan look completely. Architect a breathtaking, editorial **Velvet Midnight, Champagne Platinum & Imperial Emerald-Gold** visual system:
+     - **Primary Canvas Background:** Deep Velvet Obsidian (`#050507`) layered with subtle animated volumetric radial aurora meshes (`#141118` Warm Plum-Charcoal & `#0B1512` Deep Emerald-Slate), ultra-fine architectural micro-dot matrices, and liquid frosted obsidian glass cards (`rgba(16, 16, 22, 0.72)` with `backdrop-filter: blur(24px)` and `1px solid rgba(226, 194, 117, 0.22)` luminous hairline borders).
+     - **Primary Accent Palette:** **Imperial Champagne Gold (`#E2C275` -> `#FFF1C1` -> `#B68D3A`)** paired with **Bioluminescent Mint-Emerald (`#10B981` / `#34D399`)** for live active nodes/profits and **Crisp Alabaster Ivory (`#FAF8F5`)** for ultra-clear, high-contrast typography across all **6 languages (English, Arabic RTL, French, Spanish, Chinese, Hindi)**.
+   - **Human-Crafted Editorial Precision:** Zero generic AI templates, zero cluttered boxes, asymmetrical luxury grid layouts, smooth Framer Motion page transitions, and a subtle **Web Audio API Synthesizer (`lib/sound-engine.ts`)** (with a header mute/unmute toggle) for crisp tactile clicks and harmonic chimes.
+2. **White-Label Payment Checkout (ZERO Third-Party Gateway Names Visible):**
+   - Never display third-party gateway brand names ("Kashier", "Paymob", "Stripe", "Paddle", "LemonSqueezy") anywhere in the UI. Present clean, universal institutional payment options only: **"Credit / Debit Card (Visa & Mastercard)"**, **"Apple Pay / Google Pay"**, **"Mobile Wallets"**, and **"Direct Cryptocurrency (USDT / BTC — 0% Fee)"**, silently routing backend API calls through the configured keys in `.env.local`.
+3. **Strict Privacy:** Never hardcode personal names, national IDs, or bank IBANs in source code or `.env.example`.
+
+Execute all 10 modules autonomously without stopping:
+
+0. Autonomous `OmniRoute` (`http://localhost:20128`) Provider Repair & Sequential Free-Model Failover:
+   - Using your authorized Shell and SQLite/API access, inspect OmniRoute's local database (`~/.omniroute` / `%APPDATA%\omniroute`) and live API (`/v1/models`, `/api/providers`).
+   - Identify and disable or repair any broken/error provider in Provider Topology (such as unauthenticated Kimi/Moonshot entries) so zero failed requests occur.
+   - Activate, health-test, and enable all working free providers (`Gemini (Google AI Studio)`, `UncloseAI`, `Cloudflare AI Playground`, `DuckDuckGo AI Chat`, `ZCode (GLM Coding Plan)`, `MiniMax Code`, `OpenAI Codex`, `Augment`, `Devin CLI`, `AI Horde`, and `GitHub Copilot` if valid).
+   - Rebuild all routing combos (`auto/claude-sonnet`, `auto/claude-opus`, `auto/claude-haiku`, `auto/coding/free`) using **Priority / Sequential Failover** so models execute **one after another** automatically upon any rate limit (429) or error (`gemini-3.1-flash-lite` -> `gemini-2.5-flash` -> `gemini-3-flash-preview` -> working `UncloseAI` / `Cloudflare AI` / `ZCode` / `MiniMax` / `DuckDuckGo` tool-calling-verified models), and ensure `%USERPROFILE%\.claude\settings.json` and Windows env vars (`ANTHROPIC_BASE_URL="http://localhost:20128"`, `ANTHROPIC_AUTH_TOKEN`, removing any `Ollama` overrides) are cleanly synced.
+
+1. Bespoke Brand Identity Overhaul (New Website Logo & New `$MINEAI` Coin Emblem):
+   - **Brand-New Architectural Website Logo (`components/BrandLogo.tsx`):** Completely replace the old logo across the header, footer, auth vault, and favicons with a museum-grade **Royal Geometric Monogram Emblem**—an interlocking chamfered diamond/shield frame in brushed Champagne Gold (`#E2C275`) housing a precision-cut sculptural **"M"** crown spire with subtle animated light refraction, paired with refined luxury wordmark typography (`MINEAI`).
+   - **Brand-New `$MINEAI` Digital Currency Coin Logo (`components/MineAICoinLogo.tsx`):** Completely redesign the `$MINEAI` token emblem as a photorealistic **3D Minted Sovereign Bullion Medallion** featuring dual-tone Champagne Gold & Obsidian inlay, concentric micro-engraved guilloché security rings, milled coin edges, a bold sculpted **"M"** emblem integrated with a **Crowned Sovereign Lion Crest**, and interactive 3D specular light sweeps.
+
+2. End-to-End Bug Audit & Broken-Link Elimination:
+   - Audit every page, API route, component, and form across `C:\Users\AMAL SELMANI\OneDrive\Desktop\MINEAI`. Fix all broken buttons, hydration errors, TypeScript errors, and dead routes so every link and action executes smoothly with zero console or runtime errors.
+
+3. Bulletproof Authentication, Email Callback (`/auth/callback`), Social OAuth & Google Authenticator (2FA):
+   - Ensure `app/auth/callback/route.ts` cleanly exchanges `code` / `token_hash` parameters (`exchangeCodeForSession` and `verifyOtp`) and redirects verified users straight into `/dashboard` or `/mining` with an active session cookie (never showing an error page).
+   - Build a cinematic **Authentication Vault (`/login`, `/register`, `/forgot-password`, `/reset-password`)** with working Email + Password registration/login, **One-Click Social Sign-In (`Apple`, `Google`, `Facebook`)**, and **Google Authenticator (TOTP 2FA)** enrollment with QR code + 6-digit verification inside `/dashboard/security`.
+
+4. Architectural Multi-Coin Cloud Mining Command Center (`app/mining/page.tsx`):
+   - Completely rebuild `/mining` into a breathtaking, animated luxury mining terminal featuring a pulsing **Quantum Energy Core**, live hashrate speedometer (`MH/s` / `TH/s`), animated energy streams flowing into coin vaults, and interactive **Real-Time Earnings Area Charts**.
+   - Backed by real Supabase tables (`mining_nodes`, `mining_balances`, `withdrawals`). Users allocate power across **`$MINEAI` (3x Royal Multiplier)** and **7 major cryptocurrencies (`BTC`, `ETH`, `SOL`, `BNB`, `TON`, `DOGE`, `LTC`)**, watch real-time balances grow every second, and submit real **"Withdraw to My Wallet"** requests with on-chain `txHash` tracking.
+
+5. Above-the-Fold Subscription Plans & Multi-Step Checkout (`/store` & `/checkout`):
+   - Display all **5 Zero-Electricity Cloud Mining Plans** (`Genesis Free Cloud $0`, `Cloud Node v1 $29.99`, `Cloud Pro v2 $99.99`, `Cloud Elite v3 $299.99`, `Sovereign Master v4 $799.99`) prominently near the top of the Homepage and on `/store`, with every button opening the unified **3-Step Checkout Flow (`/checkout?plan=...`)** featuring a live **`USD $` / `EGP ج.م`** currency switcher, white-label card/wallet payment, and **Direct Multi-Chain Crypto Payment (`0%` fee)** reading public receiving wallets from `.env.local` with instant `txHash` verification that upgrades the user's Supabase subscription immediately.
+
+6. Real-Time Markets, 6-Language Animated Explainer Video, Automated News & 24/7 AI Concierge:
+   - Verify `components/ExplainerVideoPlayer.tsx` on the Homepage features smooth animated motion-graphic scenes and natural studio-paced narration across all **6 languages**.
+   - Verify `components/LiveMarketTracker.tsx` streams real-time exchange prices (Binance / CoinGecko / Gold XAU / Forex `USD/EGP`) with a live date and real-time clock, and `app/news/page.tsx` + Homepage Breaking News Ticker auto-refresh with global news.
+   - Wire `components/AiSupportWidget.tsx` and `/support` to a real LLM endpoint (`/api/ai/support`) across all **6 languages**, plus viral social sharing buttons (`WhatsApp`, `Telegram`, `X`, `Facebook`, `Copy Link`) granting `+15%` hashrate boosts.
+
+7. Clean Database Grants, Build Verification & Live Production Deployment:
+   - Ensure `supabase/security_schema.sql` has all tables with explicit `GRANT` permissions and `RLS` policies, preserve `public/google0d409ac877429b1f.html` and `.env.local` keys, run `npm run build` to guarantee **0 TypeScript or build errors**, commit all clean changes, and deploy live to Vercel (`npx vercel --prod`) targeting `https://mineai-three.vercel.app`.

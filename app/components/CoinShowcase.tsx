@@ -262,7 +262,7 @@ export default function CoinShowcase() {
                 <path
                   d={sparkPath(active.spark)}
                   fill="none"
-                  stroke={up ? '#4ade9f' : '#fb7185'}
+                  stroke={up ? '#34D399' : '#fb7185'}
                   strokeWidth="1.6"
                   strokeLinecap="round"
                   strokeLinejoin="round"

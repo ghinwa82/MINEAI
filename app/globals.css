@@ -8,24 +8,43 @@
  * dissolve into the background.
  * ------------------------------------------------------------------ */
 @theme {
-  --color-void: #04060d;
-  --color-abyss: #070b16;
-  --color-panel: #0b1120;
-  --color-panel-2: #0f1729;
-  --color-edge: #1a2438;
-  --color-edge-soft: #141d2e;
+  /* ------------------------------------------------------------------ *
+   * Velvet Obsidian · Champagne Gold · Imperial Emerald
+   *
+   * Token *names* are inherited from the previous system so every
+   * generated utility class (bg-panel, text-cyan, border-edge …) keeps
+   * resolving; only the values changed. `cyan` is now the champagne-gold
+   * accent, `mint` is the imperial emerald, and `void` is the velvet
+   * obsidian canvas.
+   * ------------------------------------------------------------------ */
+  --color-void: #050507;
+  --color-abyss: #0a0a0e;
+  --color-panel: #101016;
+  --color-panel-2: #141118;
+  --color-edge: #2e2818;
+  --color-edge-soft: #1b1712;
 
-  --color-ink: #f2f7ff;
-  --color-ink-soft: #c7d6ee;
-  --color-ink-mute: #93a6c4;
-  --color-ink-faint: #7186a8;
+  --color-ink: #faf8f5;
+  --color-ink-soft: #ded7c9;
+  --color-ink-mute: #a49c8d;
+  --color-ink-faint: #7b7365;
 
-  --color-cyan: #22e0ff;
-  --color-cyan-deep: #0891b2;
-  --color-mint: #4ade9f;
-  --color-mint-deep: #0f9d63;
-  --color-amber: #ffbe4d;
-  --color-rose: #ff6b81;
+  /* Champagne gold — the single accent that carries the whole brand. */
+  --color-gold: #e2c275;
+  --color-gold-hi: #fff1c1;
+  --color-gold-deep: #b68d3a;
+  --color-cyan: #e2c275;
+  --color-cyan-deep: #b68d3a;
+
+  /* Imperial emerald — growth, uptime, live data. */
+  --color-emerald: #10b981;
+  --color-emerald-hi: #34d399;
+  --color-mint: #34d399;
+  --color-mint-deep: #10b981;
+
+  --color-ivory: #faf8f5;
+  --color-amber: #f0cf8b;
+  --color-rose: #e8858f;
 
   --font-display: 'Inter var', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-ui: var(--font-display);
@@ -35,8 +54,10 @@
   --radius-chip: 999px;
 
   --shadow-panel: 0 24px 60px -24px rgb(0 0 0 / 0.85);
-  --shadow-cyan: 0 0 0 1px rgb(34 224 255 / 0.28), 0 12px 40px -12px rgb(34 224 255 / 0.45);
-  --shadow-mint: 0 12px 40px -14px rgb(74 222 159 / 0.5);
+  --shadow-cyan: 0 0 0 1px rgb(226 194 117 / 0.3), 0 12px 40px -12px rgb(226 194 117 / 0.4);
+  --shadow-mint: 0 12px 40px -14px rgb(52 211 153 / 0.42);
+  --shadow-gold: 0 18px 50px -18px rgb(226 194 117 / 0.45);
+  --shadow-gold-deep: 0 26px 70px -26px rgb(182 141 58 / 0.55);
 
   --animate-drift: mx-drift 26s ease-in-out infinite;
   --animate-drift-slow: mx-drift 40s ease-in-out infinite reverse;
@@ -199,12 +220,12 @@
   }
 
   ::selection {
-    background: rgb(34 224 255 / 0.28);
-    color: #ffffff;
+    background: rgb(226 194 117 / 0.26);
+    color: #fffdf6;
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-cyan);
+    outline: 2px solid var(--color-gold);
     outline-offset: 3px;
     border-radius: 6px;
   }
@@ -217,12 +238,12 @@
     background: var(--color-abyss);
   }
   ::-webkit-scrollbar-thumb {
-    background: #1c2740;
+    background: #2a2418;
     border-radius: 999px;
     border: 2px solid var(--color-abyss);
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-cyan-deep);
+    background: var(--color-gold-deep);
   }
 
   /* Arabic numerals keep their western shape so prices stay scannable. */
@@ -246,14 +267,14 @@
     font-weight: 600;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--color-cyan);
+    color: var(--color-gold);
   }
 
   .mx-eyebrow::before {
     content: '';
     inline-size: 1.75rem;
     block-size: 1px;
-    background: linear-gradient(90deg, transparent, var(--color-cyan));
+    background: linear-gradient(90deg, transparent, var(--color-gold));
   }
 
   .mx-display {
@@ -284,16 +305,19 @@
     letter-spacing: -0.02em;
   }
 
-  /* Panels use a hairline border plus an inner highlight so the edge reads
-     on a near-black surface without a heavy shadow. */
+  /* Obsidian glass: a smoked panel milled from the velvet canvas. The gold
+     hairline is what separates it from the background — no drop shadow can
+     read on a surface this dark. */
   .mx-panel {
     position: relative;
     border-radius: var(--radius-card);
-    border: 1px solid var(--color-edge);
-    background:
-      linear-gradient(180deg, rgb(255 255 255 / 0.035), rgb(255 255 255 / 0)) ,
-      var(--color-panel);
-    box-shadow: var(--shadow-panel);
+    border: 1px solid rgb(226 194 117 / 0.22);
+    background: rgba(16, 16, 22, 0.72);
+    -webkit-backdrop-filter: blur(24px) saturate(130%);
+    backdrop-filter: blur(24px) saturate(130%);
+    box-shadow:
+      var(--shadow-panel),
+      inset 0 1px 0 rgb(255 241 193 / 0.05);
   }
 
   .mx-panel::after {
@@ -302,7 +326,9 @@
     inset: 0;
     border-radius: inherit;
     pointer-events: none;
-    background: linear-gradient(140deg, rgb(34 224 255 / 0.12), transparent 42%);
+    background:
+      radial-gradient(120% 90% at 8% 0%, rgb(226 194 117 / 0.14), transparent 46%),
+      linear-gradient(140deg, rgb(52 211 153 / 0.06), transparent 50%);
     opacity: 0;
     transition: opacity 420ms cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -311,13 +337,42 @@
     opacity: 1;
   }
 
+  /* Heavier variant for hero cards and pricing columns. */
+  .mx-glass {
+    border-radius: var(--radius-card);
+    border: 1px solid rgb(226 194 117 / 0.22);
+    background: rgba(16, 16, 22, 0.72);
+    -webkit-backdrop-filter: blur(24px) saturate(130%);
+    backdrop-filter: blur(24px) saturate(130%);
+    box-shadow:
+      var(--shadow-panel),
+      inset 0 1px 0 rgb(255 241 193 / 0.06);
+  }
+
+  /* Gold foil text — the champagne ramp, never a flat yellow. */
+  .mx-gold-text {
+    background: linear-gradient(102deg, #fff1c1 0%, #e2c275 34%, #b68d3a 62%, #f5dfa4 100%);
+    background-size: 220% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: var(--color-gold);
+  }
+
+  /* A single engraved hairline, used to divide sections without a border. */
+  .mx-hairline {
+    block-size: 1px;
+    inline-size: 100%;
+    background: linear-gradient(90deg, transparent, rgb(226 194 117 / 0.3), transparent);
+  }
+
   .mx-chip {
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
     border-radius: var(--radius-chip);
-    border: 1px solid var(--color-edge);
-    background: rgb(255 255 255 / 0.03);
+    border: 1px solid rgb(226 194 117 / 0.24);
+    background: rgb(226 194 117 / 0.05);
     padding: 0.25rem 0.6875rem;
     font-family: var(--font-mono);
     font-size: 0.6875rem;
@@ -326,7 +381,7 @@
     color: var(--color-ink-soft);
   }
 
-  /* Primary action. */
+  /* Primary action — struck champagne, not a flat fill. */
   .mx-btn {
     position: relative;
     display: inline-flex;
@@ -336,22 +391,27 @@
     border-radius: 0.875rem;
     padding: 0.8125rem 1.375rem;
     font-size: 0.875rem;
-    font-weight: 650;
-    color: #01121a;
-    background: linear-gradient(120deg, #6ff0ff 0%, #22e0ff 42%, #4ade9f 100%);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: #17120a;
+    background: linear-gradient(118deg, #fff1c1 0%, #e2c275 38%, #b68d3a 72%, #e8cd8b 100%);
     background-size: 220% 100%;
     transition:
       transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
       box-shadow 260ms cubic-bezier(0.22, 1, 0.36, 1),
       background-position 620ms cubic-bezier(0.22, 1, 0.36, 1);
-    box-shadow: 0 10px 30px -12px rgb(34 224 255 / 0.7);
+    box-shadow:
+      0 10px 30px -12px rgb(226 194 117 / 0.6),
+      inset 0 1px 0 rgb(255 253 246 / 0.5);
     cursor: pointer;
   }
 
   .mx-btn:hover:not(:disabled) {
     background-position: 100% 0;
     transform: translateY(-1px);
-    box-shadow: 0 16px 40px -14px rgb(34 224 255 / 0.85);
+    box-shadow:
+      0 18px 44px -14px rgb(226 194 117 / 0.75),
+      inset 0 1px 0 rgb(255 253 246 / 0.62);
   }
 
   .mx-btn:active:not(:disabled) {
@@ -371,8 +431,8 @@
     justify-content: center;
     gap: 0.5rem;
     border-radius: 0.875rem;
-    border: 1px solid var(--color-edge);
-    background: rgb(255 255 255 / 0.025);
+    border: 1px solid rgb(226 194 117 / 0.24);
+    background: rgb(255 255 255 / 0.02);
     padding: 0.8125rem 1.375rem;
     font-size: 0.875rem;
     font-weight: 600;
@@ -385,8 +445,8 @@
   }
 
   .mx-btn-quiet:hover:not(:disabled) {
-    border-color: rgb(34 224 255 / 0.55);
-    background: rgb(34 224 255 / 0.08);
+    border-color: rgb(226 194 117 / 0.62);
+    background: rgb(226 194 117 / 0.09);
     transform: translateY(-1px);
   }
 
@@ -395,37 +455,36 @@
     cursor: not-allowed;
   }
 
-  /* Neon sweep used on the wordmark and headline accents. */
+  /* Slow champagne sweep used on the wordmark and headline accents. */
   .mx-neon-text {
-    color: var(--color-cyan);
     background: linear-gradient(
       100deg,
-      #7ef0ff 0%,
-      #22e0ff 22%,
-      #b6fff0 42%,
-      #22e0ff 62%,
-      #4ade9f 82%,
-      #7ef0ff 100%
+      #fff1c1 0%,
+      #e2c275 22%,
+      #fffdf6 42%,
+      #e2c275 62%,
+      #b68d3a 82%,
+      #fff1c1 100%
     );
     background-size: 260% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    color: var(--color-cyan);
+    color: var(--color-gold);
     animation: var(--animate-sweep);
   }
 
   .mx-rule {
     block-size: 1px;
     inline-size: 100%;
-    background: linear-gradient(90deg, transparent, var(--color-edge), transparent);
+    background: linear-gradient(90deg, transparent, rgb(226 194 117 / 0.22), transparent);
   }
 
-  /* Faint blueprint grid used behind sections. */
+  /* Faint engraved grid used behind sections. */
   .mx-blueprint {
     background-image:
-      linear-gradient(to right, rgb(34 224 255 / 0.055) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(34 224 255 / 0.055) 1px, transparent 1px);
+      linear-gradient(to right, rgb(226 194 117 / 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(226 194 117 / 0.045) 1px, transparent 1px);
     background-size: 64px 64px;
     mask-image: radial-gradient(ellipse 70% 60% at 50% 35%, #000 30%, transparent 78%);
   }
@@ -483,6 +542,31 @@
     background: currentColor;
     animation: mx-caret 1.1s steps(1) infinite;
   }
+
+  /* Refraction behind the royal monogram: the plate appears to split light.
+     Idle it drifts a couple of hundredths of a millimetre; on hover the
+     dispersion widens. */
+  .mx-refract {
+    transform-origin: 48px 48px;
+    animation: mx-refract 9s ease-in-out infinite;
+    transition: opacity 320ms ease;
+  }
+
+  .group\/logo:hover .mx-refract {
+    animation-duration: 3.4s;
+  }
+}
+
+@keyframes mx-refract {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translate3d(0.6px, -0.4px, 0) scale(1.012);
+    opacity: 0.62;
+  }
 }
 
 /* ------------------------------------------------------------------ *
@@ -512,11 +596,11 @@
   .mx-wordmark {
     background: linear-gradient(
       100deg,
-      #f4fbff 0%,
-      #ffffff 26%,
-      #7ef0ff 46%,
-      #ffffff 62%,
-      #eef7ff 100%
+      #fffdf6 0%,
+      #faf8f5 26%,
+      #e2c275 46%,
+      #fffdf6 62%,
+      #f3ece0 100%
     );
     background-size: 240% 100%;
     -webkit-background-clip: text;
@@ -531,12 +615,12 @@
   .mx-brand-word {
     background: linear-gradient(
       104deg,
-      #f8fafc 0%,
-      #ffeeb8 22%,
-      #f5d77f 38%,
-      #d4af37 52%,
-      #fff8e2 66%,
-      #f8fafc 100%
+      #faf8f5 0%,
+      #fff1c1 22%,
+      #e2c275 40%,
+      #b68d3a 54%,
+      #fff6d8 68%,
+      #faf8f5 100%
     );
     background-size: 260% 100%;
     background-position: 0% 0;
@@ -544,7 +628,7 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: var(--color-ink);
-    filter: drop-shadow(0 1px 0 rgba(212, 175, 55, 0.16));
+    filter: drop-shadow(0 1px 0 rgba(226, 194, 117, 0.18));
     transition: background-position 820ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
@@ -558,14 +642,14 @@
 
   .mx-wordmark-node {
     border-radius: 999px;
-    border: 1px solid rgb(34 224 255 / 0.35);
-    background: rgb(34 224 255 / 0.08);
+    border: 1px solid rgb(226 194 117 / 0.38);
+    background: rgb(226 194 117 / 0.08);
     padding: 0.1rem 0.45rem;
     font-family: var(--font-mono);
     font-size: 0.5625rem;
     font-weight: 700;
     letter-spacing: 0.2em;
-    color: var(--color-cyan);
+    color: var(--color-gold);
     transition:
       border-color 360ms ease,
       background-color 360ms ease,
@@ -573,9 +657,9 @@
   }
 
   .group\/logo:hover .mx-wordmark-node {
-    border-color: rgb(34 224 255 / 0.75);
-    background: rgb(34 224 255 / 0.16);
-    box-shadow: 0 0 18px -4px rgb(34 224 255 / 0.75);
+    border-color: rgb(226 194 117 / 0.8);
+    background: rgb(226 194 117 / 0.16);
+    box-shadow: 0 0 18px -4px rgb(226 194 117 / 0.7);
   }
 
   .mx-wordmark-sub {
@@ -584,14 +668,14 @@
   }
 
   .group\/logo:hover .mx-wordmark-sub {
-    color: var(--color-cyan);
+    color: var(--color-gold);
   }
 
   /* The glyph gets a travelling highlight on hover. */
   .mx-glyph {
     stroke-dasharray: 74;
     stroke-dashoffset: 0;
-    filter: drop-shadow(0 0 6px rgb(34 224 255 / 0.55));
+    filter: drop-shadow(0 0 6px rgb(226 194 117 / 0.5));
     transition:
       stroke-width 320ms cubic-bezier(0.22, 1, 0.36, 1),
       filter 320ms ease;
@@ -599,7 +683,7 @@
 
   .group\/logo:hover .mx-glyph {
     stroke-width: 3.2;
-    filter: drop-shadow(0 0 12px rgb(126 240 255 / 0.95));
+    filter: drop-shadow(0 0 12px rgb(255 241 193 / 0.9));
   }
 
   /* A light that walks the seam of the mark. */

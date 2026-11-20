@@ -162,16 +162,14 @@ export default function MineAICoinLogo({
           aria-label={`$${ticker} bullion coin — crowned lion fused with the M monogram, guilloché engraving, reeded edge`}
         >
           <defs>
-            {/* Face: warm bounce at the rim, hot specular upper-left, amber core */}
+            {/* Field: smoked obsidian with a champagne bounce along the rim */}
             <radialGradient id={`${id}-face`} cx="34%" cy="23%" r="86%">
-              <stop offset="0%" stopColor="#FFFDF2" />
-              <stop offset="12%" stopColor="#FFF4B8" />
-              <stop offset="30%" stopColor="#F8DC8B" />
-              <stop offset="48%" stopColor="#EDC45C" />
-              <stop offset="64%" stopColor="#D4AF37" />
-              <stop offset="80%" stopColor="#B0821A" />
-              <stop offset="92%" stopColor="#8A6010" />
-              <stop offset="100%" stopColor="#5E3F05" />
+              <stop offset="0%" stopColor="#232028" />
+              <stop offset="22%" stopColor="#1A1720" />
+              <stop offset="46%" stopColor="#121016" />
+              <stop offset="70%" stopColor="#0B0A0E" />
+              <stop offset="88%" stopColor="#07070A" />
+              <stop offset="100%" stopColor="#050507" />
             </radialGradient>
             {/* Collar: light from the top-left, shadow bottom-right */}
             <linearGradient id={`${id}-rim`} x1="0.1" y1="0" x2="0.9" y2="1">
@@ -203,11 +201,11 @@ export default function MineAICoinLogo({
               <stop offset="72%" stopColor="#D9AE3C" />
               <stop offset="100%" stopColor="#8E6208" />
             </linearGradient>
-            {/* Anisotropic brushing: many hairline passes, near-invisible alone */}
+            {/* Anisotropic brushing: gold hairline passes over the smoked field */}
             <linearGradient id={`${id}-brush`} x1="0" y1="0" x2="0.6" y2="1">
-              <stop offset="0%" stopColor="rgba(255,250,224,0.16)" />
-              <stop offset="50%" stopColor="rgba(120,80,4,0.1)" />
-              <stop offset="100%" stopColor="rgba(255,250,224,0.12)" />
+              <stop offset="0%" stopColor="rgba(255,241,193,0.13)" />
+              <stop offset="50%" stopColor="rgba(226,194,117,0.05)" />
+              <stop offset="100%" stopColor="rgba(255,241,193,0.1)" />
             </linearGradient>
             <linearGradient id={`${id}-sweep`} x1="0" y1="0" x2="1" y2="0.4">
               <stop offset="0%" stopColor="rgba(255,255,255,0)" />
@@ -297,7 +295,7 @@ export default function MineAICoinLogo({
                 key={index}
                 d={path}
                 fill="none"
-                stroke={index > 1 ? 'rgba(74,45,2,0.3)' : 'rgba(255,250,224,0.34)'}
+                stroke={index > 1 ? 'rgba(226,194,117,0.2)' : 'rgba(255,241,193,0.42)'}
                 strokeWidth={index > 1 ? 0.55 : 0.8}
               />
             ))}
@@ -308,20 +306,20 @@ export default function MineAICoinLogo({
                 cy={CY}
                 r={78 + index * 3.6}
                 fill="none"
-                stroke="rgba(58,35,1,0.2)"
+                stroke="rgba(226,194,117,0.16)"
                 strokeWidth="0.55"
                 strokeDasharray={index % 2 === 0 ? '1 3.6' : '2.4 5.4'}
               />
             ))}
 
             {/* Raised field boundary around the strike */}
-            <circle cx={CX} cy={CY} r="76" fill="none" stroke="rgba(255,250,224,0.26)" strokeWidth="1.1" />
-            <circle cx={CX} cy={CY} r="74.4" fill="none" stroke="rgba(58,35,1,0.4)" strokeWidth="0.9" />
+            <circle cx={CX} cy={CY} r="76" fill="none" stroke="rgba(255,241,193,0.3)" strokeWidth="1.1" />
+            <circle cx={CX} cy={CY} r="74.4" fill="none" stroke="rgba(182,141,58,0.34)" strokeWidth="0.9" />
           </g>
 
           {/* Micro-lettered band, counter-clockwise at the top */}
           <text
-            fill="rgba(74,45,2,0.76)"
+            fill="rgba(255,241,193,0.66)"
             fontSize="7.1"
             fontWeight="700"
             letterSpacing="3.6"

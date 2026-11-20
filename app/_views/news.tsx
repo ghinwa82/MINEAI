@@ -23,7 +23,7 @@ const CATEGORY_TONE: Record<string, string> = {
   gold: 'border-amber/40 text-amber',
   stocks: 'border-cyan/35 text-cyan',
   economy: 'border-mint/35 text-mint',
-  crypto: 'border-violet-400/35 text-violet-300',
+  crypto: 'border-gold/35 text-gold',
 };
 
 function localeTag(lang: string): string {

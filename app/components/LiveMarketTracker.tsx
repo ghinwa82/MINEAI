@@ -170,7 +170,7 @@ export default function LiveMarketTracker({ variant = 'board' }: { variant?: 'bo
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="rounded-xl border border-white/8 bg-[#04060d]/70 px-3 py-2 text-end">
+          <div className="rounded-xl border border-white/8 bg-[#050507]/70 px-3 py-2 text-end">
             <p className="mx-numeric text-[0.56rem] tracking-[0.14em] text-ink-faint uppercase">
               {eco.markets.updated}
             </p>
@@ -289,7 +289,7 @@ function Spark({ points, positive }: { points: number[]; positive: boolean }) {
     return [Number(x.toFixed(1)), Number(y.toFixed(1))] as const;
   });
   const line = coords.map(([x, y], index) => `${index === 0 ? 'M' : 'L'}${x} ${y}`).join(' ');
-  const stroke = positive ? '#4ade9f' : '#ff6b81';
+  const stroke = positive ? '#34D399' : '#E8858F';
   const last = coords[coords.length - 1];
 
   return (

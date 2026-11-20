@@ -81,9 +81,9 @@ interface Verdict {
  * method, never the company that clears it.
  */
 const RAIL_LABEL: Record<RailStatus['rail'], string> = {
-  kashier: 'Credit / Debit Card',
-  paymob: 'Apple Pay / Mobile Wallets',
-  stripe: 'International Card',
+  kashier: 'Credit / Debit Card (Visa & Mastercard)',
+  paymob: 'Apple Pay / Google Pay',
+  stripe: 'Mobile Wallets',
 };
 
 const EGP_PER_USD = 48.65;
@@ -428,7 +428,7 @@ export default function PaymentCheckout({
                     <p className="text-[0.7rem] font-semibold tracking-[0.14em] text-ink-faint uppercase">
                       {copy.payWith}
                     </p>
-                    <div className="flex rounded-lg border border-white/10 bg-[#04060d] p-0.5" role="group" aria-label={copy.amountLabel}>
+                    <div className="flex rounded-lg border border-white/10 bg-[#050507] p-0.5" role="group" aria-label={copy.amountLabel}>
                       {(
                         [
                           { code: 'USD' as const, label: 'USD $' },
@@ -585,7 +585,7 @@ export default function PaymentCheckout({
                     inputMode="decimal"
                     value={amount}
                     onChange={(event) => setAmount(event.target.value.replace(/[^0-9.]/g, ''))}
-                    className="mx-numeric mt-2 w-full rounded-xl border border-white/12 bg-[#04060d] px-4 py-3 text-[0.95rem] text-ink outline-none transition focus:border-cyan/55"
+                    className="mx-numeric mt-2 w-full rounded-xl border border-white/12 bg-[#050507] px-4 py-3 text-[0.95rem] text-ink outline-none transition focus:border-cyan/55"
                   />
 
                   <p className="mt-5 text-[0.7rem] font-semibold tracking-[0.14em] text-ink-faint uppercase">
@@ -713,7 +713,7 @@ export default function PaymentCheckout({
                         value={txHash}
                         onChange={(event) => setTxHash(event.target.value.trim())}
                         placeholder="0x…"
-                        className="mx-numeric mt-1.5 w-full rounded-lg border border-white/12 bg-[#04060d] px-3 py-2.5 text-[0.76rem] text-ink outline-none transition focus:border-cyan/55"
+                        className="mx-numeric mt-1.5 w-full rounded-lg border border-white/12 bg-[#050507] px-3 py-2.5 text-[0.76rem] text-ink outline-none transition focus:border-cyan/55"
                       />
                       <button
                         type="button"

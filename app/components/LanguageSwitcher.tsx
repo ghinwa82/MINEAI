@@ -78,7 +78,7 @@ export default function LanguageSwitcher({ compact = false }: { compact?: boolea
         aria-expanded={open}
         aria-label={t.language.switch}
         onClick={() => setOpen((value) => !value)}
-        className="group/lang flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs font-semibold text-ink-soft transition hover:border-cyan-400/50 hover:bg-cyan-400/8 hover:text-cyan"
+        className="group/lang flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs font-semibold text-ink-soft transition hover:border-gold/50 hover:bg-gold/8 hover:text-cyan"
       >
         <span className="mx-font-mono text-[0.65rem] tracking-[0.18em] uppercase text-cyan">
           {meta.code}
@@ -117,8 +117,8 @@ export default function LanguageSwitcher({ compact = false }: { compact?: boolea
                 onMouseEnter={() => setFocused(index)}
                 onClick={() => choose(code)}
                 className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-start transition ${
-                  active ? 'bg-cyan-400/12 text-cyan' : 'text-ink-soft hover:bg-white/5 hover:text-ink'
-                } ${index === focused ? 'ring-1 ring-cyan-400/30' : ''}`}
+                  active ? 'bg-gold/12 text-cyan' : 'text-ink-soft hover:bg-white/5 hover:text-ink'
+                } ${index === focused ? 'ring-1 ring-gold/30' : ''}`}
               >
                 <span className="flex flex-col gap-0.5" dir={item.dir}>
                   <span className="text-sm font-semibold">{item.native}</span>

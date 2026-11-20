@@ -24,8 +24,8 @@ export default async function Image() {
           justifyContent: 'space-between',
           padding: '64px 72px',
           background:
-            'radial-gradient(circle at 14% 8%, rgba(212,175,55,0.26), transparent 44%), radial-gradient(circle at 88% 88%, rgba(74,222,159,0.14), transparent 44%), #05070d',
-          color: '#f2f7ff',
+            'radial-gradient(circle at 14% 8%, rgba(212,175,55,0.26), transparent 44%), radial-gradient(circle at 88% 88%, rgba(52,211,153,0.14), transparent 44%), #05070d',
+          color: '#FAF8F5',
           fontFamily: 'Georgia, serif',
         }}
       >
@@ -39,7 +39,7 @@ export default async function Image() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                background: 'linear-gradient(140deg,#FFF3B0,#D4AF37 52%,#8a6a12)',
+                background: 'linear-gradient(140deg,#FFF3B0,#E2C275 52%,#8a6a12)',
                 color: '#241a02',
                 fontSize: 34,
                 fontWeight: 700,
@@ -47,15 +47,15 @@ export default async function Image() {
             >
               M
             </div>
-            <span style={{ fontSize: 22, letterSpacing: 8, color: '#D4AF37' }}>MINEAI NODE</span>
+            <span style={{ fontSize: 22, letterSpacing: 8, color: '#E2C275' }}>MINEAI NODE</span>
           </div>
           <span
             style={{
               display: 'flex',
               padding: '10px 22px',
               borderRadius: 999,
-              border: '1px solid rgba(74,222,159,0.5)',
-              color: '#4ade9f',
+              border: '1px solid rgba(52,211,153,0.5)',
+              color: '#34D399',
               fontSize: 18,
               letterSpacing: 4,
             }}
@@ -68,7 +68,7 @@ export default async function Image() {
           <span style={{ fontSize: 64, lineHeight: 1.06, fontWeight: 700, letterSpacing: -1.5, maxWidth: 960 }}>
             Gold, indices, forex and crypto in one terminal
           </span>
-          <span style={{ fontSize: 26, color: '#93a6c4', letterSpacing: 1 }}>
+          <span style={{ fontSize: 26, color: '#A49C8D', letterSpacing: 1 }}>
             $MINEAI · XAU/USD · BTC · ETH · SOL · USD/EGP
           </span>
         </div>
@@ -83,7 +83,7 @@ export default async function Image() {
                 borderRadius: 12,
                 border: '1px solid rgba(255,255,255,0.14)',
                 background: 'rgba(255,255,255,0.04)',
-                color: '#c7d6ee',
+                color: '#DED7C9',
                 fontSize: 20,
                 letterSpacing: 2,
               }}

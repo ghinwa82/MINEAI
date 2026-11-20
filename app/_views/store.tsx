@@ -267,12 +267,12 @@ export default function StoreView() {
               key={plan.id}
               className={`relative flex flex-col overflow-hidden rounded-[1.5rem] border p-7 transition duration-500 ${
                 isActive
-                  ? 'border-mint/45 bg-[#080f19] shadow-[0_0_50px_-24px_rgba(74,222,159,0.75)]'
+                  ? 'border-mint/45 bg-[#080f19] shadow-[0_0_50px_-24px_rgba(52,211,153,0.75)]'
                   : 'border-white/8 bg-[#080d18] hover:border-cyan/30'
               }`}
             >
               <div
-                className="pointer-events-none absolute -top-24 -right-20 h-52 w-52 rounded-full bg-[radial-gradient(circle,rgba(34,224,255,0.14),transparent_70%)] opacity-0 transition-opacity duration-500 hover:opacity-100"
+                className="pointer-events-none absolute -top-24 -right-20 h-52 w-52 rounded-full bg-[radial-gradient(circle,rgba(226,194,117,0.14),transparent_70%)] opacity-0 transition-opacity duration-500 hover:opacity-100"
                 aria-hidden
               />
 
@@ -332,7 +332,7 @@ export default function StoreView() {
                   className={`w-full rounded-xl px-4 py-3 text-[0.82rem] font-bold transition ${
                     isActive
                       ? 'border border-mint/45 bg-mint/10 text-mint hover:bg-mint/16'
-                      : 'bg-gradient-to-r from-[#6ff0ff] via-[#22e0ff] to-[#4ade9f] text-[#01121a] hover:brightness-110'
+                      : 'bg-gradient-to-r from-[#FFF1C1] via-[#E2C275] to-[#34D399] text-[#01121a] hover:brightness-110'
                   } disabled:opacity-50`}
                 >
                   {isPending

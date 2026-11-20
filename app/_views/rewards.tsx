@@ -438,7 +438,7 @@ export default function RewardsView() {
           {enrolment ? (
             <div className="mt-5">
               <p className="text-[0.62rem] tracking-[0.12em] text-ink-faint uppercase">{copy.securitySecret}</p>
-              <p className="mx-numeric mt-1.5 break-all rounded-lg border border-white/10 bg-[#04060d] px-3 py-2.5 text-[0.78rem] tracking-[0.08em] text-cyan">
+              <p className="mx-numeric mt-1.5 break-all rounded-lg border border-white/10 bg-[#050507] px-3 py-2.5 text-[0.78rem] tracking-[0.08em] text-cyan">
                 {enrolment.secret}
               </p>
 
@@ -460,7 +460,7 @@ export default function RewardsView() {
                   onChange={(event) => setCodeInput(event.target.value.replace(/[^0-9]/g, '').slice(0, 6))}
                   placeholder={copy.securityCode}
                   inputMode="numeric"
-                  className="mx-numeric flex-1 rounded-lg border border-white/12 bg-[#04060d] px-3 py-2.5 text-[0.85rem] tracking-[0.2em] text-ink outline-none focus:border-cyan/55"
+                  className="mx-numeric flex-1 rounded-lg border border-white/12 bg-[#050507] px-3 py-2.5 text-[0.85rem] tracking-[0.2em] text-ink outline-none focus:border-cyan/55"
                 />
                 <button
                   type="button"
@@ -602,7 +602,7 @@ export default function RewardsView() {
                   id="referral-code"
                   value={code}
                   onChange={(event) => setCode(event.target.value.toUpperCase().slice(0, 12))}
-                  className="mx-numeric flex-1 rounded-lg border border-white/12 bg-[#04060d] px-3 py-2.5 text-[0.8rem] tracking-[0.1em] text-ink outline-none focus:border-cyan/55"
+                  className="mx-numeric flex-1 rounded-lg border border-white/12 bg-[#050507] px-3 py-2.5 text-[0.8rem] tracking-[0.1em] text-ink outline-none focus:border-cyan/55"
                 />
                 <button
                   type="button"
