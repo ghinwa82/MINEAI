@@ -1,0 +1,39 @@
+CRITICAL DIRECTIVE: STOP PATCHING OR REUSING THE OLD UI!
+The user explicitly rejected the previous attempt because you only changed text colors while keeping the exact same broken layout, dead buttons, non-functional Google/OAuth login, disconnected database, and broken mining/payment flows.
+
+You have FULL AUTONOMOUS AUTHORIZATION inside `C:\Users\AMAL SELMANI\OneDrive\Desktop\MINEAI`. Use all connected MCP tools (`playwright`, `context7`, `openmontage`, `cli-anything`) and advanced UI/engineering skills (`ui-ux-pro-max`, `apple-design-skills`, `shadcn/ui`, `Framer Motion`, `Three.js`) to **ARCHITECT AND REBUILD `MINEAI` FROM A CLEAN SLATE** with a 100% new structure, luxury visual design, real Supabase database integration, working Google/Social OAuth, real multi-coin cloud mining, and real end-to-end payment checkout.
+
+STRICT RULES FOR THIS CLEAN-SLATE REBUILD:
+1. **Archive Old UI & Build Brand-New Architecture:**
+   - Move old legacy pages/components into `_legacy_backup/` (strictly preserving `.env.local`, `package.json`, `supabase/`, and `public/google0d409ac877429b1f.html`).
+   - Build a **100% NEW, bespoke spatial luxury layout** inspired by **Cartier / Apple Pro / Linear / Stripe**—completely different geometry, typography, navigation, hero layout, cards, and interactive dashboards:
+     - **Palette:** Deep Velvet Obsidian (`#050507`), Warm Smoked Quartz (`#0E0E14`), Imperial Champagne Gold (`#E2C275` -> `#FFF3C4` -> `#AA7E2E`), and Bioluminescent Emerald (`#10B981`).
+     - **Bespoke Logos:** Create a brand-new museum-grade geometric monogram logo (`components/BrandLogo.tsx`) and a photorealistic 3D minted gold bullion medallion coin logo for `$MINEAI` (`components/MineAICoinLogo.tsx`).
+     - **Tactile Sound & Motion:** Include subtle Web Audio API click/chime feedback (`lib/sound-engine.ts` with mute toggle) and smooth Framer Motion transitions.
+
+2. **Real, End-to-End Working Authentication (Google OAuth, Email OTP, Password & 2FA):**
+   - Do NOT leave dead or placeholder buttons. Wire every single auth button (`Continue with Google`, `Continue with Apple`, `Continue with Facebook`, `Email + Password Sign Up / Sign In`, `Magic Link`, `Forgot Password`) to real `@supabase/ssr` client & server handlers (`app/api/auth/*` and `app/auth/callback/route.ts`).
+   - Ensure `signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}/auth/callback` } })` works cleanly and handles provider configuration gracefully with clear setup diagnostics if an OAuth provider isn't toggled on in Supabase yet.
+   - Implement working **Google Authenticator (TOTP 2FA)** setup and verification inside `/dashboard/security`.
+
+3. **Real User Database & Full Transaction Lifecycle (`Supabase PostgreSQL`):**
+   - Connect every user action directly to real Supabase tables (`profiles`, `mining_nodes`, `mining_balances`, `subscriptions`, `transactions`, `withdrawals`, `support_tickets`, `referrals`) using server actions and API routes (`app/api/*`).
+   - Ensure `supabase/security_schema.sql` includes complete table definitions, automatic signup triggers (creating profile + free 5 MH/s node + 8 coin vaults on first login), Row-Level Security (`RLS`), and explicit `GRANT` permissions.
+   - Display real user profile data, real active mining nodes, real balance history, real subscription status, and real transaction receipts inside `/dashboard`.
+
+4. **Real Multi-Coin Cloud Mining Command Center (`/mining`):**
+   - Build a breathtaking, interactive 3D/animated **Quantum Cloud Mining Console** backed by real Supabase persistence (`/api/mining/sync` & `/api/mining/allocate`).
+   - Users allocate hashrate across **`$MINEAI` (3x Multiplier)** and **7 major coins (`BTC`, `ETH`, `SOL`, `BNB`, `TON`, `DOGE`, `LTC`)**, watch real accrued balances calculate dynamically from elapsed server timestamps (`last_accrued_at`), boost hashrate via referrals/plans, and submit real **Withdrawal Requests** saved to the `withdrawals` table with wallet address validation.
+
+5. **Real Working Checkout & White-Label Payment Engine (`/store` & `/checkout`):**
+   - Display all **5 Zero-Electricity Cloud Mining Plans** (`Genesis Free $0`, `Cloud Node v1 $29.99`, `Cloud Pro v2 $99.99`, `Cloud Elite v3 $299.99`, `Sovereign Master v4 $799.99`) prominently on the Homepage and `/store`.
+   - Build a unified **3-Step Checkout (`/checkout?plan=...`)** with live **`USD $` / `EGP ج.م`** currency conversion, **ZERO third-party gateway brand names** visible in the UI (present only *"Credit / Debit Card (Visa & Mastercard)"*, *"Apple Pay / Google Pay"*, *"Mobile Wallets"*, and *"Direct Cryptocurrency (USDT / BTC — 0% Fee)"*), silently routing card/wallet sessions through configured `.env.local` merchant APIs and verifying direct crypto `txHash` payments to immediately upgrade the user's `subscriptions` and `hashrate_mhs` in Supabase.
+
+6. **Studio Explainer Video (6 Languages), Live Markets, Auto-News & 24/7 AI Concierge:**
+   - Use `OpenMontage`, `Remotion`, and `FFmpeg` tools to upgrade `components/ExplainerVideoPlayer.tsx` with rich multi-scene motion graphics and natural human-paced voice narration across all **6 languages (English, Arabic RTL, French, Spanish, Chinese, Hindi)**.
+   - Stream real-time Crypto, Gold (`XAU`), and Forex (`USD/EGP`) prices with a live clock, auto-updating global economic/crypto news, and a real LLM-powered 24/7 AI Concierge (`/api/ai/support`).
+
+7. **Mandatory Automated Verification (`npm run build` + `Playwright` Live Audit) & GitHub/Vercel Deploy:**
+   - Run `npm run build` and fix EVERY TypeScript, ESLint, or Next.js build error until it passes with **0 errors**.
+   - Use your `Playwright` MCP tool against the local server (`npm run start`) to visually inspect and click-test the Homepage, Login/Google OAuth button, Dashboard, Mining Console, and Checkout flow to prove every button and database route works.
+   - Commit and push cleanly to GitHub (`git add . && git commit -m "Complete ground-up architectural rebuild of MINEAI" && git push`) so `https://mineai-three.vercel.app` deploys the brand-new site live.
